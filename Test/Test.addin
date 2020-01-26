@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>Command Test</Text>
+    <Description>Some description for Test</Description>
+    <Assembly>Test.dll</Assembly>
+    <FullClassName>Test.Command</FullClassName>
+    <ClientId>4aa565e8-3fe2-4a59-872a-08267bb16fa0</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>Application Test</Name>
+    <Assembly>Test.dll</Assembly>
+    <FullClassName>Test.App</FullClassName>
+    <ClientId>e1ce0178-04b7-445d-ad8d-e6615c78c658</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>

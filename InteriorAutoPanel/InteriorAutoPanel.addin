@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>Command InteriorAutoPanel</Text>
+    <Description>Some description for InteriorAutoPanel</Description>
+    <Assembly>InteriorAutoPanel.dll</Assembly>
+    <FullClassName>InteriorAutoPanel.CmdAutoPanel</FullClassName>
+    <ClientId>1b9b520f-ffbe-471e-a7c6-701ac3e8c921</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>Application InteriorAutoPanel</Name>
+    <Assembly>InteriorAutoPanel.dll</Assembly>
+    <FullClassName>InteriorAutoPanel.App</FullClassName>
+    <ClientId>1f1701aa-b35b-4269-97d5-7496a4864d61</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
