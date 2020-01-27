@@ -25,6 +25,36 @@ namespace AutoRouteMEP
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
+            //Check the default settings.
+            const string elecSettingName = 
+                "DefaultElectricalSettingExcuted";
+            GlobalParameter SettingP = doc.GetElement( 
+                GlobalParametersManager.FindByName
+                (doc, elecSettingName)) as GlobalParameter;
+            if (SettingP == null)
+            {
+                //Set the voltage and distribution to default
+                using (Transaction tx = new Transaction(doc))
+                {
+                    tx.Start("Autoset electrical setting");
+                    ElectricalSetting ElecSet = ElectricalSetting
+                        .GetElectricalSettings(doc);
+                    VoltageType VtypeHome = ElecSet
+                        .AddVoltageType("Home", 220, 200, 240);
+                    ElecSet.AddDistributionSysType
+                        ("Lighting", ElectricalPhase.SinglePhase,
+                        ElectricalPhaseConfiguration.Undefined,
+                        2, null, VtypeHome);
+                    ElecSet.AddDistributionSysType
+                        ("Outlet", ElectricalPhase.SinglePhase,
+                        ElectricalPhaseConfiguration.Undefined,
+                        2, null, VtypeHome);
+                    tx.Commit();
+                }
+                //Create the parameter to mark as excuted
+                GlobalParameter.Create
+                    (doc, elecSettingName, ParameterType.Number);
+            }
             #region Retrieve elements from database
             List<ElementId> LightIds = new List<ElementId>();
             List<ElementId> OutletIds = new List<ElementId>();

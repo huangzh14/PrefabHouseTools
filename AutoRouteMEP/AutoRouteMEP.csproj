@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoRouteApp.cs" />
-    <Compile Include="CmdSetElectricalSettings.cs" />
     <Compile Include="CmdSetCircuit.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
