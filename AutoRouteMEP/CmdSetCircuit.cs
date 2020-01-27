@@ -25,7 +25,7 @@ namespace AutoRouteMEP
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            //Check the default settings.
+            # region Check the default settings.
             const string elecSettingName = 
                 "DefaultElectricalSettingExcuted";
             GlobalParameter SettingP = doc.GetElement( 
@@ -55,6 +55,8 @@ namespace AutoRouteMEP
                 GlobalParameter.Create
                     (doc, elecSettingName, ParameterType.Number);
             }
+            #endregion
+
             #region Retrieve elements from database
             List<ElementId> LightIds = new List<ElementId>();
             List<ElementId> OutletIds = new List<ElementId>();

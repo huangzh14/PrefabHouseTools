@@ -24,6 +24,13 @@ namespace AutoRouteMEP
                 thisPath, "AutoRouteMEP.CmdSetCircuit");
             PushButton SetCircuitB = ribPanel
                 .AddItem(SetCircuitD) as PushButton;
+
+            PushButtonData AutoRouteD = new PushButtonData
+                ("CmdAutoRoute","Auto Route",
+                thisPath,"AutoRouteMEP.CmdAutoRoute");
+            PushButton AutoRouteB = ribPanel
+                .AddItem(AutoRouteD) as PushButton;
+
             return Result.Succeeded;
         }
 

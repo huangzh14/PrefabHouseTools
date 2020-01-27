@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteriorAutoPanel", "Interi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRouteMEP", "AutoRouteMEP\AutoRouteMEP.csproj", "{7C4FEB04-960D-471E-A113-4609D8226C94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{5C96B922-0503-48AB-9D9A-528413C7014A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7C4FEB04-960D-471E-A113-4609D8226C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C4FEB04-960D-471E-A113-4609D8226C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C4FEB04-960D-471E-A113-4609D8226C94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C96B922-0503-48AB-9D9A-528413C7014A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C96B922-0503-48AB-9D9A-528413C7014A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C96B922-0503-48AB-9D9A-528413C7014A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C96B922-0503-48AB-9D9A-528413C7014A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
