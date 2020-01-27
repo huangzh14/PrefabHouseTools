@@ -13,7 +13,7 @@ using Autodesk.Revit.DB.Electrical;
 namespace AutoRouteMEP
 {
     [Transaction(TransactionMode.Manual)]
-    public class CmdAutoSetCircuit : IExternalCommand
+    public class CmdSetCircuit : IExternalCommand
     {
         public Result Execute(
           ExternalCommandData commandData,
@@ -57,10 +57,11 @@ namespace AutoRouteMEP
             }
 
             #endregion Retrieve elements from databa
+
+            //Locate the electrical main box.
             FamilyInstance ElecBox = null;
             try
             {
-                //Locate the electrical main box.
                 Selection sel = uidoc.Selection;
                 TaskDialog.Show("Choose", "Please select one electrical box after closing the dialog.\n" +
                     "请在关闭窗口后选择一个配电箱。");
@@ -72,8 +73,8 @@ namespace AutoRouteMEP
                 TaskDialog.Show("Error", "Something went wrong.\n" + ex.Message);
                 return Result.Failed;
             }
-            
 
+            
             // Create the electrical system
             using (Transaction tx = new Transaction(doc))
             {      
@@ -93,8 +94,6 @@ namespace AutoRouteMEP
                 "已创建默认系统");
 
             return Result.Succeeded;
-
-            //test test
         }
     }
 }
