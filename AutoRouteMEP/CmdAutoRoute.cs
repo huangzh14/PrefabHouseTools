@@ -38,6 +38,8 @@ namespace AutoRouteMEP
                 //The fixtures of this terminal
                 ElementSet fixtures = eElec.Elements;
                 FamilyInstance baseE = eElec.BaseEquipment;
+                List<XYZ> nodeList = eElec.GetCircuitPath() as List<XYZ>;
+                
             }
 
             return Result.Succeeded;

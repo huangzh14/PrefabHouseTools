@@ -49,11 +49,10 @@ namespace AutoRouteMEP
                         ("Outlet", ElectricalPhase.SinglePhase,
                         ElectricalPhaseConfiguration.Undefined,
                         2, null, VtypeHome);
+                    GlobalParameter.Create
+                    (doc, elecSettingName, ParameterType.Number);
                     tx.Commit();
                 }
-                //Create the parameter to mark as excuted
-                GlobalParameter.Create
-                    (doc, elecSettingName, ParameterType.Number);
             }
             #endregion
 
