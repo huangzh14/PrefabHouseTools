@@ -13,7 +13,7 @@ using Autodesk.Revit.DB.Electrical;
 namespace AutoRouteMEP
 {
     [Transaction(TransactionMode.Manual)]
-    public class CmdAutoSetCircuit : IExternalCommand
+    public class CmdSetCircuit : IExternalCommand
     {
         public Result Execute(
           ExternalCommandData commandData,
@@ -24,6 +24,37 @@ namespace AutoRouteMEP
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
+
+            # region Check the default settings.
+            const string elecSettingName = 
+                "DefaultElectricalSettingExcuted";
+            GlobalParameter SettingP = doc.GetElement( 
+                GlobalParametersManager.FindByName
+                (doc, elecSettingName)) as GlobalParameter;
+            if (SettingP == null)
+            {
+                //Set the voltage and distribution to default
+                using (Transaction tx = new Transaction(doc))
+                {
+                    tx.Start("Autoset electrical setting");
+                    ElectricalSetting ElecSet = ElectricalSetting
+                        .GetElectricalSettings(doc);
+                    VoltageType VtypeHome = ElecSet
+                        .AddVoltageType("Home", 220, 200, 240);
+                    ElecSet.AddDistributionSysType
+                        ("Lighting", ElectricalPhase.SinglePhase,
+                        ElectricalPhaseConfiguration.Undefined,
+                        2, null, VtypeHome);
+                    ElecSet.AddDistributionSysType
+                        ("Outlet", ElectricalPhase.SinglePhase,
+                        ElectricalPhaseConfiguration.Undefined,
+                        2, null, VtypeHome);
+                    GlobalParameter.Create
+                    (doc, elecSettingName, ParameterType.Number);
+                    tx.Commit();
+                }
+            }
+            #endregion
 
             #region Retrieve elements from database
             List<ElementId> LightIds = new List<ElementId>();
@@ -57,10 +88,11 @@ namespace AutoRouteMEP
             }
 
             #endregion Retrieve elements from databa
+
+            //Locate the electrical main box.
             FamilyInstance ElecBox = null;
             try
             {
-                //Locate the electrical main box.
                 Selection sel = uidoc.Selection;
                 TaskDialog.Show("Choose", "Please select one electrical box after closing the dialog.\n" +
                     "请在关闭窗口后选择一个配电箱。");
@@ -72,8 +104,8 @@ namespace AutoRouteMEP
                 TaskDialog.Show("Error", "Something went wrong.\n" + ex.Message);
                 return Result.Failed;
             }
-            
 
+            
             // Create the electrical system
             using (Transaction tx = new Transaction(doc))
             {      
@@ -93,8 +125,6 @@ namespace AutoRouteMEP
                 "已创建默认系统");
 
             return Result.Succeeded;
-
-            //test test
         }
     }
 }
