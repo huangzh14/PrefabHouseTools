@@ -16,29 +16,37 @@ using System.Windows;
 #endregion
 
 namespace AutoRouteMEP
-{
+{  
     public struct SLine
     {
         public XYZ StartPt { get; }
         public XYZ EndPt { get; }
         public XYZ Vector { get { return (EndPt - StartPt); } }
+        public XYZ UnitV { get { return (Vector / Vector.GetLength()); } }
         public SLine(XYZ start,XYZ end) { 
             StartPt = start;
             EndPt = end; }
     }
-    class RoomBound
+    public struct EFixture
     {
-        public List<XYZ> Vertexs { get; }
-        List<List<SLine>> borderList;
-        Room theRoom;
-        
+        public ElementId id { get; }
+    }
+    class RoomRouteCalculator
+    {
+        public List<XYZ> BorderVertexs { get; }
+        public Room TheRoom { get; }
+        public List<List<SLine>> BorderList { get ; }
+
         /// <summary>
         /// Constructor from room.
         /// </summary>
         /// <param name="room"></param>
-        public RoomBound(Room room)
+        /// !Note: Currently not merge the borders that are one line
+        /// divided into several in order to simplify development.
+        /// Can be further optimized to improve efficiency.
+        public RoomRouteCalculator(Room room)
         {
-            theRoom = room;
+            TheRoom = room;
             //Get the border.
             List<List<BoundarySegment>> BSlist = 
                 room.GetBoundarySegments
@@ -52,11 +60,11 @@ namespace AutoRouteMEP
                     Curve tempC = BSeg.GetCurve();
                     borders.Add(new SLine
                         (tempC.GetEndPoint(0), tempC.GetEndPoint(1)));
-                    Vertexs.Add(tempC.GetEndPoint(0));
+                    BorderVertexs.Add(tempC.GetEndPoint(0));
                 }
-                borderList.Add(borders);
+                BorderList.Add(borders);
                 borders.Clear();
-            } 
+            }
         }
 
         /// <summary>
@@ -65,11 +73,11 @@ namespace AutoRouteMEP
         /// <returns>True if the boundary is a convex polygon</returns>
         public bool IsConvex()
         {
-            if (borderList.Count > 1)
+            if (BorderList.Count > 1)
             {
                 return false;
             }
-            List<SLine> borders = borderList[0];
+            List<SLine> borders = BorderList[0];
             int borderNum = borders.Count();
             int counter = 0;
             ///Add the first border to the end to create a loop.
@@ -78,7 +86,7 @@ namespace AutoRouteMEP
             for (int i = 0; i < borderNum; i++)
             {
                 XYZ crossProduct =
-                    crossP(borders[i].Vector, borders[i + 1].Vector);
+                    CrossP(borders[i].Vector, borders[i + 1].Vector);
                 if (crossProduct.Z > 0)
                     counter++;
             }
@@ -96,7 +104,7 @@ namespace AutoRouteMEP
         /// <param name="vec1"></param>
         /// <param name="vec2"></param>
         /// <returns></returns>
-        private XYZ crossP (XYZ vec1,XYZ vec2)
+        private XYZ CrossP (XYZ vec1,XYZ vec2)
         {
             double x = vec1.Y * vec2.Z - vec2.Y * vec1.Z;
             double y = vec1.Z * vec2.X - vec2.Z * vec1.X;
@@ -110,7 +118,7 @@ namespace AutoRouteMEP
         /// <param name="l1"></param>
         /// <param name="l2"></param>
         /// <returns></returns>
-        private bool isIntersect(SLine l1, SLine l2)
+        private bool IsIntersect(SLine l1, SLine l2)
         {
             int counterUp = 0;
             int counterDown = 0;
@@ -119,7 +127,7 @@ namespace AutoRouteMEP
             pts.Add(pts[0]);
             for (int i = 0; i < 4; i++)
             {
-                XYZ c = crossP(pts[i], pts[i + 1]);
+                XYZ c = CrossP(pts[i], pts[i + 1]);
                 if (c.Z > 0) counterUp++;
                 else counterDown++;
             }
@@ -135,11 +143,11 @@ namespace AutoRouteMEP
         /// <returns>True if have intersection.</returns>
         public bool BorderIntersectWith(SLine line)
         {
-            foreach(List<SLine> borders in borderList)
+            foreach(List<SLine> borders in BorderList)
             {
                 foreach(SLine border in borders)
                 {
-                    if (isIntersect(border, line))
+                    if (IsIntersect(border, line))
                         return true;
                 }
             }
@@ -152,7 +160,7 @@ namespace AutoRouteMEP
         /// <param name="startPt"></param>
         /// <param name="endPt"></param>
         /// <returns></returns>
-        public List<XYZ> FindPlanRoute(XYZ start,XYZ end)
+        private List<XYZ> FindPlanRoute(XYZ start, XYZ end)
         {
             List<XYZ> route = new List<XYZ>();
             //The simple situation.
@@ -182,7 +190,7 @@ namespace AutoRouteMEP
         public List<XYZ> FindRoute(XYZ start,XYZ end)
         {
             List<XYZ> route = new List<XYZ>();
-
+            
             return route;
         }
     }
