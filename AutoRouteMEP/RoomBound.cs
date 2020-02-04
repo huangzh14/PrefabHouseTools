@@ -109,7 +109,6 @@ namespace AutoRouteMEP
             double x = vec1.Y * vec2.Z - vec2.Y * vec1.Z;
             double y = vec1.Z * vec2.X - vec2.Z * vec1.X;
             double z = vec1.X * vec2.Y - vec2.X * vec1.Y;
-            vec1.CrossProduct()
             return new XYZ(x,y,z); 
         }
 

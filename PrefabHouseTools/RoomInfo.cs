@@ -15,11 +15,14 @@ namespace PrefabHouseTools
     public class RoomInfo
     {
         public Room Room { get; }
-        public List<Dictionary<Curve, ElementId>> Boundaries { get; set; }
+        public List<Dictionary<Curve, ElementId>> BoundaryList { get; set; }
+        public List<List<XYZ>> VertexList { get; set; }
         public RoomInfo(Room room)
         {
             Room = room;
-            Boundaries = GetBoundary(room);
+            BoundaryList = GetBoundary
+                (room,out List<List<XYZ>>vList);
+            VertexList = vList;
         }
         
         #region Supporting method for the following method.
@@ -73,7 +76,7 @@ namespace PrefabHouseTools
         /// </summary>
         /// <param name="room"></param>
         /// <returns></returns>
-        public static List<Dictionary<Curve,ElementId>> GetBoundary(Room room)
+        public static List<Dictionary<Curve,ElementId>> GetBoundary(Room room,out List<List<XYZ>> vertexList)
         {
             List<Dictionary<Curve, ElementId>> boundaryList =
                 new List<Dictionary<Curve, ElementId>>();
@@ -81,10 +84,12 @@ namespace PrefabHouseTools
                 room.GetBoundarySegments
                 (new SpatialElementBoundaryOptions())
                 as List<List<BoundarySegment>>;
+            vertexList = new List<List<XYZ>>();
             foreach (List<BoundarySegment> BSegs in BSlist)
             {
                 Dictionary<Curve, ElementId> boundaries = 
                     new Dictionary<Curve, ElementId>();
+                List<XYZ> vertexes = new List<XYZ>();
                 Stack<Bcurve> boundCurs = new Stack<Bcurve>();
                 Queue<Bcurve> cursMerged = new Queue<Bcurve>();
                 foreach (BoundarySegment Seg in BSegs)
@@ -92,7 +97,8 @@ namespace PrefabHouseTools
                     boundCurs.Push(new Bcurve
                         (Seg.GetCurve(),Seg.ElementId));
                 }
-                while(boundCurs.Count > 1)
+                #region Merge curves
+                while (boundCurs.Count > 1)
                 {
                     Bcurve cur1 = boundCurs.Pop();
                     Bcurve cur2 = boundCurs.Pop();
@@ -115,12 +121,16 @@ namespace PrefabHouseTools
                 {
                     cursMerged.Enqueue(cur3);
                 }
+                #endregion 
                 foreach (Bcurve bcur in cursMerged)
                 {
                     boundaries.Add(bcur.Curve, bcur.Id);
+                    vertexes.Add(bcur.Curve.GetEndPoint(0));
                 }
                 boundaryList.Add(boundaries);
                 boundaries.Clear();
+                vertexList.Add(vertexes);
+                vertexes.Clear();
             }
             return boundaryList;
         }
@@ -133,9 +143,9 @@ namespace PrefabHouseTools
         /// <returns></returns>
         public bool IsAdjacent(RoomInfo otherRoom)
         {
-            foreach(Dictionary<Curve,ElementId> boundLoop1 in Boundaries){
+            foreach(Dictionary<Curve,ElementId> boundLoop1 in BoundaryList){
                 foreach(Dictionary<Curve,ElementId> boundLoop2 
-                    in otherRoom.Boundaries){
+                    in otherRoom.BoundaryList){
                     //First iterate through each boundary loop.
                     foreach(var bound1 in boundLoop1){
                         foreach(var bound2 in boundLoop2){

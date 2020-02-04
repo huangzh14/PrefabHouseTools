@@ -53,7 +53,7 @@ namespace PrefabHouseTools
         public bool BoundaryIntersectWith(Curve c)
         {
             foreach(Dictionary<Curve,ElementId> boundLoop 
-                in Boundaries)
+                in BoundaryList)
             {
                 foreach(Curve bCur in boundLoop.Keys)
                 {
@@ -62,6 +62,18 @@ namespace PrefabHouseTools
                 }
             }
             return false;
+        }
+
+        private struct Vertex
+        {
+            XYZ pt;
+            double d2s;
+            double d2e;
+        }
+        private List<XYZ> FindVertexPath(XYZ start,XYZ end, List<XYZ> vertex)
+        {
+            List<XYZ> path = new List<XYZ>();
+
         }
         /// <summary>
         /// Find the planer route of two points at given height.
@@ -82,6 +94,7 @@ namespace PrefabHouseTools
                 return route;
             }
             ///Thi tricky situation when stright line is not ok.
+            
             return route;
         }
     }
