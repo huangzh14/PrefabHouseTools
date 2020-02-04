@@ -10,9 +10,9 @@
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
   </AddIn>
   <AddIn Type="Application">
-    <Name>Application PrefabHouseTools</Name>
+    <Name>App PrefabHouseTools</Name>
     <Assembly>PrefabHouseTools.dll</Assembly>
-    <FullClassName>PrefabHouseTools.App</FullClassName>
+    <FullClassName>PrefabHouseTools.AppPrefabHouseTools</FullClassName>
     <ClientId>5507f8ae-09b8-405d-b340-39e489a66f06</ClientId>
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>

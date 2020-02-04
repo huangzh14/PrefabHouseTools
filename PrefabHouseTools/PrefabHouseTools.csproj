@@ -51,7 +51,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.cs" />
+    <Compile Include="AppPrefabHouseTools.cs" />
+    <Compile Include="CmdAutoRouteE.cs" />
+    <Compile Include="CmdSetCircuit.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="RoomInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
