@@ -22,7 +22,7 @@ namespace AutoRouteMEP
         public XYZ StartPt { get; }
         public XYZ EndPt { get; }
         public XYZ Vector { get { return (EndPt - StartPt); } }
-        public XYZ UnitV { get { return (Vector / Vector.GetLength()); } }
+        public XYZ UnitV { get { return Vector.Normalize(); } }
         public SLine(XYZ start,XYZ end) { 
             StartPt = start;
             EndPt = end; }
@@ -109,6 +109,7 @@ namespace AutoRouteMEP
             double x = vec1.Y * vec2.Z - vec2.Y * vec1.Z;
             double y = vec1.Z * vec2.X - vec2.Z * vec1.X;
             double z = vec1.X * vec2.Y - vec2.X * vec1.Y;
+            vec1.CrossProduct()
             return new XYZ(x,y,z); 
         }
 
@@ -173,10 +174,7 @@ namespace AutoRouteMEP
                 return route;
             }
             //The trick situation.
-            do
-            {
-
-            } while ();
+            
 
             return route;
         }

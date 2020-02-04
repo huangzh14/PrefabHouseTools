@@ -57,6 +57,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="RoomInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoomInfoElec.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="PrefabHouseTools.addin" />
