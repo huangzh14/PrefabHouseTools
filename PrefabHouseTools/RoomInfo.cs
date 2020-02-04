@@ -133,10 +133,51 @@ namespace PrefabHouseTools
         /// <returns></returns>
         public bool IsAdjacent(RoomInfo otherRoom)
         {
-            foreach(Dictionary<Curve,ElementId> boundLoop in Boundaries)
-            {
-                foreach(Curve)
+            foreach(Dictionary<Curve,ElementId> boundLoop1 in Boundaries){
+                foreach(Dictionary<Curve,ElementId> boundLoop2 
+                    in otherRoom.Boundaries){
+                    //First iterate through each boundary loop.
+                    foreach(var bound1 in boundLoop1){
+                        foreach(var bound2 in boundLoop2){
+                            ///Then iterate through each boundary segment.
+                            ///If they are the same element carry on.
+                            if (bound1.Value == bound2.Value)
+                            {
+                                ///Project the two endpoint of the shorter one
+                                ///onto the long one.If any projection point is
+                                ///inbetween the vertexs of the longer one than
+                                ///we can say this two rooms are adjacent.
+                                Curve shortc;
+                                Curve longc;
+                                if (bound1.Key.Length > bound2.Key.Length)
+                                {
+                                    shortc = bound2.Key;
+                                    longc = bound1.Key;
+                                }
+                                else
+                                {
+                                    shortc = bound1.Key;
+                                    longc = bound2.Key;
+                                }
+                                List<XYZ> ptsL = new List<XYZ>
+                                    {shortc.GetEndPoint(0),shortc.GetEndPoint(1)};
+                                foreach (XYZ p in ptsL)
+                                {
+                                    XYZ pt = longc.Project(p).XYZPoint;
+                                    XYZ pt2s = pt - longc.GetEndPoint(0);
+                                    XYZ pt2e = longc.GetEndPoint(1) - pt;
+                                    if (pt2s.Normalize().IsAlmostEqualTo
+                                        (pt2e.Normalize()))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            return false;
         }
     }
 }
