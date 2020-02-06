@@ -192,6 +192,7 @@ namespace PrefabHouseTools
                                     bound1.Key:bound2.Key;
                                 List<XYZ> ptsL = new List<XYZ>
                                     {shortc.GetEndPoint(0),shortc.GetEndPoint(1)};
+                                ptsL.Add(0.5 * (ptsL[0] + ptsL[1]));
                                 foreach (XYZ p in ptsL)
                                 {
                                     XYZ pt = longc.Project(p).XYZPoint;
