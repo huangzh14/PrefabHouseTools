@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -307,6 +308,13 @@ namespace PrefabHouseTools
             return false;
         }
 
+        public void CalculateFixCentroid()
+        {
+            double aX = ElecFixtures.Average(ef => ef.Origin.X);
+            double aY = ElecFixtures.Average(ef => ef.Origin.Y);
+            FixCentroid = new XYZ(aX, aY, 0);
+        }
+
         private List<XYZ> FindVertexPath(XYZ start, XYZ end, List<XYZ> vertex)
         {
             List<XYZ> path = new List<XYZ>();
@@ -336,13 +344,53 @@ namespace PrefabHouseTools
         }
     }
 
+    public class ElecSystemInfo
+    {
+        public string Name { get; }
+        public List<FixtureE> ElecFixtures { get; set; }
+        public ElecSystemInfo(ElectricalSystem system)
+        {
+            Name = system.Name;
+        }
+
+    }
+
     /// <summary>
     /// 
     /// </summary>
     public class FixtureE
     {
+        public Room Room { get; }
         public ElementId ElementId { get; }
-        MEPModel model;
+        public MEPModel MepModel { get; }
+        public XYZ Origin { get; }
+        public Connector EConnector { get; }
+        public FixtureE(FamilyInstance fa)
+        {
+            this.Room = fa.Room;
+            this.ElementId = fa.Id;
+            this.MepModel = fa.MEPModel;
+            IEnumerator connectors = this.MepModel
+                .ConnectorManager.Connectors
+                .GetEnumerator();
+            while (connectors.MoveNext())
+            {
+                Connector c = connectors
+                    .Current as Connector;
+                try
+                {
+                    ElectricalSystemType est =
+                        c.ElectricalSystemType;
+                    EConnector = c;
+                    Origin = c.Origin;
+                    break;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
         
     }
 

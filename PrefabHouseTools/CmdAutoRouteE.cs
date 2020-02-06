@@ -6,8 +6,11 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
+using Autodesk.Revit.DB.Electrical;
+using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using System.Linq;
 #endregion
 
 namespace PrefabHouseTools
@@ -56,7 +59,8 @@ namespace PrefabHouseTools
             Document doc = uidoc.Document;
 
             List<Room> roomSelected = new List<Room>();
-            #region Retrieve rooms from database
+
+            #region Step1-Retrieve rooms from database
             TaskDialog td = new TaskDialog("Start");
             TaskDialogResult tdR;
             string roomNames ;
@@ -82,11 +86,11 @@ namespace PrefabHouseTools
                 {
                     if (tdR == TaskDialogResult.Yes)
                     {
-                        FilteredElementCollector col = 
+                        FilteredElementCollector colR = 
                             new FilteredElementCollector(doc)
                             .WhereElementIsNotElementType()
                             .OfCategory(BuiltInCategory.OST_Rooms);
-                        foreach (Element e in col)
+                        foreach (Element e in colR)
                         {
                             roomSelected.Add(e as Room);
                             roomNames += e.Name + "\n";
@@ -131,19 +135,58 @@ namespace PrefabHouseTools
             } while (tdR == TaskDialogResult.Retry);
             #endregion
 
-            #region Initialize the roominfos.
-            List<RoomInfoElec> roomInfoList = new List<RoomInfoElec>();
-            foreach(Room r in roomSelected)
+            List<RoomInfoElec> roomInfoList 
+                = new List<RoomInfoElec>();
+            List<ElecSystemInfo> systemInfoList 
+                = new List<ElecSystemInfo>();
+            #region Step2-Initialize the roominfos and systemInfo.
+            foreach (Room r in roomSelected)
             {
                 roomInfoList.Add(new RoomInfoElec(r));
             }
             RoomInfoElec.SolveAdjacency(roomInfoList);
+
+            ///Get all the electrical system and fixture.
+            FilteredElementCollector col =
+                new FilteredElementCollector(doc)
+                .WhereElementIsNotElementType()
+                .OfCategory(BuiltInCategory.OST_ElectricalCircuit);
+            foreach (Element elecCir in col)
+            {
+                ElectricalSystem elecSys 
+                    = elecCir as ElectricalSystem;
+                ElecSystemInfo systemInfo
+                    = new ElecSystemInfo(elecSys);
+                foreach (Element f in elecSys.Elements)
+                {
+                    FamilyInstance fixture = f as FamilyInstance;
+                    var roomInfo = roomInfoList.Where(r => r.Room == fixture.Room);
+
+                    if (roomInfo.FirstOrDefault() == null)
+                        continue;
+
+                    FixtureE fE = new FixtureE(fixture);
+                    roomInfo.FirstOrDefault().ElecFixtures.Add(fE);
+                    systemInfo.ElecFixtures.Add(fE);
+                }
+                systemInfoList.Add(systemInfo);
+            }
+
+            foreach (RoomInfoElec r in roomInfoList)
+            {
+                r.CalculateFixCentroid();
+            }
+
+            #endregion
+
+            #region Step3-Calculate cross wall location.
             #endregion
             // Modify document within a transaction
-
+            #region demo only
             using (Transaction tx = new Transaction(doc))
             {
                 tx.Start("Demo");
+                
                 string adjan = "";
                 foreach(RoomInfoElec r in roomInfoList)
                 {
@@ -165,6 +208,7 @@ namespace PrefabHouseTools
                 TaskDialog.Show("demo", adjan);
                 tx.Commit();
             }
+            #endregion
 
             return Result.Succeeded;
         }
