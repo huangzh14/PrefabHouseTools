@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AppPrefabHouseTools.cs" />
     <Compile Include="CmdAutoRouteE.cs" />
+    <Compile Include="CmdAutoRouteGraph.cs" />
     <Compile Include="CmdSetCircuit.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CmdAutoRouteEobject.cs" />
