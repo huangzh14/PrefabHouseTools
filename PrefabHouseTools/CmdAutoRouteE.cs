@@ -40,7 +40,7 @@ namespace PrefabHouseTools
     }
 
     /// <summary>
-    /// 
+    /// The main command
     /// </summary>
     [Transaction(TransactionMode.Manual)]
     public class CmdAutoRouteE : IExternalCommand
@@ -55,13 +55,10 @@ namespace PrefabHouseTools
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            // Access current selection
-
-            Selection sel = uidoc.Selection;
+            List<Room> roomSelected = new List<Room>();
             #region Retrieve rooms from database
             TaskDialog td = new TaskDialog("Start");
             TaskDialogResult tdR;
-            List<Room> roomSelected = new List<Room>();
             string roomNames ;
             ///Start selection.If retry is choose at last,
             ///do the loop again.
@@ -134,24 +131,38 @@ namespace PrefabHouseTools
             } while (tdR == TaskDialogResult.Retry);
             #endregion
 
-
-
-
-
-
-
-            // Filtered element collector is iterable
-
-            foreach (Element e in col)
+            #region Initialize the roominfos.
+            List<RoomInfoElec> roomInfoList = new List<RoomInfoElec>();
+            foreach(Room r in roomSelected)
             {
-                Debug.Print(e.Name);
+                roomInfoList.Add(new RoomInfoElec(r));
             }
-
+            RoomInfoElec.SolveAdjacency(roomInfoList);
+            #endregion
             // Modify document within a transaction
 
             using (Transaction tx = new Transaction(doc))
             {
-                tx.Start("Transaction Name");
+                tx.Start("Demo");
+                string adjan = "";
+                foreach(RoomInfoElec r in roomInfoList)
+                {
+                    ///Draw model line for demo.
+                    CurveArray curves = r.GetBoundaryCurves();
+                    XYZ originpt = curves.get_Item(0)
+                                   .GetEndPoint(0);
+                    SketchPlane sp = SketchPlane.Create
+                        (doc, Plane.CreateByNormalAndOrigin
+                        (new XYZ(0, 0, 1), originpt));
+                    doc.Create.NewModelCurveArray(curves, sp);
+                    ///Display adjancant info for demo.
+                    adjan += "\n" + r + " is adjacent to:\n";
+                    foreach(RoomInfoElec adjR in r.AdjacentRooms)
+                    {
+                        adjan += adjR + "\n";
+                    }
+                }
+                TaskDialog.Show("demo", adjan);
                 tx.Commit();
             }
 
