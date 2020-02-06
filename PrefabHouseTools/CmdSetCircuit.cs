@@ -110,19 +110,25 @@ namespace PrefabHouseTools
             using (Transaction tx = new Transaction(doc))
             {      
                 tx.Start("Create ElectricalSystem");
-                ElectricalSystem LightSystem =
+                ElectricalSystem LightingCircuit =
                     ElectricalSystem.Create(doc, LightIds, ElectricalSystemType.PowerCircuit);
-                LightSystem.SelectPanel(ElecBox);
-                ElectricalSystem OutletSystem =
+                LightingCircuit.Name = "LightingCircuit";
+                LightingCircuit.SelectPanel(ElecBox);
+                ElectricalSystem OutlietCircuit =
                     ElectricalSystem.Create(doc, OutletIds, ElectricalSystemType.PowerCircuit);
-                OutletSystem.SelectPanel(ElecBox);
-                ElectricalSystem HVACSystem =
+                OutlietCircuit.Name = "OutletCircuit";
+                OutlietCircuit.SelectPanel(ElecBox);
+                ElectricalSystem HVACCircuit =
                     ElectricalSystem.Create(doc, HVACIds, ElectricalSystemType.PowerCircuit);
-                HVACSystem.SelectPanel(ElecBox);
+                HVACCircuit.Name = "HVACCircuit";
+                HVACCircuit.SelectPanel(ElecBox);
                 tx.Commit();
             }
-            TaskDialog.Show("Result", "Default systems have been created.\n" +
-                "已创建默认系统");
+            TaskDialog.Show("Result",
+                "Default systems have been created.\n" +
+                "Please do not change system name.\n"+
+                "已创建默认系统,请勿修改系统名，将影响后续计算\n"+
+                "可手动调整系统内末端.");
 
             return Result.Succeeded;
         }
