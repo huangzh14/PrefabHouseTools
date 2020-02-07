@@ -258,34 +258,6 @@ namespace PrefabHouseTools
                             ///If they are the same element carry on.
                             if ((bound1.Id == bound2.Id)&&(bound1.BaseIsWall))
                             {
-                                #region The old method.
-                                /*
-                                ///Project the two endpoint of the shorter one
-                                ///onto the long one.If any projection point is
-                                ///inbetween the vertexs of the longer one than
-                                ///we can say this two rooms are adjacent.
-                                Curve shortc = 
-                                    (bound1.Length > bound2.Length)?
-                                    bound2.Curve:bound1.Curve;
-                                Curve longc = 
-                                    (bound1.Length > bound2.Length)?
-                                    bound1.Curve:bound2.Curve;
-                                List<XYZ> ptsL = new List<XYZ>
-                                    {shortc.GetEndPoint(0),shortc.GetEndPoint(1)};
-                                ptsL.Add(0.5 * (ptsL[0] + ptsL[1]));
-                                foreach (XYZ p in ptsL)
-                                {
-                                    XYZ pt = longc.Project(p).XYZPoint;
-                                    XYZ pt2s = pt - longc.GetEndPoint(0);
-                                    XYZ pt2e = longc.GetEndPoint(1) - pt;
-                                    if (pt2s.Normalize().IsAlmostEqualTo
-                                        (pt2e.Normalize()))
-                                    {
-                                        return true;
-                                    }
-                                }
-                                */
-                                #endregion
                                 Curve baseCurve = bound1.BaseWallCurve;
                                 Curve c1 = bound1.Curve;
                                 Curve c2 = bound2.Curve;
@@ -302,31 +274,6 @@ namespace PrefabHouseTools
             return isAdjacent;
         }
         #endregion
-
-        /// <summary>
-        /// Calculate the adjacent relationship between several rooms.
-        /// This will clear the existing adjacency relationship first.
-        /// </summary>
-        /// <param name="rooms"></param>
-        public virtual void SolveAdjacency(List<RoomInfo> rooms)
-        {
-            int num = rooms.Count;
-            for (int i = 0; i < num; i++)
-            {
-                rooms[i].AdjacentRooms.Clear();
-            }
-            for (int i = 0; i < num; i++)
-            {
-                for (int j = i + 1; j < num; j++)
-                {
-                    if (rooms[i].IsAdjacentTo(rooms[j],out CurveArray ca))
-                    {
-                        rooms[i].AdjacentRooms.Add(rooms[j]);
-                        rooms[j].AdjacentRooms.Add(rooms[i]);
-                    }
-                }
-            }
-        }
     }
     /// <summary>
     /// 
@@ -357,6 +304,7 @@ namespace PrefabHouseTools
         /// <returns></returns>
         private bool IsPlanIntersect(Curve c1, Curve c2)
         {
+            
             int iUp = 0;
             int iDown = 0;
             List<XYZ> pts = new List<XYZ>
@@ -406,6 +354,18 @@ namespace PrefabHouseTools
                 double aY = ElecFixtures.Average(ef => ef.Origin.Y);
                 FixCentroid = new XYZ(aX, aY, 0);
             }
+        }
+        public bool IsAdjacentTo(RoomInfoElec otherRoom, out PathExWall path,out double roughL)
+        {
+            path = new PathExWall();
+            roughL = 0;
+            bool boolResult = 
+                base.IsAdjacentTo(otherRoom, out CurveArray adjCurves);
+            if (boolResult)
+            {
+                return true;
+            }
+            return boolResult;
         }
 
         private List<XYZ> FindVertexPath(XYZ start, XYZ end, List<XYZ> vertex)
@@ -499,7 +459,7 @@ namespace PrefabHouseTools
     /// <summary>
     /// 
     /// </summary>
-    public class PathEcrossWall : PathE
+    public class PathExWall : PathE
     {
         public void MoveNext()
         {

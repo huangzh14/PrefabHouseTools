@@ -11,6 +11,14 @@ namespace PrefabHouseTools
         public int Index { get; set; }
         public Vertex Parent { get; set; }
         public int Rank { get; set; }
+        public object Object { get; }
+        public Vertex(object linkedObj)
+        {
+            this.Object = linkedObj;
+            this.Parent = this;
+            this.Rank = 0;
+            this.Index = -1;
+        }
     }
     class Edge
     {
@@ -24,18 +32,26 @@ namespace PrefabHouseTools
                 Begin.ToString(), End.ToString(),
                 Weight.ToString());
         }
+        public object Object { get; }
+        public Edge(Vertex begin,Vertex end, object linkedObj, double weight)
+        {
+            this.Begin = begin;
+            this.End = end;
+            this.Weight = weight;
+            this.Object = linkedObj;
+        }
     }
     class Graph
     {
         private Dictionary<Vertex, List<Edge>> adjacentEdges
             = new Dictionary<Vertex, List<Edge>>();
         public int VertexCount { get; }
-        public Graph(int vertexCount)
+        public Graph(IEnumerable<Vertex> vertices)
         {
-            this.VertexCount = vertexCount;
+            this.Vertices = vertices;
+            this.VertexCount = vertices.Count();
         }
-        public IEnumerable<Vertex> Vertices { 
-            get { return adjacentEdges.Keys; } }
+        public IEnumerable<Vertex> Vertices { get; }
         public IEnumerable<Edge> Edges {
             get { return adjacentEdges.Values
                     .SelectMany(e => e); }}
