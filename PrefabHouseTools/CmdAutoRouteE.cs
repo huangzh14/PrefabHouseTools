@@ -154,7 +154,7 @@ namespace PrefabHouseTools
             {
                 for (int j = i + 1; j < num; j++)
                 {
-                    if (roomInfoList[i].IsAdjacentTo(roomInfoList[j], out CurveArray ca))
+                    if (roomInfoList[i].IsAdjacentTo(roomInfoList[j]))
                     {
                         roomInfoList[i].AdjacentRooms.Add(roomInfoList[j]);
                         roomInfoList[j].AdjacentRooms.Add(roomInfoList[i]);
