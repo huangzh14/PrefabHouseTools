@@ -17,34 +17,55 @@ namespace PrefabHouseTools
     /// <summary>
     /// 
     /// </summary>
+    public struct Bcurve
+    {
+        public Curve Curve { get; }
+        public Curve BaseWallCurve { get; }
+        public bool BaseIsWall { get; }
+        public ElementId Id { get; }
+        public double Length { get; }
+        public Bcurve(Curve curve, ElementId id, bool baseIsWall, Curve baseCurve)
+        {
+            Curve = curve;
+            Id = id;
+            BaseIsWall = baseIsWall;
+            BaseWallCurve = baseCurve;
+            Length = curve.Length;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoomInfo
     {
         public Room Room { get; }
+        ///Hold the adjacent rooms to this one.
+        public List<RoomInfo> AdjacentRooms { get; set; }
         public override string ToString()
         {
             return Room.Name;
         }
-        public List<Dictionary<Curve, ElementId>> BoundaryList { get; set; }
+        public List<List<Bcurve>> BoundaryList { get; set; }
         public List<List<XYZ>> VertexList { get; set; }
+        
         public RoomInfo(Room room)
         {
             Room = room;
             BoundaryList = GetBoundary
                 (room,out List<List<XYZ>>vList);
             VertexList = vList;
+            AdjacentRooms = new List<RoomInfo>();
         }
-        
-        #region Supporting method for the following method.
-        public struct Bcurve
-        {
-            public Curve Curve;
-            public ElementId Id;
-            public Bcurve(Curve curve,ElementId id)
-            {
-                Curve = curve;
-                Id = id;
-            }
-        }
+
+        #region The method for boundary calculation.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cur1"></param>
+        /// <param name="cur2"></param>
+        /// <param name="mergedCur"></param>
+        /// <returns></returns>
         public static bool Merge(Bcurve cur1,Bcurve cur2,out Bcurve mergedCur)
         {
             mergedCur = new Bcurve();
@@ -65,33 +86,33 @@ namespace PrefabHouseTools
                     {
                         mergedCur = new Bcurve
                             (Line.CreateBound(lin2s, lin1e),
-                            cur1.Id);
+                            cur1.Id,cur1.BaseIsWall,
+                            cur1.BaseWallCurve);
                         return true;
                     }
                     else if (lin1e.IsAlmostEqualTo(lin2s))
                     {
                         mergedCur = new Bcurve(
                             Line.CreateBound(lin1s, lin2e),
-                            cur1.Id);
+                            cur1.Id,cur1.BaseIsWall,
+                            cur1.BaseWallCurve);
                         return true;
                     }
                 }
             }
             return false;
         }
-        #endregion
-        #region The method for boundary calculation.
 
         /// <summary>
         /// Calculate the boundary of a room with elementId attached to it.
         /// </summary>
         /// <param name="room"></param>
         /// <returns></returns>
-        public static List<Dictionary<Curve,ElementId>> GetBoundary
+        public static List<List<Bcurve>> GetBoundary
             (Room room,out List<List<XYZ>> vertexList)
         {
-            List<Dictionary<Curve, ElementId>> boundaryList =
-                new List<Dictionary<Curve, ElementId>>();
+            List<List<Bcurve>> boundaryList =
+                new List<List<Bcurve>>();
             vertexList = new List<List<XYZ>>();
 
             IList<IList<BoundarySegment>> BSlist =
@@ -102,15 +123,30 @@ namespace PrefabHouseTools
             
             foreach (IList<BoundarySegment> BSegs in BSlist)
             {
-                Dictionary<Curve, ElementId> boundaries =
-                    new Dictionary<Curve, ElementId>();
+                List<Bcurve> boundaries =
+                    new List<Bcurve>();
                 List<XYZ> vertexes = new List<XYZ>();
                 Stack<Bcurve> boundCurs = new Stack<Bcurve>();
                 Queue<Bcurve> cursMerged = new Queue<Bcurve>();
                 foreach (BoundarySegment Seg in BSegs)
                 {
-                    boundCurs.Push(new Bcurve
-                        (Seg.GetCurve(),Seg.ElementId));
+                    Document doc = room.Document;
+                    Element wallOrNo = doc.GetElement(Seg.ElementId);
+                    ElementId wallId = doc.Settings.Categories
+                        .get_Item(BuiltInCategory.OST_Walls).Id;
+                    if (wallOrNo.Category.Id.Equals(wallId))
+                    {
+                        Wall w = wallOrNo as Wall;
+                        LocationCurve wLoc = w.Location as LocationCurve;
+                        boundCurs.Push(new Bcurve
+                        (Seg.GetCurve(), Seg.ElementId,true,wLoc.Curve));
+                    }
+                    else
+                    {
+                        boundCurs.Push(new Bcurve
+                        (Seg.GetCurve(), Seg.ElementId,false,Seg.GetCurve()));
+                    }
+                    
                 }
                 #region Merge curves
                 while (boundCurs.Count > 1)
@@ -136,10 +172,11 @@ namespace PrefabHouseTools
                 {
                     cursMerged.Enqueue(cur3);
                 }
+                cursMerged.Reverse();
                 #endregion 
                 foreach (Bcurve bcur in cursMerged)
                 {
-                    boundaries.Add(bcur.Curve, bcur.Id);
+                    boundaries.Add(bcur);
                     vertexes.Add(bcur.Curve.GetEndPoint(0));
                 }
                 boundaryList.Add(boundaries);
@@ -154,16 +191,51 @@ namespace PrefabHouseTools
         public CurveArray GetBoundaryCurves()
         {
             CurveArray curves = new CurveArray();
-            foreach(Dictionary<Curve,ElementId> boundary in BoundaryList)
+            foreach(List<Bcurve> boundary in BoundaryList)
             {
-                foreach (Curve c in boundary.Keys)
+                foreach (Bcurve c in boundary)
                 {
-                    curves.Append(c);
+                    curves.Append(c.Curve);
                 }
             }
             return curves;
         }
         #endregion
+
+        #region Methods for solving adjacency.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        /// <param name="baseCurve"></param>
+        /// <param name="interCurve"></param>
+        /// <returns></returns>
+        public bool ProjectIntersectCurve(Curve c1,Curve c2,Curve baseCurve,out Curve interCurve)
+        {
+            interCurve = baseCurve.Clone();
+            double[] rcp1 = {baseCurve.Project(c1.GetEndPoint(0)).Parameter
+                           ,baseCurve.Project(c1.GetEndPoint(1)).Parameter };
+            double[] rcp2 = {baseCurve.Project(c2.GetEndPoint(0)).Parameter
+                           ,baseCurve.Project(c2.GetEndPoint(1)).Parameter };
+            var cp1 = rcp1.OrderBy(n => n).ToArray();
+            var cp2 = rcp2.OrderBy(n => n).ToArray();
+            if (cp1[0] > cp2[0])
+            {
+                double[] cpt = cp1.Clone() as double[];
+                cp1 = cp2;
+                cp2 = cpt;
+            }
+            if ((cp1[0] == cp1[1])||(cp2[0] == cp2[1])
+                || (cp1[1] <= cp2[0]))
+                return false;
+            else if (cp1[1] <= cp2[1])
+                interCurve.MakeBound(cp2[0], cp1[1]);
+            else
+                interCurve.MakeBound(cp2[0], cp2[1]);
+            return true;
+
+        }
 
         /// <summary>
         /// Return whether two room are adjacent.
@@ -175,27 +247,29 @@ namespace PrefabHouseTools
         public bool IsAdjacentTo(RoomInfo otherRoom,out CurveArray adjCurves)
         {
             adjCurves = new CurveArray();
-            foreach(Dictionary<Curve,ElementId> boundLoop1 in BoundaryList){
-                foreach(Dictionary<Curve,ElementId> boundLoop2 
+            bool isAdjacent = false;
+            foreach(List<Bcurve> boundLoop1 in BoundaryList){
+                foreach(List<Bcurve> boundLoop2 
                     in otherRoom.BoundaryList){
                     //First iterate through each boundary loop.
-                    foreach(var bound1 in boundLoop1){
-                        foreach(var bound2 in boundLoop2){
+                    foreach(Bcurve bound1 in boundLoop1){
+                        foreach(Bcurve bound2 in boundLoop2){
                             ///Then iterate through each boundary segment.
                             ///If they are the same element carry on.
-                            if (bound1.Value == bound2.Value)
+                            if ((bound1.Id == bound2.Id)&&(bound1.BaseIsWall))
                             {
                                 #region The old method.
+                                /*
                                 ///Project the two endpoint of the shorter one
                                 ///onto the long one.If any projection point is
                                 ///inbetween the vertexs of the longer one than
                                 ///we can say this two rooms are adjacent.
                                 Curve shortc = 
-                                    (bound1.Key.Length > bound2.Key.Length)?
-                                    bound2.Key:bound1.Key;
+                                    (bound1.Length > bound2.Length)?
+                                    bound2.Curve:bound1.Curve;
                                 Curve longc = 
-                                    (bound1.Key.Length > bound2.Key.Length)?
-                                    bound1.Key:bound2.Key;
+                                    (bound1.Length > bound2.Length)?
+                                    bound1.Curve:bound2.Curve;
                                 List<XYZ> ptsL = new List<XYZ>
                                     {shortc.GetEndPoint(0),shortc.GetEndPoint(1)};
                                 ptsL.Add(0.5 * (ptsL[0] + ptsL[1]));
@@ -210,41 +284,31 @@ namespace PrefabHouseTools
                                         return true;
                                     }
                                 }
+                                */
                                 #endregion
+                                Curve baseCurve = bound1.BaseWallCurve;
+                                Curve c1 = bound1.Curve;
+                                Curve c2 = bound2.Curve;
+                                if (ProjectIntersectCurve(c1,c2,baseCurve,out Curve adjC))
+                                {
+                                    isAdjacent = true;
+                                    adjCurves.Append(adjC);
+                                }   
                             }
                         }
                     }
                 }
             }
-            return false;
+            return isAdjacent;
         }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    class RoomInfoElec : RoomInfo
-    {
-        ///Hold the adjacent rooms to this one.
-        public List<RoomInfoElec> AdjacentRooms { get; set; }
-        ///The electrical fixtures in the room.
-        public List<FixtureE> ElecFixtures { get; set; }
-        ///The average centroid of all the fixtures
-        ///in the room
-        public XYZ FixCentroid { get; set; }
-
-        public RoomInfoElec(Room room) : base(room)
-        {
-            AdjacentRooms = new List<RoomInfoElec>();
-            ElecFixtures = new List<FixtureE>();
-            FixCentroid = new XYZ();
-        }
+        #endregion
 
         /// <summary>
         /// Calculate the adjacent relationship between several rooms.
         /// This will clear the existing adjacency relationship first.
         /// </summary>
         /// <param name="rooms"></param>
-        public static void SolveAdjacency(List<RoomInfoElec> rooms)
+        public virtual void SolveAdjacency(List<RoomInfo> rooms)
         {
             int num = rooms.Count;
             for (int i = 0; i < num; i++)
@@ -253,9 +317,9 @@ namespace PrefabHouseTools
             }
             for (int i = 0; i < num; i++)
             {
-                for (int j = i+1; j < num; j++)
+                for (int j = i + 1; j < num; j++)
                 {
-                    if (rooms[i].IsAdjacentTo(rooms[j]))
+                    if (rooms[i].IsAdjacentTo(rooms[j],out CurveArray ca))
                     {
                         rooms[i].AdjacentRooms.Add(rooms[j]);
                         rooms[j].AdjacentRooms.Add(rooms[i]);
@@ -263,7 +327,27 @@ namespace PrefabHouseTools
                 }
             }
         }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    class RoomInfoElec : RoomInfo
+    {
         
+        ///The electrical fixtures in the room.
+        public List<FixtureE> ElecFixtures { get; set; }
+        ///The average centroid of all the fixtures
+        ///in the room
+        public XYZ FixCentroid { get; set; }
+
+        public RoomInfoElec(Room room) : base(room)
+        {
+            ElecFixtures = new List<FixtureE>();
+            FixCentroid = new XYZ();
+        }
+
+        
+
         /// <summary>
         /// Decide whether two line intersect in planview.
         /// By default the input curves are stright line.
@@ -302,12 +386,12 @@ namespace PrefabHouseTools
         /// <returns></returns>
         public bool BoundaryIntersectWith(Curve c)
         {
-            foreach (Dictionary<Curve, ElementId> boundLoop
+            foreach (List<Bcurve> boundLoop
                 in BoundaryList)
             {
-                foreach (Curve bCur in boundLoop.Keys)
+                foreach (Bcurve bCur in boundLoop)
                 {
-                    if (IsPlanIntersect(c, bCur))
+                    if (IsPlanIntersect(c, bCur.Curve))
                         return true;
                 }
             }
@@ -316,9 +400,12 @@ namespace PrefabHouseTools
 
         public void CalculateFixCentroid()
         {
-            double aX = ElecFixtures.Average(ef => ef.Origin.X);
-            double aY = ElecFixtures.Average(ef => ef.Origin.Y);
-            FixCentroid = new XYZ(aX, aY, 0);
+            if (ElecFixtures.Count > 0)
+            {
+                double aX = ElecFixtures.Average(ef => ef.Origin.X);
+                double aY = ElecFixtures.Average(ef => ef.Origin.Y);
+                FixCentroid = new XYZ(aX, aY, 0);
+            }
         }
 
         private List<XYZ> FindVertexPath(XYZ start, XYZ end, List<XYZ> vertex)
@@ -405,7 +492,19 @@ namespace PrefabHouseTools
     /// </summary>
     public class PathE
     {
+        public FixtureE Begin { get; }
+        public FixtureE End { get; }
+        public List<XYZ> Vertices { get; }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PathEcrossWall : PathE
+    {
+        public void MoveNext()
+        {
 
+        }
     }
 
 }

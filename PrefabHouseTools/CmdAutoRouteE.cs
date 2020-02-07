@@ -144,7 +144,25 @@ namespace PrefabHouseTools
             {
                 roomInfoList.Add(new RoomInfoElec(r));
             }
-            RoomInfoElec.SolveAdjacency(roomInfoList);
+            #region Solving adjacency
+            int num = roomInfoList.Count;
+            for (int i = 0; i < num; i++)
+            {
+                roomInfoList[i].AdjacentRooms.Clear();
+            }
+            for (int i = 0; i < num; i++)
+            {
+                for (int j = i + 1; j < num; j++)
+                {
+                    if (roomInfoList[i].IsAdjacentTo(roomInfoList[j], out CurveArray ca))
+                    {
+                        roomInfoList[i].AdjacentRooms.Add(roomInfoList[j]);
+                        roomInfoList[j].AdjacentRooms.Add(roomInfoList[i]);
+                    }
+                }
+            }
+            #endregion 
+            ///RoomInfoElec.SolveAdjacency(roomInfoList);
 
             ///Get all the electrical system and fixture.
             FilteredElementCollector col =
