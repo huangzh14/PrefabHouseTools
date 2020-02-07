@@ -80,6 +80,8 @@ namespace PrefabHouseTools
             return false;
         }
         #endregion
+        #region The method for boundary calculation.
+
         /// <summary>
         /// Calculate the boundary of a room with elementId attached to it.
         /// </summary>
@@ -161,6 +163,7 @@ namespace PrefabHouseTools
             }
             return curves;
         }
+        #endregion
 
         /// <summary>
         /// Return whether two room are adjacent.
@@ -169,8 +172,9 @@ namespace PrefabHouseTools
         /// <param name="room1"></param>
         /// <param name="room2"></param>
         /// <returns></returns>
-        public bool IsAdjacentTo(RoomInfo otherRoom)
+        public bool IsAdjacentTo(RoomInfo otherRoom,out CurveArray adjCurves)
         {
+            adjCurves = new CurveArray();
             foreach(Dictionary<Curve,ElementId> boundLoop1 in BoundaryList){
                 foreach(Dictionary<Curve,ElementId> boundLoop2 
                     in otherRoom.BoundaryList){
@@ -181,6 +185,7 @@ namespace PrefabHouseTools
                             ///If they are the same element carry on.
                             if (bound1.Value == bound2.Value)
                             {
+                                #region The old method.
                                 ///Project the two endpoint of the shorter one
                                 ///onto the long one.If any projection point is
                                 ///inbetween the vertexs of the longer one than
@@ -205,6 +210,7 @@ namespace PrefabHouseTools
                                         return true;
                                     }
                                 }
+                                #endregion
                             }
                         }
                     }

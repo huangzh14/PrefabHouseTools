@@ -79,7 +79,7 @@ namespace PrefabHouseTools
             Edge[] mst = new Edge[VertexCount - 1];
 
             //Step1:Sort all the edges in non-decending of weight
-            var sortedEdges = this.Edges.OrderBy(e => e.Weight);
+            var sortedEdges = this.Edges.OrderBy(edge => edge.Weight);
             var edgeEnumerator = sortedEdges.GetEnumerator();
             //Initializa the subtrees.
             int n = this.VertexCount;
