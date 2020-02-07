@@ -425,6 +425,9 @@ namespace PrefabHouseTools
         }
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void CalculateFixCentroid()
         {
             if (ElecFixtures.Count > 0)
@@ -434,6 +437,15 @@ namespace PrefabHouseTools
                 FixCentroid = new XYZ(aX, aY, FloorLevel);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="otherRoom"></param>
+        /// <param name="height"></param>
+        /// <param name="path"></param>
+        /// <param name="roughL"></param>
+        /// <returns></returns>
         public bool AdjacentPathTo(RoomInfoElec otherRoom, double height,
             out PathExWall path,out double roughL)
         {
@@ -494,19 +506,22 @@ namespace PrefabHouseTools
                     normVec = normVectors[i];
                     width = widthList[i];
                 }
-                //Create the crossing path.
-                XYZ ptHere = crossPt + 0.5 * width * normVec ;
-                XYZ ptThere = crossPt - 0.5 * width * normVec ;
-                FixtureE crossPtHere = new FixtureE(ptHere,height);
-                FixtureE crossPtThere = new FixtureE(ptThere,height);
-                path = new PathExWall(crossPtHere, crossPtThere);
-                roughL = width + (ptHere - FixCentroid).GetLength() 
-                    + (ptThere - otherRoom.FixCentroid).GetLength();
-                return true;
+                if (width != 0)
+                {
+                    //Create the crossing path.
+                    XYZ ptHere = crossPt + 0.5 * width * normVec;
+                    XYZ ptThere = crossPt - 0.5 * width * normVec;
+                    FixtureE crossPtHere = new FixtureE(ptHere, height);
+                    FixtureE crossPtThere = new FixtureE(ptThere, height);
+                    path = new PathExWall(crossPtHere, crossPtThere);
+                    roughL = width + (ptHere - FixCentroid).GetLength()
+                        + (ptThere - otherRoom.FixCentroid).GetLength();
+                    return true;
+                }///If width =0, than no available route is generated.Go false.
             }
             path = new PathExWall();
             roughL = 0;
-            return boolResult;
+            return false;
         }
 
         private List<XYZ> FindVertexPath(XYZ start, XYZ end, List<XYZ> vertex)
@@ -549,9 +564,7 @@ namespace PrefabHouseTools
 
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
+    
     public class FixtureE
     {
         public Room Room { get; }
@@ -592,9 +605,7 @@ namespace PrefabHouseTools
         
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
+    
     public class PathE
     {
         public FixtureE Begin { get; }
@@ -607,9 +618,7 @@ namespace PrefabHouseTools
             this.Vertices = vertices;
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
+    
     public class PathExWall : PathE
     {
         public PathExWall(FixtureE begin, FixtureE end)

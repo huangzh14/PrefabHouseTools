@@ -198,8 +198,39 @@ namespace PrefabHouseTools
             #endregion
 
             #region Step3-Calculate cross wall location.
-
+            ///Initialize the vertices and the graph.
+            List<Vertex> vRooms = new List<Vertex>();
+            foreach (RoomInfoElec r in roomInfoList){
+                vRooms.Add(new Vertex(r));}
+            Graph roomGraph = new Graph(vRooms);
+            int n = roomGraph.VertexCount;
+            ///Initialize the edges.
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = i + 1; j < n; j++)
+                {
+                    Vertex v1 = roomGraph.Vertices.ElementAt(i);
+                    Vertex v2 = roomGraph.Vertices.ElementAt(j);
+                    RoomInfoElec r1 = v1.Object as RoomInfoElec;
+                    RoomInfoElec r2 = v2.Object as RoomInfoElec;
+                    if (r1.AdjacentPathTo
+                        (r2,0,out PathExWall path,out double roughL))
+                    {
+                        Edge e = new Edge(v1, v2, path, roughL);
+                    }
+                }
+            }
+            Edge[] mstRoom = roomGraph.KruskalMinTree();
+            string result = "";
+            foreach (Edge e in mstRoom)
+            {
+                RoomInfoElec r1 = e.Begin.Object as RoomInfoElec;
+                RoomInfoElec r2 = e.End.Object as RoomInfoElec;
+                result += r1 + " to " + r2 + "\n";
+                TaskDialog.Show("Result", result);
+            }
             #endregion
+
             // Modify document within a transaction
             #region demo only
             using (Transaction tx = new Transaction(doc))
