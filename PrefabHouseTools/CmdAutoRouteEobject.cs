@@ -68,6 +68,7 @@ namespace PrefabHouseTools
         }
         public List<List<Bcurve>> BoundaryList { get; set; }
         public List<List<XYZ>> VertexList { get; set; }
+        public double FloorLevel { get; }
         
         public RoomInfo(Room room)
         {
@@ -76,6 +77,8 @@ namespace PrefabHouseTools
                 (room,out List<List<XYZ>>vList);
             VertexList = vList;
             AdjacentRooms = new List<RoomInfo>();
+            FloorLevel = room.get_BoundingBox
+                (room.Document.ActiveView).Min.Z;
         }
 
         #region The methodS for boundary calculation.
@@ -266,15 +269,15 @@ namespace PrefabHouseTools
         /// </summary>
         /// <param name="otherRoom"></param>
         /// <param name="adjCurves"></param>
-        /// <param name="transform"></param>
+        /// <param name="normVlist">The normal vector point at inside the room.</param>
         /// <param name="wallWidth"></param>
         /// <returns></returns>
         public bool IsAdjacentTo(RoomInfo otherRoom,
-            out CurveArray adjCurves,out List<XYZ> transform,
+            out List<Curve> adjCurves,out List<XYZ> normVlist,
             out List<double>wallWidth)
         {
-            adjCurves = new CurveArray();
-            transform = new List<XYZ>();
+            adjCurves = new List<Curve>();
+            normVlist = new List<XYZ>();
             wallWidth = new List<double>();
             bool isAdjacent = false;
             foreach(List<Bcurve> boundLoop1 in BoundaryList){
@@ -290,11 +293,17 @@ namespace PrefabHouseTools
                                 Curve baseCurve = bound1.BaseWallCurve;
                                 Curve c1 = bound1.Curve;
                                 Curve c2 = bound2.Curve;
-                                if (ProjectIntersectCurve(c1,c2,baseCurve,out Curve adjC,out XYZ t))
+                                if (ProjectIntersectCurve(c1,c2,
+                                    baseCurve,out Curve adjC,out XYZ t))
                                 {
                                     isAdjacent = true;
-                                    adjCurves.Append(adjC);
-                                    transform.Add(t);
+                                    ///Move the curve to wall center line.
+                                    Curve centC = adjC.CreateTransformed
+                                        (Transform.CreateTranslation(t));
+                                    XYZ pt = centC.GetEndPoint(0);
+                                    XYZ normV = c1.Project(pt).XYZPoint - pt;
+                                    adjCurves.Add(centC);
+                                    normVlist.Add(normV.Normalize());
                                     wallWidth.Add(bound1.BaseWallWidth);
                                 }   
                             }
@@ -306,8 +315,9 @@ namespace PrefabHouseTools
         }
         public bool IsAdjacentTo(RoomInfo otherRoom)
         {
-            bool result = this.IsAdjacentTo(otherRoom, out CurveArray c,
-                out List<XYZ> t, out List<double> w);
+            bool result = this.IsAdjacentTo(otherRoom, 
+                out List<Curve> c,out List<XYZ> t, 
+                out List<double> w);
             return result;
         }
         #endregion
@@ -421,34 +431,81 @@ namespace PrefabHouseTools
             {
                 double aX = ElecFixtures.Average(ef => ef.Origin.X);
                 double aY = ElecFixtures.Average(ef => ef.Origin.Y);
-                FixCentroid = new XYZ(aX, aY, 0);
+                FixCentroid = new XYZ(aX, aY, FloorLevel);
             }
         }
-        public bool AdjacentPathTo(RoomInfoElec otherRoom, 
+        public bool AdjacentPathTo(RoomInfoElec otherRoom, double height,
             out PathExWall path,out double roughL)
         {
-            path = new PathExWall();
-            roughL = 0;
             bool boolResult = 
                 base.IsAdjacentTo(otherRoom, 
-                out CurveArray adjCurves,
-                out List<XYZ> transfList,
+                out List<Curve> adjCurves,
+                out List<XYZ> normVectors,
                 out List<double> widthList);
+            ///If the two room are adjacent,calculate
+            ///the intersect point.
             if (boolResult)
             {
-                Curve c2c = Line.CreateBound(this.FixCentroid, otherRoom.FixCentroid);
+                Curve c2c = Line.CreateBound
+                    (this.FixCentroid, otherRoom.FixCentroid);
                 int n = widthList.Count;
-
-
-                foreach (Curve adjC in adjCurves)
+                ///Store the endpoint for the useful area of adjacent curve.
+                Dictionary<XYZ,Curve> vList = new Dictionary<XYZ, Curve>();
+                XYZ crossPt = new XYZ();//The real crossing point on the center line.
+                XYZ normVec = new XYZ();//The normal vector
+                double width = 0;//The width of the wall
+                bool directLine = false;//If direct line exist.
+                for (int i = 0; i < n; i++)
                 {
-                    if (IsPlanIntersect(adjC,c2c,out XYZ iPt))
+                    Curve adjC = adjCurves[i];
+                    ///Trunk line need 200mm space.
+                    double reserveW = UnitUtils
+                        .ConvertToInternalUnits
+                        (200, DisplayUnitType.DUT_MILLIMETERS);
+                    if (adjC.Length <= reserveW)
+                        continue;
+                    ///If curve is long enough,shorten each side 100mm.
+                    XYZ p1 = adjC.GetEndPoint(0);
+                    XYZ p2 = adjC.GetEndPoint(1);
+                    XYZ dir = (p2 - p1).Normalize();
+                    XYZ p1new = p1 + 0.5 * reserveW * dir;
+                    XYZ p2new = p2 - 0.5 * reserveW * dir;
+                    Line adjCuse = Line.CreateBound(p1new, p2new);
+                    vList.Add(p1new, adjC);
+                    vList.Add(p2new, adjC);
+                    ///If have intersect point,stop searching.
+                    if (IsPlanIntersect(adjCuse,c2c,out XYZ iPt))
                     {
-                        
+                        crossPt = iPt;
+                        normVec = normVectors[i];
+                        width = widthList[i];
+                        directLine = true;
+                        break;
                     }
                 }
+                //If no directline is formed,find the closet point.
+                if (!directLine)
+                {
+                    ///Sort the dictionary by distance to the curve.
+                    var vListSorted = 
+                        vList.OrderBy(v => c2c.Distance(v.Key));
+                    int i = adjCurves.IndexOf(vListSorted.First().Value);
+                    crossPt = vListSorted.First().Key;
+                    normVec = normVectors[i];
+                    width = widthList[i];
+                }
+                //Create the crossing path.
+                XYZ ptHere = crossPt + 0.5 * width * normVec ;
+                XYZ ptThere = crossPt - 0.5 * width * normVec ;
+                FixtureE crossPtHere = new FixtureE(ptHere,height);
+                FixtureE crossPtThere = new FixtureE(ptThere,height);
+                path = new PathExWall(crossPtHere, crossPtThere);
+                roughL = width + (ptHere - FixCentroid).GetLength() 
+                    + (ptThere - otherRoom.FixCentroid).GetLength();
                 return true;
             }
+            path = new PathExWall();
+            roughL = 0;
             return boolResult;
         }
 
@@ -528,6 +585,10 @@ namespace PrefabHouseTools
                 }
             }
         }
+        public FixtureE(XYZ location,double height)
+        {
+            this.Origin = new XYZ(location.X, location.Y, height);
+        }
         
     }
 
@@ -539,12 +600,28 @@ namespace PrefabHouseTools
         public FixtureE Begin { get; }
         public FixtureE End { get; }
         public List<XYZ> Vertices { get; }
+        public PathE(FixtureE begin,FixtureE end,List<XYZ> vertices)
+        {
+            this.Begin = begin;
+            this.End = end;
+            this.Vertices = vertices;
+        }
     }
     /// <summary>
     /// 
     /// </summary>
     public class PathExWall : PathE
     {
+        public PathExWall(FixtureE begin, FixtureE end)
+            : base(begin,end,new List<XYZ>())
+        {
+        }
+        public PathExWall() : 
+            base(new FixtureE(new XYZ(),0), 
+                new FixtureE(new XYZ(),0), 
+                new List<XYZ>())
+        {
+        }
         public void MoveNext()
         {
 
