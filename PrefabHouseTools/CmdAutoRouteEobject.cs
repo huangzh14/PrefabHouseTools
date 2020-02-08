@@ -495,8 +495,9 @@ namespace PrefabHouseTools
                         break;
                     }
                 }
-                //If no directline is formed,find the closet point.
-                if (!directLine)
+                ///If no directline is formed,while avaiable curve exist,
+                ///which means vList is not empty,find the closet point.
+                if (!directLine && (vList.Count > 0))
                 {
                     ///Sort the dictionary by distance to the curve.
                     var vListSorted = 
@@ -560,6 +561,7 @@ namespace PrefabHouseTools
         public ElecSystemInfo(ElectricalSystem system)
         {
             Name = system.Name;
+            ElecFixtures = new List<FixtureE>();
         }
 
     }

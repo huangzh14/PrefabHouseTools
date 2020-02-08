@@ -104,6 +104,7 @@ namespace PrefabHouseTools
             {
                 subtrees[i].Parent = subtrees[i];
                 subtrees[i].Rank = 0;
+                subtrees[i].Index = i;
             }
 
             //Number of edges should be V-1

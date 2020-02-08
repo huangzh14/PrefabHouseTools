@@ -178,7 +178,9 @@ namespace PrefabHouseTools
                 foreach (Element f in elecSys.Elements)
                 {
                     FamilyInstance fixture = f as FamilyInstance;
-                    var roomInfo = roomInfoList.Where(r => r.Room == fixture.Room);
+                    if (fixture.Room == null) continue;
+                    var roomInfo = roomInfoList
+                        .Where(r => r.Room.Id == fixture.Room.Id);
 
                     if (roomInfo.FirstOrDefault() == null)
                         continue;
@@ -217,6 +219,7 @@ namespace PrefabHouseTools
                         (r2,0,out PathExWall path,out double roughL))
                     {
                         Edge e = new Edge(v1, v2, path, roughL);
+                        roomGraph.AddEdge(e);
                     }
                 }
             }
@@ -227,8 +230,8 @@ namespace PrefabHouseTools
                 RoomInfoElec r1 = e.Begin.Object as RoomInfoElec;
                 RoomInfoElec r2 = e.End.Object as RoomInfoElec;
                 result += r1 + " to " + r2 + "\n";
-                TaskDialog.Show("Result", result);
             }
+            TaskDialog.Show("Result", result);
             #endregion
 
             // Modify document within a transaction
