@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region Namespaces
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -11,9 +12,11 @@ using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+#endregion
 
 namespace PrefabHouseTools
 {
+    #region Intro
     ///Important note:Here are some basic assumptions.
     ///If the project doesn't meet,unexpect result may occur.
     ///
@@ -22,7 +25,8 @@ namespace PrefabHouseTools
     ///they are all lines.
     ///
     ///2-
-  
+    #endregion
+
     /// <summary>
     /// 
     /// </summary>
@@ -223,19 +227,27 @@ namespace PrefabHouseTools
 
         #region Methods for solving adjacency.
         /// <summary>
-        /// 
+        /// This method project two curves c1 and c2 onto baseCurve
+        /// If the projection result of c1&c2 overlap,return ture.
         /// </summary>
-        /// <param name="c1"></param>
-        /// <param name="c2"></param>
-        /// <param name="baseCurve"></param>
-        /// <param name="interCurve"></param>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        public bool ProjectIntersectCurve(Curve c1,Curve c2,Curve baseCurve,out Curve interCurve,out XYZ t)
+        /// <param name="c1">The input curve1.</param>
+        /// <param name="c2">The input curve2.</param>
+        /// <param name="baseCurve">The base curve to project on.</param>
+        /// <param name="interCurve">
+        /// The overlap curve of input c1&c2 on the baseCurve</param>
+        /// <param name="t">
+        /// The vector needed to transform interCurve to the center
+        /// of input c1&c2,if needed.</param>
+        /// <returns>True if projection of c1&c2 on baseCurve
+        /// have overlapped area.</returns>
+        public bool ProjectCurvesOverlap(Curve c1,Curve c2,
+            Curve baseCurve,out Curve interCurve,out XYZ t)
         {
+            ///Create the output.
             interCurve = baseCurve.Clone();
             t = new XYZ();
-            ///Project two curve onto base curve.Get the projection parameter.
+            ///Project input curves onto base curve.
+            ///Get the projection parameter.
             double[] rcp1 = {baseCurve.Project(c1.GetEndPoint(0)).Parameter
                            ,baseCurve.Project(c1.GetEndPoint(1)).Parameter };
             double[] rcp2 = {baseCurve.Project(c2.GetEndPoint(0)).Parameter
@@ -249,7 +261,8 @@ namespace PrefabHouseTools
                 cp1 = cp2;
                 cp2 = cpt;
             }
-            ///Compare two domain to decide if intersect area exist.
+            ///Compare two domain to decide if overlap area exist.
+            ///And if overlap area exist,create the overlap curve.
             if ((cp1[0] == cp1[1])||(cp2[0] == cp2[1])
                 || (cp1[1] <= cp2[0]))
                 return false;
@@ -257,20 +270,27 @@ namespace PrefabHouseTools
                 interCurve.MakeBound(cp2[0], cp1[1]);
             else
                 interCurve.MakeBound(cp2[0], cp2[1]);
-            ///Get the vector to move the basecurve to the center or c1&c2.
+            ///Get the vector to move the basecurve to the center of c1&c2.
             XYZ basePt = interCurve.GetEndPoint(0);
-            XYZ centPt = 0.5*(c1.Project(basePt).XYZPoint+c2.Project(basePt).XYZPoint);
+            XYZ centPt = 0.5 * (c1.Project(basePt).XYZPoint 
+                              + c2.Project(basePt).XYZPoint);
             t = centPt - basePt;
             return true;
         }
 
         /// <summary>
-        /// 
+        /// This method match all the boundary line in each room
+        /// to check if two boundary are from the same wall and 
+        /// share a common projection on the basewall centerline.
         /// </summary>
-        /// <param name="otherRoom"></param>
-        /// <param name="adjCurves"></param>
-        /// <param name="normVlist">The normal vector point at inside the room.</param>
-        /// <param name="wallWidth"></param>
+        /// <param name="otherRoom">
+        /// The otherRoom to calculate adjacency with.</param>
+        /// <param name="adjCurves">
+        /// The centerline of the adjacent walls</param>
+        /// <param name="normVlist">
+        /// The normal vector which point at inside this room.</param>
+        /// <param name="wallWidth">
+        /// The width of the adjacent wall.</param>
         /// <returns></returns>
         public bool IsAdjacentTo(RoomInfo otherRoom,
             out List<Curve> adjCurves,out List<XYZ> normVlist,
@@ -283,17 +303,17 @@ namespace PrefabHouseTools
             foreach(List<Bcurve> boundLoop1 in BoundaryList){
                 foreach(List<Bcurve> boundLoop2 
                     in otherRoom.BoundaryList){
-                    //First iterate through each boundary loop.
+                    ///First iterate through each boundary loop.
                     foreach(Bcurve bound1 in boundLoop1){
                         foreach(Bcurve bound2 in boundLoop2){
                             ///Then iterate through each boundary segment.
-                            ///If they are the same element carry on.
+                            ///If they are the same wall carry on.
                             if ((bound1.Id == bound2.Id)&&(bound1.BaseIsWall))
                             {
                                 Curve baseCurve = bound1.BaseWallCurve;
                                 Curve c1 = bound1.Curve;
                                 Curve c2 = bound2.Curve;
-                                if (ProjectIntersectCurve(c1,c2,
+                                if (ProjectCurvesOverlap(c1,c2,
                                     baseCurve,out Curve adjC,out XYZ t))
                                 {
                                     isAdjacent = true;
@@ -313,6 +333,12 @@ namespace PrefabHouseTools
             }
             return isAdjacent;
         }
+        /// <summary>
+        /// The overload method that only 
+        /// give answer whether adjacent.
+        /// </summary>
+        /// <param name="otherRoom"></param>
+        /// <returns></returns>
         public bool IsAdjacentTo(RoomInfo otherRoom)
         {
             bool result = this.IsAdjacentTo(otherRoom, 
@@ -449,24 +475,26 @@ namespace PrefabHouseTools
         public bool AdjacentPathTo(RoomInfoElec otherRoom, double height,
             out PathExWall path,out double roughL)
         {
+            ///Use the base class method to decide whether this two room 
+            ///are adjacent and get the needed info.
             bool boolResult = 
                 base.IsAdjacentTo(otherRoom, 
                 out List<Curve> adjCurves,
                 out List<XYZ> normVectors,
                 out List<double> widthList);
             ///If the two room are adjacent,calculate
-            ///the intersect point.
+            ///the intersect point of the two room fixtures centriod line.
             if (boolResult)
             {
                 Curve c2c = Line.CreateBound
                     (this.FixCentroid, otherRoom.FixCentroid);
-                int n = widthList.Count;
                 ///Store the endpoint for the useful area of adjacent curve.
                 Dictionary<XYZ,Curve> vList = new Dictionary<XYZ, Curve>();
                 XYZ crossPt = new XYZ();//The real crossing point on the center line.
                 XYZ normVec = new XYZ();//The normal vector
                 double width = 0;//The width of the wall
                 bool directLine = false;//If direct line exist.
+                int n = widthList.Count;//Start iteration.
                 for (int i = 0; i < n; i++)
                 {
                     Curve adjC = adjCurves[i];
@@ -474,9 +502,10 @@ namespace PrefabHouseTools
                     double reserveW = UnitUtils
                         .ConvertToInternalUnits
                         (200, DisplayUnitType.DUT_MILLIMETERS);
+                    /// If curve is not long enough,go to next one.
                     if (adjC.Length <= reserveW)
                         continue;
-                    ///If curve is long enough,shorten each side 100mm.
+                    /// If curve is long enough,shorten each side 100mm.
                     XYZ p1 = adjC.GetEndPoint(0);
                     XYZ p2 = adjC.GetEndPoint(1);
                     XYZ dir = (p2 - p1).Normalize();
@@ -485,7 +514,7 @@ namespace PrefabHouseTools
                     Line adjCuse = Line.CreateBound(p1new, p2new);
                     vList.Add(p1new, adjC);
                     vList.Add(p2new, adjC);
-                    ///If have intersect point,stop searching.
+                    ///If intersect point found,stop searching.
                     if (IsPlanIntersect(adjCuse,c2c,out XYZ iPt))
                     {
                         crossPt = iPt;
@@ -507,6 +536,8 @@ namespace PrefabHouseTools
                     normVec = normVectors[i];
                     width = widthList[i];
                 }
+                /// Only when width != 0 ,a crossing path can be created.
+                /// Width =0 means no available route is generated.Go false.
                 if (width != 0)
                 {
                     //Create the crossing path.
@@ -518,7 +549,7 @@ namespace PrefabHouseTools
                     roughL = width + (ptHere - FixCentroid).GetLength()
                         + (ptThere - otherRoom.FixCentroid).GetLength();
                     return true;
-                }///If width =0, than no available route is generated.Go false.
+                }
             }
             path = new PathExWall();
             roughL = 0;

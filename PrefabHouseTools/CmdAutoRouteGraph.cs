@@ -11,13 +11,15 @@ namespace PrefabHouseTools
         public int Index { get; set; }
         public Vertex Parent { get; set; }
         public int Rank { get; set; }
+        public double Dist2Root { get; set; }
         public object Object { get; }
         public Vertex(object linkedObj)
         {
             this.Object = linkedObj;
+            this.Index = -1;
             this.Parent = this;
             this.Rank = 0;
-            this.Index = -1;
+            this.Dist2Root = -1;
         }
     }
     class Edge
@@ -51,6 +53,16 @@ namespace PrefabHouseTools
             this.Vertices = vertices;
             this.VertexCount = vertices.Count();
         }
+        private void ResetGraph()
+        {
+            Vertex[] verArray = this.Vertices.ToArray();
+            for (int i = 0; i < VertexCount; i++)
+            {
+                verArray[i].Parent = verArray[i];
+                verArray[i].Index = i;
+                verArray[i].Rank = 0;
+            }
+        }
         public IEnumerable<Vertex> Vertices { get; }
         public IEnumerable<Edge> Edges {
             get { return adjacentEdges.Values
@@ -60,10 +72,13 @@ namespace PrefabHouseTools
         public void AddEdge(Edge edge)
         {
             Vertex b = edge.Begin;
+            Vertex e = edge.End;
             if (!adjacentEdges.ContainsKey(b))
-                adjacentEdges
-                    .Add(b, new List<Edge>());
+                adjacentEdges.Add(b, new List<Edge>());
+            if (!adjacentEdges.ContainsKey(e))
+                adjacentEdges.Add(e, new List<Edge>());
             adjacentEdges[b].Add(edge);
+            adjacentEdges[e].Add(edge);
         }
         private Vertex FindRoot(Vertex[] subtrees,Vertex v)
         {
@@ -90,6 +105,12 @@ namespace PrefabHouseTools
             }
         }
 
+        /// <summary>
+        /// Using the Kruskal algorithm to generate a 
+        /// minium span tree.
+        /// </summary>
+        /// 
+        /// <returns>All the edges of the tree.</returns>
         public Edge[] KruskalMinTree()
         {
             Edge[] mst = new Edge[VertexCount - 1];
@@ -98,15 +119,9 @@ namespace PrefabHouseTools
             var sortedEdges = this.Edges.OrderBy(edge => edge.Weight);
             var edgeEnumerator = sortedEdges.GetEnumerator();
             //Initializa the subtrees.
-            int n = this.VertexCount;
+            this.ResetGraph();
             Vertex[] subtrees = this.Vertices.ToArray();
-            for (int i = 0; i < n; i++)
-            {
-                subtrees[i].Parent = subtrees[i];
-                subtrees[i].Rank = 0;
-                subtrees[i].Index = i;
-            }
-
+            
             //Number of edges should be V-1
             int e = 0;
             while (e < VertexCount - 1)
@@ -128,6 +143,86 @@ namespace PrefabHouseTools
                 }
             }
             return mst;
+        }
+
+        /// <summary>
+        /// Using Breadth First Search method to 
+        /// traverse the graph.
+        /// </summary>
+        /// 
+        /// <param name="root">
+        /// The root vertex to start the traverse.</param>
+        /// <returns>
+        /// The edges of the traverse tree.</returns>
+        public Edge[] BFS(Vertex root)
+        {
+            Edge[] bfs = new Edge[VertexCount - 1];
+            int ei = 0;
+            bool[] visited = new bool[VertexCount];
+            this.ResetGraph();
+            for (int i = 0; i < VertexCount; i++)
+            {
+                visited[i] = false;
+            }
+            Queue<Vertex> verQ = new Queue<Vertex>();
+            verQ.Enqueue(root);
+            visited[root.Index] = true;
+            while (verQ.Count > 0)
+            {
+                Vertex curV = verQ.Dequeue();
+                List<Edge> adjE = adjacentEdges[curV];
+                foreach(Edge e in adjE)
+                {
+                    Vertex adjV = curV == e.Begin ? 
+                                  e.End : e.Begin;
+                    if (visited[adjV.Index] == false)
+                    {
+                        verQ.Enqueue(adjV);
+                        visited[adjV.Index] = true;
+                        bfs[ei++] = e;
+                    }
+                }
+            }
+            return bfs;
+        }
+
+        /// <summary>
+        /// Using Dijkstra algorithm to create a tree in which
+        /// all vertex has a shortest route to root.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public Edge[] DijkstraTree(Vertex root)
+        {
+            Edge[] dt = new Edge[VertexCount - 1];
+            this.ResetGraph();
+            root.Dist2Root = 0;
+            List<Vertex> vList = Vertices.ToList();
+            for (int i = 0; i < VertexCount; i++)
+            {
+                var curV = vList
+                        .Where(v => v.Dist2Root > 0)
+                        .OrderBy(v => v.Dist2Root)
+                        .First() as Vertex;
+                List<Edge> es = adjacentEdges[curV];
+                foreach (Edge e in es)
+                {
+                    Vertex adjV = e.Begin == curV ?
+                                  e.End : e.Begin ;
+                    if (adjV.Dist2Root < 0)
+                    {
+                        adjV.Dist2Root = e.Weight;
+                        adjV.Parent = curV;
+                    }
+                    else if (adjV.Dist2Root > curV.Dist2Root + e.Weight)
+                    {
+                        adjV.Dist2Root = curV.Dist2Root + e.Weight;
+                        adjV.Parent = curV;
+                    }
+                }
+                vList.Remove(curV);
+            }
+            return dt;
         }
     }
 }
