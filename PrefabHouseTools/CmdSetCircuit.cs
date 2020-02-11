@@ -12,6 +12,29 @@ using Autodesk.Revit.DB.Electrical;
 
 namespace PrefabHouseTools
 {
+    class SelFilterElecEquip : ISelectionFilter
+    {
+        public bool AllowElement(Element elem)
+        {
+            if (elem is null) return false;
+            try
+            {
+                if (elem.Category.Id.IntegerValue
+                    == (int)BuiltInCategory.OST_ElectricalEquipment)
+                    return true;
+            }
+            catch
+            {
+                return false;
+            }
+            return false;
+        }
+
+        public bool AllowReference(Reference reference, XYZ position)
+        {
+            throw new NotImplementedException();
+        }
+    }
     [Transaction(TransactionMode.Manual)]
     public class CmdSetCircuit : IExternalCommand
     {
@@ -45,6 +68,7 @@ namespace PrefabHouseTools
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
+            #region Clear the existing system.
             TaskDialogResult r = TaskDialog.Show("Note", 
                 "This will clear the existing " +
                 "electrical system.Continue?",
@@ -69,7 +93,9 @@ namespace PrefabHouseTools
                 }
                 tx.Commit();
             }
-            # region Check the default settings.
+            #endregion
+
+            #region Check the default settings.
             const string elecSettingName = 
                 "DefaultElectricalSettingExcuted";
             GlobalParameter SettingP = doc.GetElement( 
@@ -136,19 +162,30 @@ namespace PrefabHouseTools
 
             //Locate the electrical main box.
             FamilyInstance ElecBox = null;
-            try
+            do
             {
-                Selection sel = uidoc.Selection;
-                TaskDialog.Show("Choose", "Please select one electrical box after closing the dialog.\n" +
-                    "请在关闭窗口后选择一个配电箱。");
-                ElementId ElecBoxId = sel.PickObject(ObjectType.Element, "Select the main box").ElementId;
-                ElecBox = doc.GetElement(ElecBoxId) as FamilyInstance;
-            }
-            catch (Exception ex)
-            {
-                TaskDialog.Show("Error", "Something went wrong.\n" + ex.Message);
-                return Result.Failed;
-            }
+                try
+                {
+                    Selection sel = uidoc.Selection;
+                    TaskDialog.Show("Choose", "Please " +
+                        "select one electrical box after " +
+                        "closing the dialog.\n" +
+                        "请在关闭窗口后选择一个配电箱。");
+                    ElementId ElecBoxId = sel.PickObject
+                        (ObjectType.Element, new SelFilterElecEquip()
+                        , "Select the main box").ElementId;
+                    ElecBox = doc.GetElement(ElecBoxId)
+                        as FamilyInstance;
+                }
+                catch (Exception ex)
+                {
+                    TaskDialog.Show("Error", "Something went wrong.\n" 
+                        + ex.Message);
+                    return Result.Failed;
+                }
+            } while ((ElecBox.MEPModel as ElectricalEquipment)
+                      .DistributionSystem == null);
+            
 
             
             // Create the electrical system

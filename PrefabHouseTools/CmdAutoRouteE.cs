@@ -234,16 +234,26 @@ namespace PrefabHouseTools
             }
             Room panelRoom = systemInfoList[0].BaseEquipment.Room;
             Vertex panelVertex = roomGraph.Vertices
-                .Where(v => v.Object.ToString() == panelRoom.ToString())
+                .Where(v => v.Object.ToString() == panelRoom.Name)
                 .ToArray().First() as Vertex ;
+            #region
+            /*
             Edge[] mstRoom = roomGraph.KruskalMinTree();
-            Edge[] mstRoomD = roomGraph.DijkstraTree(panelVertex);
             string result = "";
             foreach (Edge e in mstRoomD)
             {
                 RoomInfoElec r1 = e.Begin.Object as RoomInfoElec;
                 RoomInfoElec r2 = e.End.Object as RoomInfoElec;
                 result += r1 + " to " + r2 + "\n";
+            }*/
+            #endregion
+
+            Edge[] mstRoomD = roomGraph.DijkstraTree(panelVertex);
+            string result = "";
+            foreach (Vertex v in roomGraph.Vertices)
+            {
+                result += v.Object + " to " 
+                    + v.Parent.Object + "\n";
             }
             TaskDialog.Show("Result", result);
             #endregion

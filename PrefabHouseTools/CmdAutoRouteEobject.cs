@@ -68,7 +68,7 @@ namespace PrefabHouseTools
         public List<RoomInfo> AdjacentRooms { get; set; }
         public override string ToString()
         {
-            return this.Room.ToString();
+            return this.Room.Name;
         }
         public List<List<Bcurve>> BoundaryList { get; set; }
         public List<List<XYZ>> VertexList { get; set; }

@@ -198,10 +198,10 @@ namespace PrefabHouseTools
             this.ResetGraph();
             root.Dist2Root = 0;
             List<Vertex> vList = Vertices.ToList();
-            for (int i = 0; i < VertexCount; i++)
+            for (int i = 0; i < VertexCount -1 ; i++)
             {
                 var curV = vList
-                        .Where(v => v.Dist2Root > 0)
+                        .Where(v => v.Dist2Root >= 0)
                         .OrderBy(v => v.Dist2Root)
                         .First() as Vertex;
                 List<Edge> es = adjacentEdges[curV];
