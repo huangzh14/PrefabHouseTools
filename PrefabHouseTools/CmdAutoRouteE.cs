@@ -165,32 +165,41 @@ namespace PrefabHouseTools
             ///RoomInfoElec.SolveAdjacency(roomInfoList);
 
             ///Get all the electrical system and fixture.
-            FilteredElementCollector col =
+            try
+            {
+                FilteredElementCollector col =
                 new FilteredElementCollector(doc)
                 .WhereElementIsNotElementType()
                 .OfCategory(BuiltInCategory.OST_ElectricalCircuit);
-            foreach (Element elecCir in col)
-            {
-                ElectricalSystem elecSys 
-                    = elecCir as ElectricalSystem;
-                ElecSystemInfo systemInfo
-                    = new ElecSystemInfo(elecSys);
-                foreach (Element f in elecSys.Elements)
+                foreach (Element elecCir in col)
                 {
-                    FamilyInstance fixture = f as FamilyInstance;
-                    if (fixture.Room == null) continue;
-                    var roomInfo = roomInfoList
-                        .Where(r => r.Room.Id == fixture.Room.Id);
+                    ElectricalSystem elecSys
+                        = elecCir as ElectricalSystem;
+                    ElecSystemInfo systemInfo
+                        = new ElecSystemInfo(elecSys);
+                    foreach (Element f in elecSys.Elements)
+                    {
+                        FamilyInstance fixture = f as FamilyInstance;
+                        if (fixture.Room == null) continue;
+                        var roomInfo = roomInfoList
+                            .Where(r => r.Room.Id == fixture.Room.Id);
 
-                    if (roomInfo.FirstOrDefault() == null)
-                        continue;
+                        if (roomInfo.FirstOrDefault() == null)
+                            continue;
 
-                    FixtureE fE = new FixtureE(fixture);
-                    roomInfo.FirstOrDefault().ElecFixtures.Add(fE);
-                    systemInfo.ElecFixtures.Add(fE);
+                        FixtureE fE = new FixtureE(fixture);
+                        roomInfo.FirstOrDefault().ElecFixtures.Add(fE);
+                        systemInfo.ElecFixtures.Add(fE);
+                    }
+                    systemInfoList.Add(systemInfo);
                 }
-                systemInfoList.Add(systemInfo);
             }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", e.Message);
+                return Result.Failed;
+            }
+            
 
             foreach (RoomInfoElec r in roomInfoList)
             {
@@ -223,9 +232,14 @@ namespace PrefabHouseTools
                     }
                 }
             }
+            Room panelRoom = systemInfoList[0].BaseEquipment.Room;
+            Vertex panelVertex = roomGraph.Vertices
+                .Where(v => v.Object.ToString() == panelRoom.ToString())
+                .ToArray().First() as Vertex ;
             Edge[] mstRoom = roomGraph.KruskalMinTree();
+            Edge[] mstRoomD = roomGraph.DijkstraTree(panelVertex);
             string result = "";
-            foreach (Edge e in mstRoom)
+            foreach (Edge e in mstRoomD)
             {
                 RoomInfoElec r1 = e.Begin.Object as RoomInfoElec;
                 RoomInfoElec r2 = e.End.Object as RoomInfoElec;

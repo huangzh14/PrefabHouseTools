@@ -15,6 +15,26 @@ namespace PrefabHouseTools
     [Transaction(TransactionMode.Manual)]
     public class CmdSetCircuit : IExternalCommand
     {
+        private bool HasElectricalConnector(Element e)
+        {
+            if (!(e is FamilyInstance)) return false;
+            FamilyInstance fa = e as FamilyInstance;
+            if (fa.MEPModel.ConnectorManager == null) return false;
+            ConnectorSet cs = fa.MEPModel.ConnectorManager.Connectors;
+            foreach (Connector c in cs)
+            {
+                try
+                {
+                    if ((int)c.ElectricalSystemType >= 0)
+                        return true;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            return false;
+        }
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
@@ -25,6 +45,30 @@ namespace PrefabHouseTools
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
+            TaskDialogResult r = TaskDialog.Show("Note", 
+                "This will clear the existing " +
+                "electrical system.Continue?",
+                TaskDialogCommonButtons.Yes |
+                TaskDialogCommonButtons.No);
+            if (r == TaskDialogResult.No) return Result.Failed;
+            using (Transaction tx = new Transaction(doc))
+            {
+                tx.Start("Clear existing system.");
+                FilteredElementCollector col =
+                    new FilteredElementCollector(doc)
+                    .WhereElementIsNotElementType()
+                    .OfCategory(BuiltInCategory.OST_ElectricalCircuit);
+                Stack<ElementId> sysId = new Stack<ElementId>();
+                foreach (Element e in col)
+                {
+                    sysId.Push(e.Id);
+                }
+                while(sysId.Count > 0)
+                {
+                    doc.Delete(sysId.Pop());
+                }
+                tx.Commit();
+            }
             # region Check the default settings.
             const string elecSettingName = 
                 "DefaultElectricalSettingExcuted";
@@ -40,7 +84,7 @@ namespace PrefabHouseTools
                     ElectricalSetting ElecSet = ElectricalSetting
                         .GetElectricalSettings(doc);
                     VoltageType VtypeHome = ElecSet
-                        .AddVoltageType("Home", 220, 200, 240);
+                        .AddVoltageType("Home", 220, 200, 250);
                     ElecSet.AddDistributionSysType
                         ("Lighting", ElectricalPhase.SinglePhase,
                         ElectricalPhaseConfiguration.Undefined,
@@ -84,7 +128,8 @@ namespace PrefabHouseTools
             }
             foreach (Element e in colHVAC)
             {
-                HVACIds.Add(e.Id);
+                if (HasElectricalConnector(e))
+                    HVACIds.Add(e.Id);
             }
 
             #endregion Retrieve elements from databa
@@ -111,15 +156,18 @@ namespace PrefabHouseTools
             {      
                 tx.Start("Create ElectricalSystem");
                 ElectricalSystem LightingCircuit =
-                    ElectricalSystem.Create(doc, LightIds, ElectricalSystemType.PowerCircuit);
+                    ElectricalSystem.Create(doc, LightIds, 
+                    ElectricalSystemType.PowerCircuit);
                 LightingCircuit.Name = "LightingCircuit";
                 LightingCircuit.SelectPanel(ElecBox);
                 ElectricalSystem OutlietCircuit =
-                    ElectricalSystem.Create(doc, OutletIds, ElectricalSystemType.PowerCircuit);
+                    ElectricalSystem.Create(doc, OutletIds, 
+                    ElectricalSystemType.PowerCircuit);
                 OutlietCircuit.Name = "OutletCircuit";
                 OutlietCircuit.SelectPanel(ElecBox);
                 ElectricalSystem HVACCircuit =
-                    ElectricalSystem.Create(doc, HVACIds, ElectricalSystemType.PowerCircuit);
+                    ElectricalSystem.Create(doc, HVACIds, 
+                    ElectricalSystemType.PowerCircuit);
                 HVACCircuit.Name = "HVACCircuit";
                 HVACCircuit.SelectPanel(ElecBox);
                 tx.Commit();

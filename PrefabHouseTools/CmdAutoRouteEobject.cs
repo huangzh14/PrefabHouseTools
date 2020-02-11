@@ -68,7 +68,7 @@ namespace PrefabHouseTools
         public List<RoomInfo> AdjacentRooms { get; set; }
         public override string ToString()
         {
-            return Room.Name;
+            return this.Room.ToString();
         }
         public List<List<Bcurve>> BoundaryList { get; set; }
         public List<List<XYZ>> VertexList { get; set; }
@@ -589,10 +589,20 @@ namespace PrefabHouseTools
     {
         public string Name { get; }
         public List<FixtureE> ElecFixtures { get; set; }
+        public FixtureE BaseEquipment { get; }
         public ElecSystemInfo(ElectricalSystem system)
         {
             Name = system.Name;
             ElecFixtures = new List<FixtureE>();
+            try
+            {
+                BaseEquipment = new FixtureE(system.BaseEquipment);
+            }
+            catch
+            {
+                throw new Exception("The panel of "
+                    + system.Name + " is not set.");
+            }
         }
 
     }
