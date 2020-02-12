@@ -11,10 +11,23 @@ using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System.Linq;
+using System.Windows.Forms;
 #endregion
 
 namespace PrefabHouseTools
 {
+    #region Intro
+    ///Important note:Here are some basic assumptions.
+    ///If the project doesn't meet,unexpect result may occur.
+    ///
+    ///1-Room boundary are lines not curves.The program use
+    ///Curve class for develop convenient,the logic all assume
+    ///they are all lines.
+    ///
+    ///2-The electrical line go above the ceilings.
+    ///
+    ///3-The room have a common structural ceiling floor height.
+    #endregion
     /// <summary>
     /// The filter for selecting rooms.
     /// </summary>
@@ -55,7 +68,8 @@ namespace PrefabHouseTools
         {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
-            Application app = uiapp.Application;
+            Autodesk.Revit.ApplicationServices.
+                Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
             List<Room> roomSelected = new List<Room>();
@@ -140,11 +154,43 @@ namespace PrefabHouseTools
             List<ElecSystemInfo> systemInfoList 
                 = new List<ElecSystemInfo>();
             #region Step2-Initialize the roominfos and systemInfo.
+
+            #region Ask for input for structural levels.
+            double structCeilingH = 0;
+            double structFloorH = 0;
+            using (CmdAutoRouteEform input = new CmdAutoRouteEform())
+            {
+                FilteredElementCollector levels =
+                    new FilteredElementCollector(doc)
+                    .WhereElementIsNotElementType()
+                    .OfCategory(BuiltInCategory.OST_Levels);
+                List<string> levelNames = new List<string>();
+                List<double> levelH = new List<double>();
+                foreach (Level l in levels)
+                {
+                    levelNames.Add(l.Name);
+                    levelH.Add(l.ProjectElevation);
+                }
+                input.InputLevels(levelNames);
+                DialogResult dr = input.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    structCeilingH = levelH
+                        [input.listCeilingLevel.SelectedIndex];
+                    structFloorH = levelH
+                        [input.listFloorLevel.SelectedIndex];
+                }  
+                else return Result.Cancelled;
+            }
+            #endregion
+
+            //Create roomInfo object.
             foreach (Room r in roomSelected)
             {
-                roomInfoList.Add(new RoomInfoElec(r));
+                roomInfoList.Add(new RoomInfoElec
+                    (r,structCeilingH,structFloorH));
             }
-            #region Solving adjacency
+            #region (delete later)Solving adjacency
             int num = roomInfoList.Count;
             for (int i = 0; i < num; i++)
             {
@@ -162,7 +208,6 @@ namespace PrefabHouseTools
                 }
             }
             #endregion 
-            ///RoomInfoElec.SolveAdjacency(roomInfoList);
 
             ///Get all the electrical system and fixture.
             try
@@ -182,14 +227,15 @@ namespace PrefabHouseTools
                         FamilyInstance fixture = f as FamilyInstance;
                         if (fixture.Room == null) continue;
                         var roomInfo = roomInfoList
-                            .Where(r => r.Room.Id == fixture.Room.Id);
+                            .Where(r => r.Room.Id == fixture.Room.Id)
+                            .First();
 
-                        if (roomInfo.FirstOrDefault() == null)
+                        if (roomInfo == null)
                             continue;
 
                         FixtureE fE = new FixtureE(fixture);
-                        roomInfo.FirstOrDefault().ElecFixtures.Add(fE);
-                        systemInfo.ElecFixtures.Add(fE);
+                        roomInfo.AddFixture(fE, systemInfo);
+                        systemInfo.AddFixture(fE, roomInfo);
                     }
                     systemInfoList.Add(systemInfo);
                 }
@@ -199,56 +245,54 @@ namespace PrefabHouseTools
                 TaskDialog.Show("Error", e.Message);
                 return Result.Failed;
             }
-            
-
-            foreach (RoomInfoElec r in roomInfoList)
-            {
-                r.CalculateFixCentroid();
-            }
-
             #endregion
 
             #region Step3-Calculate cross wall location.
             ///Initialize the vertices and the graph.
             List<Vertex> vRooms = new List<Vertex>();
-            foreach (RoomInfoElec r in roomInfoList){
-                vRooms.Add(new Vertex(r));}
-            Graph roomGraph = new Graph(vRooms);
-            int n = roomGraph.VertexCount;
-            ///Initialize the edges.
-            for (int i = 0; i < n; i++)
+            foreach (RoomInfoElec r in roomInfoList)
             {
-                for (int j = i + 1; j < n; j++)
+                vRooms.Add(new Vertex(r));
+            }
+            Graph roomGraph = new Graph(vRooms);
+            int vNum = roomGraph.VertexCount;
+            ///Calculate the centroid of each room.
+            foreach (RoomInfoElec r in roomInfoList)
+            {
+                r.CalculateFixCentroid();
+            }
+            ///Find the room where the panel are located.
+            ///And change the centroid of this room to panel location.
+            Room panelRoom = systemInfoList[0].BaseEquipment.Room;
+            Vertex panelVertex = roomGraph.Vertices
+                .Where(v => v.Object.ToString() == panelRoom.Name)
+                .ToArray().First() as Vertex;
+            RoomInfoElec panelRoomInfo = panelVertex.Object 
+                as RoomInfoElec;
+            panelRoomInfo.AssignFixCentroid
+                (systemInfoList[0].BaseEquipment.Origin);
+            ///Initialize the edges.
+            for (int i = 0; i < vNum; i++)
+            {
+                for (int j = i + 1; j < vNum; j++)
                 {
                     Vertex v1 = roomGraph.Vertices.ElementAt(i);
                     Vertex v2 = roomGraph.Vertices.ElementAt(j);
                     RoomInfoElec r1 = v1.Object as RoomInfoElec;
                     RoomInfoElec r2 = v2.Object as RoomInfoElec;
                     if (r1.AdjacentPathTo
-                        (r2,0,out PathExWall path,out double roughL))
+                        (r2,Math.Min(r1.StructCeilingLevel,r2.StructCeilingLevel)
+                        ,out PathXWall path,out double roughL))
                     {
                         Edge e = new Edge(v1, v2, path, roughL);
                         roomGraph.AddEdge(e);
                     }
                 }
             }
-            Room panelRoom = systemInfoList[0].BaseEquipment.Room;
-            Vertex panelVertex = roomGraph.Vertices
-                .Where(v => v.Object.ToString() == panelRoom.Name)
-                .ToArray().First() as Vertex ;
-            #region
-            /*
-            Edge[] mstRoom = roomGraph.KruskalMinTree();
-            string result = "";
-            foreach (Edge e in mstRoomD)
-            {
-                RoomInfoElec r1 = e.Begin.Object as RoomInfoElec;
-                RoomInfoElec r2 = e.End.Object as RoomInfoElec;
-                result += r1 + " to " + r2 + "\n";
-            }*/
-            #endregion
-
+            ///Using the DijkstraTree algorithm to calculate the 
+            ///trunk path.
             Edge[] mstRoomD = roomGraph.DijkstraTree(panelVertex);
+            #region _Demo Only
             string result = "";
             foreach (Vertex v in roomGraph.Vertices)
             {
@@ -256,6 +300,52 @@ namespace PrefabHouseTools
                     + v.Parent.Object + "\n";
             }
             TaskDialog.Show("Result", result);
+            #endregion
+
+            #endregion
+
+            #region Step4-Add cross wall vertex to room.
+            List<PathXWall> allPaths = new List<PathXWall>();
+            ///Correct all the direction of crosspoint.
+            ///Log all the paths to do movenext lateron.
+            foreach (Vertex v in vRooms)
+            {
+                //Skip the root room.
+                if (v == v.Parent) continue;
+                Edge e = roomGraph.FindEdge(v, v.Parent);
+                PathXWall p = e.Object as PathXWall;
+                //Make sure all crosspoint are same direction.
+                //From centre panel to fixtures.
+                if (e.Begin != v.Parent)
+                {
+                    e.Reverse();
+                    p.Reverse();
+                }
+                allPaths.Add(p);
+            }
+            ///Add vertex for each system to all the room needed.
+            foreach (ElecSystemInfo sys in systemInfoList)
+            {
+                List<RoomInfoElec> sysRooms
+                    = sys.ElecFixturesDic.Keys.ToList();
+                List<Vertex> sysRoomsV = roomGraph.UpTrace
+                    (vRooms.Where(v => sysRooms
+                    .Contains(v.Object as RoomInfoElec)));
+                foreach (Vertex v in sysRoomsV)
+                {
+                    RoomInfoElec toR = v.Object as RoomInfoElec;
+                    RoomInfoElec fromR = v.Parent.Object as RoomInfoElec;
+                    Edge e = roomGraph.FindEdge(v, v.Parent);
+                    PathXWall p = e.Object as PathXWall;
+                    fromR.AddFixture(p.CurrentBegin, sys);
+                    toR.AddFixture(p.CurrentEnd, sys);
+                }
+                foreach (PathXWall p in allPaths)
+                    p.MoveNext();
+            }
+            #endregion
+
+            #region Step5-Calculate the final route.
             #endregion
 
             // Modify document within a transaction

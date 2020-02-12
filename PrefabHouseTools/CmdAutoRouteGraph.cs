@@ -24,8 +24,8 @@ namespace PrefabHouseTools
     }
     class Edge
     {
-        public Vertex Begin { get; }
-        public Vertex End { get; }
+        public Vertex Begin { get; private set; }
+        public Vertex End { get; private set; }
         public double Weight { get; }
         public override string ToString()
         {
@@ -35,12 +35,21 @@ namespace PrefabHouseTools
                 Weight.ToString());
         }
         public object Object { get; }
-        public Edge(Vertex begin,Vertex end, object linkedObj, double weight)
+        public Edge
+            (Vertex begin,Vertex end, 
+            object linkedObj, double weight)
         {
             this.Begin = begin;
             this.End = end;
             this.Weight = weight;
             this.Object = linkedObj;
+        }
+
+        public void Reverse()
+        {
+            Vertex temp = Begin;
+            Begin = End;
+            End = temp;
         }
     }
     class Graph
@@ -53,6 +62,13 @@ namespace PrefabHouseTools
             this.Vertices = vertices;
             this.VertexCount = vertices.Count();
         }
+        public IEnumerable<Vertex> Vertices { get; }
+        public IEnumerable<Edge> Edges {
+            get { return adjacentEdges.Values
+                    .SelectMany(e => e).Distinct(); }}
+        public int EdgeCount { 
+            get { return this.Edges.Count(); }
+        }
         private void ResetGraph()
         {
             Vertex[] verArray = this.Vertices.ToArray();
@@ -63,12 +79,6 @@ namespace PrefabHouseTools
                 verArray[i].Rank = 0;
             }
         }
-        public IEnumerable<Vertex> Vertices { get; }
-        public IEnumerable<Edge> Edges {
-            get { return adjacentEdges.Values
-                    .SelectMany(e => e); }}
-        public int EdgeCount { 
-            get { return this.Edges.Count(); } }
         public void AddEdge(Edge edge)
         {
             Vertex b = edge.Begin;
@@ -103,6 +113,42 @@ namespace PrefabHouseTools
                 yroot.Parent = xroot;
                 xroot.Rank++;
             }
+        }
+        /// <summary>
+        /// Up trace all the input vertex to the root and return 
+        /// the collection of all vertex on the way.
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public List<Vertex> UpTrace(IEnumerable<Vertex> inputV)
+        {
+            List<Vertex> upV = new List<Vertex>();
+            Stack<Vertex> uncheck = new Stack<Vertex>();
+            Vertex cur;
+            foreach (Vertex v in inputV)
+            {
+                uncheck.Push(v);
+            }
+            while (uncheck.Count > 0)
+            {
+                cur = uncheck.Pop();
+                if ((cur.Parent != cur)&&
+                    (!uncheck.Contains(cur.Parent)))
+                    uncheck.Push(cur.Parent);
+                upV.Add(cur);
+            }
+            return upV;
+        }
+        public Edge FindEdge(Vertex v1,Vertex v2)
+        {
+            foreach (Edge e in adjacentEdges[v1])
+            {
+                Vertex otherV = e.Begin == v1 ?
+                    e.End : e.Begin;
+                if (otherV == v2)
+                    return e;
+            }
+            return null;
         }
 
         /// <summary>

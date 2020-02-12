@@ -61,10 +61,21 @@
     <Compile Include="CmdSetCircuit.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CmdAutoRouteEobject.cs" />
+    <Compile Include="CmdAutoRouteEform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CmdAutoRouteEform.Designer.cs">
+      <DependentUpon>CmdAutoRouteEform.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="PrefabHouseTools.addin" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CmdAutoRouteEform.resx">
+      <DependentUpon>CmdAutoRouteEform.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

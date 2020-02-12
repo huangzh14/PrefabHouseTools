@@ -16,17 +16,6 @@ using Autodesk.Revit.UI.Selection;
 
 namespace PrefabHouseTools
 {
-    #region Intro
-    ///Important note:Here are some basic assumptions.
-    ///If the project doesn't meet,unexpect result may occur.
-    ///
-    ///1-Room boundary are lines not curves.The program use
-    ///Curve class for develop convenient,the logic all assume
-    ///they are all lines.
-    ///
-    ///2-
-    #endregion
-
     /// <summary>
     /// 
     /// </summary>
@@ -64,7 +53,6 @@ namespace PrefabHouseTools
     public class RoomInfo
     {
         public Room Room { get; }
-        ///Hold the adjacent rooms to this one.
         public List<RoomInfo> AdjacentRooms { get; set; }
         public override string ToString()
         {
@@ -72,17 +60,26 @@ namespace PrefabHouseTools
         }
         public List<List<Bcurve>> BoundaryList { get; set; }
         public List<List<XYZ>> VertexList { get; set; }
-        public double FloorLevel { get; }
+        public double FinishCeilingLevel { get; }
+        public double FinishFloorLevel { get; }
+        public double StructCeilingLevel { get; }
+        public double StructFloorLevel { get; }
         
-        public RoomInfo(Room room)
+        public RoomInfo(Room room,
+            double structuralCeilingHeight,
+            double structuralFloorHeight)
         {
             Room = room;
             BoundaryList = GetBoundary
                 (room,out List<List<XYZ>>vList);
             VertexList = vList;
             AdjacentRooms = new List<RoomInfo>();
-            FloorLevel = room.get_BoundingBox
-                (room.Document.ActiveView).Min.Z;
+            FinishFloorLevel = room.ClosedShell
+                .GetBoundingBox().Min.Z;
+            FinishCeilingLevel = room.ClosedShell
+                .GetBoundingBox().Max.Z;
+            StructCeilingLevel = structuralCeilingHeight;
+            StructFloorLevel = structuralFloorHeight;
         }
 
         #region The methodS for boundary calculation.
@@ -356,30 +353,56 @@ namespace PrefabHouseTools
     /// In the real scenarios most boundary are lines.And all the 
     /// relative calculation only work for line.If curve wall exist,
     /// unexpect result may occur.
-    class RoomInfoElec : RoomInfo
+    public class RoomInfoElec : RoomInfo
     {
-        
-        ///The electrical fixtures in the room.
-        public List<FixtureE> ElecFixtures { get; set; }
+        /// The electrical fixtures in the room as a dictionary.
+        public Dictionary<ElecSystemInfo,List<FixtureE>> 
+            ElecFixturesDic{ get; private set; }
+        ///The electrical fixtures in the room as a list.
+        public List<FixtureE> ElecFixtures 
+        {
+            get
+            {
+                return ElecFixturesDic
+                    .SelectMany(e => e.Value)
+                    .Distinct().ToList();
+            }
+        }
         ///The average centroid of all the fixtures
         ///in the room
-        public XYZ FixCentroid { get; set; }
-
-        public RoomInfoElec(Room room) : base(room)
+        public XYZ FixCentroid { get; private set; }
+        /// <summary>
+        /// The constructor of roominfoelec
+        /// </summary>
+        /// <param name="room"></param>
+        public RoomInfoElec(Room room,
+            double structuralCeilingHeight,
+            double structuralFloorHeight) 
+            : base(room,structuralCeilingHeight
+                       ,structuralFloorHeight)
         {
-            ElecFixtures = new List<FixtureE>();
+            ElecFixturesDic = 
+                new Dictionary<ElecSystemInfo, List<FixtureE>>();
             FixCentroid = new XYZ();
+        }
+
+        public void AddFixture(FixtureE fixture,ElecSystemInfo systemInfo)
+        {
+            if (!ElecFixturesDic.ContainsKey(systemInfo))
+                ElecFixturesDic.Add(systemInfo, new List<FixtureE>());
+            ElecFixturesDic[systemInfo].Add(fixture);
         }
 
         #region Methods for calculating intersection.
         /// <summary>
-        /// Transfer a bound line to a fomula.
+        /// Transfer a bound line to a fomula as Ax + By = C.
         /// </summary>
         /// <param name="cur"></param>
         /// <param name="A"></param>
         /// <param name="B"></param>
         /// <param name="C"></param>
-        private void LineToPlanFomula(Curve cur,out double A,out double B,out double C)
+        private void LineToPlanFomula(Curve cur,
+            out double A,out double B,out double C)
         {
             XYZ pt1 = cur.GetEndPoint(0);
             XYZ pt2 = cur.GetEndPoint(1);
@@ -411,7 +434,8 @@ namespace PrefabHouseTools
         /// <param name="c1"></param>
         /// <param name="c2"></param>
         /// <returns></returns>
-        private bool IsPlanIntersect(Curve cur1, Curve cur2,out XYZ intersecPt)
+        private bool IsPlanIntersect
+            (Curve cur1, Curve cur2,out XYZ intersecPt)
         {
             intersecPt = new XYZ();
             LineToPlanFomula(cur1, out double A1, out double B1, out double C1);
@@ -456,12 +480,23 @@ namespace PrefabHouseTools
         /// </summary>
         public void CalculateFixCentroid()
         {
-            if (ElecFixtures.Count > 0)
+            if (ElecFixtures.Count <= 0) return;
+            List<double> xs = new List<double>();
+            List<double> ys = new List<double>();
+            foreach (List<FixtureE> fList in ElecFixturesDic.Values)
             {
-                double aX = ElecFixtures.Average(ef => ef.Origin.X);
-                double aY = ElecFixtures.Average(ef => ef.Origin.Y);
-                FixCentroid = new XYZ(aX, aY, FloorLevel);
+                xs.Add(fList.Average(fe => fe.Origin.X));
+                ys.Add(fList.Average(fe => fe.Origin.Y));
             }
+            double aX = xs.Average(x => x);
+            double aY = ys.Average(y => y);
+            FixCentroid = new XYZ(aX, aY, FinishFloorLevel);
+        }
+
+        public void AssignFixCentroid(XYZ position)
+        {
+            this.FixCentroid = new XYZ
+                (position.X, position.Y, FinishFloorLevel); ;
         }
 
         /// <summary>
@@ -473,7 +508,7 @@ namespace PrefabHouseTools
         /// <param name="roughL"></param>
         /// <returns></returns>
         public bool AdjacentPathTo(RoomInfoElec otherRoom, double height,
-            out PathExWall path,out double roughL)
+            out PathXWall path,out double roughL)
         {
             ///Use the base class method to decide whether this two room 
             ///are adjacent and get the needed info.
@@ -545,13 +580,13 @@ namespace PrefabHouseTools
                     XYZ ptThere = crossPt - 0.5 * width * normVec;
                     FixtureE crossPtHere = new FixtureE(ptHere, height);
                     FixtureE crossPtThere = new FixtureE(ptThere, height);
-                    path = new PathExWall(crossPtHere, crossPtThere);
+                    path = new PathXWall(crossPtHere, crossPtThere);
                     roughL = width + (ptHere - FixCentroid).GetLength()
                         + (ptThere - otherRoom.FixCentroid).GetLength();
                     return true;
                 }
             }
-            path = new PathExWall();
+            path = new PathXWall();
             roughL = 0;
             return false;
         }
@@ -588,12 +623,18 @@ namespace PrefabHouseTools
     public class ElecSystemInfo
     {
         public string Name { get; }
-        public List<FixtureE> ElecFixtures { get; set; }
+        public Dictionary<RoomInfoElec,List<FixtureE>> 
+            ElecFixturesDic { get; private set; }
+        public List<FixtureE> ElecFixtures { 
+            get { return ElecFixturesDic
+                    .SelectMany(e => e.Value)
+                    .Distinct().ToList(); }  }
         public FixtureE BaseEquipment { get; }
         public ElecSystemInfo(ElectricalSystem system)
         {
             Name = system.Name;
-            ElecFixtures = new List<FixtureE>();
+            ElecFixturesDic = 
+                new Dictionary<RoomInfoElec, List<FixtureE>>();
             try
             {
                 BaseEquipment = new FixtureE(system.BaseEquipment);
@@ -605,6 +646,12 @@ namespace PrefabHouseTools
             }
         }
 
+        public void AddFixture(FixtureE fixture,RoomInfoElec roomInfoElec)
+        {
+            if (!ElecFixturesDic.ContainsKey(roomInfoElec))
+                ElecFixturesDic.Add(roomInfoElec, new List<FixtureE>());
+            ElecFixturesDic[roomInfoElec].Add(fixture);
+        }
     }
 
     
@@ -651,32 +698,74 @@ namespace PrefabHouseTools
     
     public class PathE
     {
-        public FixtureE Begin { get; }
-        public FixtureE End { get; }
-        public List<XYZ> Vertices { get; }
+        public FixtureE Begin { get; private set; }
+        public FixtureE End { get; private set; }
+        public List<XYZ> Vertices { get; private set; }
         public PathE(FixtureE begin,FixtureE end,List<XYZ> vertices)
         {
             this.Begin = begin;
             this.End = end;
             this.Vertices = vertices;
         }
+        public virtual void Reverse()
+        {
+            FixtureE temp = Begin;
+            Begin = End;
+            End = temp;
+            Vertices.Reverse();
+        }
     }
     
-    public class PathExWall : PathE
+    public class PathXWall : PathE
     {
-        public PathExWall(FixtureE begin, FixtureE end)
+        private double PathInterval = UnitUtils.ConvertToInternalUnits
+            (30, DisplayUnitType.DUT_MILLIMETERS);
+        public PathXWall(FixtureE begin, FixtureE end)
             : base(begin,end,new List<XYZ>())
         {
+            CurrentBegin = begin;
+            CurrentEnd = end;
+            this.counter = 0;
+            XYZ norm = (end.Origin - begin.Origin).Normalize();
+            vec = new XYZ(norm.Y, norm.X, 0);
         }
-        public PathExWall() : 
-            base(new FixtureE(new XYZ(),0), 
-                new FixtureE(new XYZ(),0), 
+        /// To deal with the void circumstance.
+        public PathXWall() :
+            base(new FixtureE(new XYZ(), 0),
+                new FixtureE(new XYZ(), 0),
                 new List<XYZ>())
         {
         }
+        /// <summary>
+        /// The folloling properties is used to generate group of
+        /// fixture used for multiple system.
+        /// </summary>
+        public FixtureE CurrentBegin { get; private set; }
+        public FixtureE CurrentEnd { get; private set; }
+        private int counter;
+        ///The vector along the wall that the path cross.
+        private XYZ vec;
         public void MoveNext()
         {
-
+            CurrentBegin = new FixtureE
+                (CurrentBegin.Origin + 
+                PathInterval * ((-1) ^ counter) * counter * vec
+                , CurrentBegin.Origin.Z);
+            CurrentEnd = new FixtureE
+                (CurrentEnd.Origin + 
+                PathInterval * ((-1) ^ counter) * counter * vec
+                , CurrentEnd.Origin.Z);
+        }
+        public void Reset()
+        {
+            CurrentBegin = Begin;
+            CurrentEnd = End;
+            counter = 0;
+        }
+        public override void Reverse()
+        {
+            base.Reverse();
+            this.Reset();
         }
     }
 
