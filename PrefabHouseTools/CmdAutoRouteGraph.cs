@@ -209,12 +209,8 @@ namespace PrefabHouseTools
                 {
                     Vertex adjV = e.Begin == curV ?
                                   e.End : e.Begin ;
-                    if (adjV.Dist2Root < 0)
-                    {
-                        adjV.Dist2Root = e.Weight;
-                        adjV.Parent = curV;
-                    }
-                    else if (adjV.Dist2Root > curV.Dist2Root + e.Weight)
+                    if ((adjV.Dist2Root < 0) || 
+                        (adjV.Dist2Root > curV.Dist2Root + e.Weight))
                     {
                         adjV.Dist2Root = curV.Dist2Root + e.Weight;
                         adjV.Parent = curV;
