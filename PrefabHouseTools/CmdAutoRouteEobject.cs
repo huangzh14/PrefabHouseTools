@@ -508,7 +508,7 @@ namespace PrefabHouseTools
         /// <param name="roughL"></param>
         /// <returns></returns>
         public bool AdjacentPathTo(RoomInfoElec otherRoom, double height,
-            out PathXWall path,out double roughL)
+            out PathExWall path,out double roughL)
         {
             ///Use the base class method to decide whether this two room 
             ///are adjacent and get the needed info.
@@ -578,22 +578,22 @@ namespace PrefabHouseTools
                     //Create the crossing path.
                     XYZ ptHere = crossPt + 0.5 * width * normVec;
                     XYZ ptThere = crossPt - 0.5 * width * normVec;
-                    FixtureE crossPtHere = new FixtureE(ptHere, height);
-                    FixtureE crossPtThere = new FixtureE(ptThere, height);
-                    path = new PathXWall(crossPtHere, crossPtThere);
+                    FixtureE crossPtHere = new FixtureE(ptHere, height,this.Room);
+                    FixtureE crossPtThere = new FixtureE(ptThere, height,otherRoom.Room);
+                    path = new PathExWall(crossPtHere, crossPtThere,width);
                     roughL = width + (ptHere - FixCentroid).GetLength()
                         + (ptThere - otherRoom.FixCentroid).GetLength();
                     return true;
                 }
             }
-            path = new PathXWall();
+            path = new PathExWall();
             roughL = 0;
             return false;
         }
 
-        private List<XYZ> FindVertexPath(XYZ start, XYZ end, List<XYZ> vertex)
+        private PathE FindPath(FixtureE begin,FixtureE end)
         {
-            List<XYZ> path = new List<XYZ>();
+            PathE path = new PathE(begin,end,new List<XYZ>(),0);
             return path;
         }
         /// <summary>
@@ -688,9 +688,14 @@ namespace PrefabHouseTools
                 }
             }
         }
-        public FixtureE(XYZ location,double height)
+        public FixtureE(XYZ location,double height,Room room)
         {
             this.Origin = new XYZ(location.X, location.Y, height);
+            this.Room = room;
+        }
+        public FixtureE()
+        {
+
         }
         
     }
@@ -701,11 +706,14 @@ namespace PrefabHouseTools
         public FixtureE Begin { get; private set; }
         public FixtureE End { get; private set; }
         public List<XYZ> Vertices { get; private set; }
-        public PathE(FixtureE begin,FixtureE end,List<XYZ> vertices)
+        public double Cost { get; private set; }
+        public PathE(FixtureE begin,FixtureE end,
+            List<XYZ> vertices,double cost)
         {
             this.Begin = begin;
             this.End = end;
             this.Vertices = vertices;
+            this.Cost = cost;
         }
         public virtual void Reverse()
         {
@@ -716,12 +724,12 @@ namespace PrefabHouseTools
         }
     }
     
-    public class PathXWall : PathE
+    public class PathExWall : PathE
     {
         private double PathInterval = UnitUtils.ConvertToInternalUnits
             (30, DisplayUnitType.DUT_MILLIMETERS);
-        public PathXWall(FixtureE begin, FixtureE end)
-            : base(begin,end,new List<XYZ>())
+        public PathExWall(FixtureE begin, FixtureE end,double cost)
+            : base(begin,end,new List<XYZ>(),cost)
         {
             CurrentBegin = begin;
             CurrentEnd = end;
@@ -730,10 +738,10 @@ namespace PrefabHouseTools
             vec = new XYZ(norm.Y, norm.X, 0);
         }
         /// To deal with the void circumstance.
-        public PathXWall() :
-            base(new FixtureE(new XYZ(), 0),
-                new FixtureE(new XYZ(), 0),
-                new List<XYZ>())
+        public PathExWall() :
+            base(new FixtureE(),
+                new FixtureE(),
+                new List<XYZ>(),0)
         {
         }
         /// <summary>
@@ -750,11 +758,11 @@ namespace PrefabHouseTools
             CurrentBegin = new FixtureE
                 (CurrentBegin.Origin + 
                 PathInterval * ((-1) ^ counter) * counter * vec
-                , CurrentBegin.Origin.Z);
+                , CurrentBegin.Origin.Z,CurrentBegin.Room);
             CurrentEnd = new FixtureE
                 (CurrentEnd.Origin + 
                 PathInterval * ((-1) ^ counter) * counter * vec
-                , CurrentEnd.Origin.Z);
+                , CurrentEnd.Origin.Z,CurrentEnd.Room);
         }
         public void Reset()
         {
@@ -766,6 +774,11 @@ namespace PrefabHouseTools
         {
             base.Reverse();
             this.Reset();
+        }
+        public PathExWall CloneCurrent()
+        {
+            return new PathExWall
+                (this.CurrentBegin, this.CurrentEnd,this.Cost);
         }
     }
 

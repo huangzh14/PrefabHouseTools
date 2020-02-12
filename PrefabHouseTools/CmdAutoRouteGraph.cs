@@ -54,15 +54,22 @@ namespace PrefabHouseTools
     }
     class Graph
     {
-        private Dictionary<Vertex, List<Edge>> adjacentEdges
-            = new Dictionary<Vertex, List<Edge>>();
-        public int VertexCount { get; }
-        public Graph(IEnumerable<Vertex> vertices)
+        private Dictionary<Vertex, List<Edge>> adjacentEdges;
+        public int VertexCount 
+        {
+            get { return this.Vertices.Count(); } 
+        }
+        public Graph(List<Vertex> vertices)
         {
             this.Vertices = vertices;
-            this.VertexCount = vertices.Count();
+            adjacentEdges = new Dictionary<Vertex, List<Edge>>();
         }
-        public IEnumerable<Vertex> Vertices { get; }
+        public Graph()
+        {
+            Vertices = new List<Vertex>();
+            adjacentEdges = new Dictionary<Vertex, List<Edge>>();
+        }
+        public List<Vertex> Vertices { get; private set; }
         public IEnumerable<Edge> Edges {
             get { return adjacentEdges.Values
                     .SelectMany(e => e).Distinct(); }}
@@ -78,6 +85,14 @@ namespace PrefabHouseTools
                 verArray[i].Index = i;
                 verArray[i].Rank = 0;
             }
+        }
+        public void AddVertex(Vertex vertex)
+        {
+            Vertices.Add(vertex);
+        }
+        public void AddVertices(List<Vertex> vertices)
+        {
+            this.Vertices.AddRange(vertices);
         }
         public void AddEdge(Edge edge)
         {

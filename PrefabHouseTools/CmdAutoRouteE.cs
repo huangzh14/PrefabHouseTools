@@ -282,7 +282,7 @@ namespace PrefabHouseTools
                     RoomInfoElec r2 = v2.Object as RoomInfoElec;
                     if (r1.AdjacentPathTo
                         (r2,Math.Min(r1.StructCeilingLevel,r2.StructCeilingLevel)
-                        ,out PathXWall path,out double roughL))
+                        ,out PathExWall path,out double roughL))
                     {
                         Edge e = new Edge(v1, v2, path, roughL);
                         roomGraph.AddEdge(e);
@@ -304,8 +304,9 @@ namespace PrefabHouseTools
 
             #endregion
 
-            #region Step4-Add cross wall vertex to room.
-            List<PathXWall> allPaths = new List<PathXWall>();
+            List<Graph> sysGraphList = new List<Graph>();
+            List<PathExWall> allPaths = new List<PathExWall>();
+            #region Step4-Add cross wall vertex to room and graph.
             ///Correct all the direction of crosspoint.
             ///Log all the paths to do movenext lateron.
             foreach (Vertex v in vRooms)
@@ -313,7 +314,7 @@ namespace PrefabHouseTools
                 //Skip the root room.
                 if (v == v.Parent) continue;
                 Edge e = roomGraph.FindEdge(v, v.Parent);
-                PathXWall p = e.Object as PathXWall;
+                PathExWall p = e.Object as PathExWall;
                 //Make sure all crosspoint are same direction.
                 //From centre panel to fixtures.
                 if (e.Begin != v.Parent)
@@ -326,26 +327,62 @@ namespace PrefabHouseTools
             ///Add vertex for each system to all the room needed.
             foreach (ElecSystemInfo sys in systemInfoList)
             {
+                //sysGraph is the graph of fixtures for this system.
+                Graph sysGraph = new Graph();
                 List<RoomInfoElec> sysRooms
                     = sys.ElecFixturesDic.Keys.ToList();
+                //sysRoomsV are all the roomVertex that system
+                //will path through.
                 List<Vertex> sysRoomsV = roomGraph.UpTrace
                     (vRooms.Where(v => sysRooms
                     .Contains(v.Object as RoomInfoElec)));
+                //First add all the normal fixture as vertex.
+                foreach (FixtureE f in sys.ElecFixtures)
+                {
+                    sysGraph.AddVertex(new Vertex(f));
+                }
+                //Second add the crossing paths.
                 foreach (Vertex v in sysRoomsV)
                 {
+                    if (v.Parent == v) continue;
+                    //Add crossing point as fixture to each room.
                     RoomInfoElec toR = v.Object as RoomInfoElec;
                     RoomInfoElec fromR = v.Parent.Object as RoomInfoElec;
                     Edge e = roomGraph.FindEdge(v, v.Parent);
-                    PathXWall p = e.Object as PathXWall;
+                    PathExWall p = e.Object as PathExWall;
                     fromR.AddFixture(p.CurrentBegin, sys);
                     toR.AddFixture(p.CurrentEnd, sys);
+                    sys.AddFixture(p.CurrentBegin, fromR);
+                    sys.AddFixture(p.CurrentEnd, toR);
+                    //Add crossing point as vertex to systemGraph.
+                    Vertex v1 = new Vertex(p.CurrentBegin);
+                    Vertex v2 = new Vertex(p.CurrentEnd);
+                    Edge enew = new Edge(v1, v2, p.CloneCurrent(), p.Cost);
+                    sysGraph.AddVertex(v1);
+                    sysGraph.AddVertex(v2);
+                    sysGraph.AddEdge(enew);
                 }
-                foreach (PathXWall p in allPaths)
+                //Generate next crossing path for next system.
+                //Including the paths which this system didnt use.
+                foreach (PathExWall p in allPaths)
                     p.MoveNext();
+                sysGraphList.Add(sysGraph);
             }
             #endregion
 
             #region Step5-Calculate the final route.
+            ///Add all the route inside rooms to the graph.
+            foreach (Graph sysGraph in sysGraphList)
+            {
+                foreach (RoomInfoElec r in roomInfoList)
+                {
+                    List<FixtureE> fs = sysGraph.Vertices
+                        .Where(v => (v.Object as FixtureE)
+                                    .Room.Name == r.Room.Name)
+                        .Select(v => (v.Object as FixtureE))
+                        .ToList();
+                }
+            }
             #endregion
 
             // Modify document within a transaction
