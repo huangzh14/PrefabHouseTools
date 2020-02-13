@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>Command PrefabHouseTools</Text>
+    <Description>Some description for PrefabHouseTools</Description>
+    <Assembly>PrefabHouseTools.dll</Assembly>
+    <FullClassName>PrefabHouseTools.Command</FullClassName>
+    <ClientId>e08addfe-24a7-4cad-b7fe-61b7215a69f8</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>App PrefabHouseTools</Name>
+    <Assembly>PrefabHouseTools.dll</Assembly>
+    <FullClassName>PrefabHouseTools.AppPrefabHouseTools</FullClassName>
+    <ClientId>5507f8ae-09b8-405d-b340-39e489a66f06</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
