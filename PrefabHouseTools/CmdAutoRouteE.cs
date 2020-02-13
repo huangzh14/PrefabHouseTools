@@ -420,16 +420,28 @@ namespace PrefabHouseTools
                 short counter = 1;
                 foreach (ElecSystemInfo eSys in systemInfoList)
                 {
-                    ///Create new linestyle.
-                    Category newLineStyleCat = cats.NewSubcategory
-                        (lineCat, "ElectricalLine-" + counter);
-                    doc.Regenerate();
-                    newLineStyleCat.SetLineWeight
-                        (7, GraphicsStyleType.Projection);
-                    newLineStyleCat.LineColor =colors[counter - 1];
-                    Element newLineStyle = 
-                        doc.GetElement(newLineStyleCat.Id);
-
+                    Category newLineStyleCat = null;
+                    Element newLineStyle = null;
+                    do
+                    {
+                        try
+                        {
+                            ///Create new linestyle.
+                            newLineStyleCat = cats.NewSubcategory
+                                (lineCat, "ElectricalLine-" + counter);
+                            doc.Regenerate();
+                            newLineStyleCat.SetLineWeight
+                                (7, GraphicsStyleType.Projection);
+                            newLineStyleCat.LineColor = colors[counter - 1];
+                            newLineStyle =
+                                doc.GetElement(newLineStyleCat.Id);
+                        }
+                        catch
+                        {
+                            ///Do something to deal with name conflict,if needed.
+                        }
+                    } while (newLineStyleCat == null);
+                    
                     ///Create the model line and set linestyle.
                     XYZ x0 = new XYZ();
                     List<ElementId> modelC = new List<ElementId>();
