@@ -27,7 +27,8 @@ namespace PrefabHouseTools
         public bool BaseIsWall { get; }
         public ElementId Id { get; }
         public double Length { get; }
-        public Bcurve(Curve curve, ElementId id, bool baseIsWall, Curve baseCurve,double baseWith)
+        public Bcurve(Curve curve, ElementId id, 
+            bool baseIsWall, Curve baseCurve,double baseWith)
         {
             Curve = curve;
             Id = id;
@@ -60,6 +61,7 @@ namespace PrefabHouseTools
         }
         public List<List<Bcurve>> BoundaryList { get; set; }
         public List<List<XYZ>> VertexList { get; set; }
+        public bool IsConvex { get; }
         public double FinishCeilingLevel { get; }
         public double FinishFloorLevel { get; }
         public double StructCeilingLevel { get; }
@@ -73,6 +75,7 @@ namespace PrefabHouseTools
             BoundaryList = GetBoundary
                 (room,out List<List<XYZ>>vList);
             VertexList = vList;
+            IsConvex = this.BoundaryIsConvex();
             AdjacentRooms = new List<RoomInfo>();
             FinishFloorLevel = room.ClosedShell
                 .GetBoundingBox().Min.Z;
@@ -219,6 +222,27 @@ namespace PrefabHouseTools
                 }
             }
             return curves;
+        }
+        private bool BoundaryIsConvex()
+        {
+            if (BoundaryList.Count > 1) return false;
+            int iUp = 0;
+            int iDown = 0;
+            List<XYZ> dirs = BoundaryList[0].Select
+                             (c => (c.Curve.GetEndPoint(1) - 
+                                    c.Curve.GetEndPoint(0)))
+                                   .ToList();
+            int n = dirs.Count();
+            dirs.Add(dirs[0]);
+            for (int i = 0; i < n; i++)
+            {
+                if (dirs[i].CrossProduct(dirs[i + 1]).Z > 0)
+                    iUp++;
+                else
+                    iDown++;
+            }
+            if ((iUp == n) || (iDown == n)) return true;
+            else return false;
         }
         #endregion
 
@@ -384,7 +408,9 @@ namespace PrefabHouseTools
             ElecFixturesDic = 
                 new Dictionary<ElecSystemInfo, List<FixtureE>>();
             FixCentroid = new XYZ();
+            BasicGraph = CreateBasicGraph();
         }
+        private Graph BasicGraph { get; }
 
         public void AddFixture(FixtureE fixture,ElecSystemInfo systemInfo)
         {
@@ -473,8 +499,26 @@ namespace PrefabHouseTools
             }
             return false;
         }
+
+        public bool HaveDirectRoute(XYZ start,XYZ end)
+        {
+            Line li = Line.CreateBound
+                        (start, end);
+            //If the line intersect with boundary,reject.
+            if (BoundaryIntersectWith(li))
+                return false;
+            //If the midpoint of the line is not in the room.
+            XYZ cent = 0.5 * (start + end);
+            cent = new XYZ(cent.X, cent.Y,
+                0.5 * (FinishCeilingLevel + FinishFloorLevel));
+            if (!Room.IsPointInRoom(cent))
+                return false;
+            //If the two test pass,direct route is possible.
+            return true;
+        }
         #endregion
 
+        #region Methods for calculating roomGraph.
         /// <summary>
         /// 
         /// </summary>
@@ -590,11 +634,39 @@ namespace PrefabHouseTools
             roughL = 0;
             return false;
         }
+        #endregion
 
         private PathE FindPath(FixtureE begin,FixtureE end)
         {
             PathE path = new PathE(begin,end,new List<XYZ>(),0);
             return path;
+        }
+        public Graph CreateBasicGraph()
+        {
+            ///Create the basic vertices.
+            ///(The endpoint of all the boundaries)
+            List<XYZ> vList = VertexList
+                             .SelectMany(v => v)
+                             .ToList();
+            List<Vertex> graphV = new List<Vertex>();
+            foreach(XYZ pt in vList)
+            {
+                graphV.Add(new Vertex(pt));
+            }
+            Graph g = new Graph(graphV);
+            ///Add common edges.
+            int n = graphV.Count;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = i + 1; j < n; j++)
+                {
+                    if (HaveDirectRoute(vList[i], vList[j]))
+                        g.AddEdge(new Edge 
+                            (graphV[i], graphV[j],  
+                            (vList[j]-vList[i]).GetLength()));
+                }
+            }
+            return g;
         }
         /// <summary>
         /// Find the planer route of two points at given height.
@@ -606,16 +678,43 @@ namespace PrefabHouseTools
         public List<XYZ> FindPlanerRoute(XYZ start, XYZ end, double h)
         {
             List<XYZ> route = new List<XYZ>();
+            route.Add(new XYZ(start.X, start.Y, h));
+            route.Add(new XYZ(end.X, end.Y, h));
             Curve sLine = Line.CreateBound(start, end);
-            ///The simple situation when stright line is ok.
-            if (!BoundaryIntersectWith(sLine))
-            {
-                route.Add(new XYZ(start.X, start.Y, h));
-                route.Add(new XYZ(end.X, end.Y, h));
-                return route;
-            }
-            ///The tricky situation when stright line is not ok.
 
+            ///The simple situation when stright line is ok.
+            if (IsConvex || (!BoundaryIntersectWith(sLine)))
+                return route;
+
+            ///The tricky situation when stright line is not ok.
+            ///Clone the basic graph to calculate.
+            Graph ptGraph = BasicGraph.Clone();
+
+            ///Save the original vertices for further use.
+            ///Using tolist to clone the list.
+            List<Vertex> originV = ptGraph.Vertices.ToList();
+            Vertex startV = new Vertex(start);
+            Vertex endV = new Vertex(end);
+            ptGraph.AddVertex(startV);
+            ptGraph.AddVertex(endV);
+            foreach (Vertex v in originV)
+            {
+                XYZ vPt = v.Object as XYZ;
+                if (HaveDirectRoute(start, vPt))
+                    ptGraph.AddEdge(new Edge(startV, v, (vPt - start).GetLength()));
+                if (HaveDirectRoute(end, vPt))
+                    ptGraph.AddEdge(new Edge(endV, v, (vPt - end).GetLength()));
+            }
+
+            ///Start calculation.
+            if (ptGraph.DijkstraRoute
+                (startV,endV,out List<Vertex> vRoute))
+            {
+                route = vRoute
+                    .Select(v => v.Object as XYZ)
+                    .Select(v => new XYZ(v.X,v.Y,h))
+                    .ToList();
+            }
             return route;
         }
     }

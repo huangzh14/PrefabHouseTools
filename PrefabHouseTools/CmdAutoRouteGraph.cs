@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrefabHouseTools
 {
-    class Vertex
+    public class Vertex
     {
         public int Index { get; set; }
         public Vertex Parent { get; set; }
@@ -22,7 +22,7 @@ namespace PrefabHouseTools
             this.Dist2Root = -1;
         }
     }
-    class Edge
+    public class Edge
     {
         public Vertex Begin { get; private set; }
         public Vertex End { get; private set; }
@@ -44,6 +44,13 @@ namespace PrefabHouseTools
             this.Weight = weight;
             this.Object = linkedObj;
         }
+        public Edge(Vertex begin,Vertex end,double weight)
+        {
+            this.Begin = begin;
+            this.End = end;
+            this.Weight = weight;
+            this.Object = null;
+        }
 
         public void Reverse()
         {
@@ -52,7 +59,7 @@ namespace PrefabHouseTools
             End = temp;
         }
     }
-    class Graph
+    public class Graph
     {
         private Dictionary<Vertex, List<Edge>> adjacentEdges;
         public int VertexCount 
@@ -84,7 +91,17 @@ namespace PrefabHouseTools
                 verArray[i].Parent = verArray[i];
                 verArray[i].Index = i;
                 verArray[i].Rank = 0;
+                verArray[i].Dist2Root = -1;
             }
+        }
+        public Graph Clone()
+        {
+            Graph copy = new Graph(this.Vertices);
+            foreach (Edge e in this.Edges)
+            {
+                copy.AddEdge(e);
+            }
+            return copy;
         }
         public void AddVertex(Vertex vertex)
         {
@@ -153,6 +170,11 @@ namespace PrefabHouseTools
                 upV.Add(cur);
             }
             return upV;
+        }
+        public List<Vertex> UpTrace(Vertex inputV)
+        {
+            List<Vertex> vs = new List<Vertex> { inputV };
+            return this.UpTrace(vs);
         }
         public Edge FindEdge(Vertex v1,Vertex v2)
         {
@@ -255,16 +277,22 @@ namespace PrefabHouseTools
         /// <returns></returns>
         public Edge[] DijkstraTree(Vertex root)
         {
+            ///Initialize the graph and root.
             Edge[] dt = new Edge[VertexCount - 1];
             this.ResetGraph();
             root.Dist2Root = 0;
-            List<Vertex> vList = Vertices.ToList();
+            List<Vertex> vList = Vertices;
+            ///Set current vertex to root.
+            var curV = root;
             for (int i = 0; i < VertexCount -1 ; i++)
             {
-                var curV = vList
+                ///Find the vertex with shortest distance
+                ///in the ramaining vertices.
+                curV = vList
                         .Where(v => v.Dist2Root >= 0)
                         .OrderBy(v => v.Dist2Root)
                         .First() as Vertex;
+                ///Update shortest distance of the adjacent vertex.
                 List<Edge> es = adjacentEdges[curV];
                 foreach (Edge e in es)
                 {
@@ -277,9 +305,66 @@ namespace PrefabHouseTools
                         adjV.Parent = curV;
                     }
                 }
+                ///Remove the current vertex from remaining list.
                 vList.Remove(curV);
             }
             return dt;
+        }
+
+        /// <summary>
+        /// Using Dijkstra algorithm to generate the shortest route
+        /// in the graph from start to end.The result is given in 
+        /// vertex list form. Return true if a route is found.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="route"></param>
+        /// <returns></returns>
+        public bool DijkstraRoute(Vertex start,Vertex end,
+            out List<Vertex>route)
+        {
+            ///Initialize the parameters and graph.
+            bool result = false;
+            route = new List<Vertex>();
+            this.ResetGraph();
+            ///Set start vertex as root.
+            start.Dist2Root = 0;
+            List<Vertex> vList = Vertices;
+            var curV =start;
+            for (int i = 0; i < VertexCount - 1; i++)
+            {
+                ///Find the vertex with shortest distance
+                ///in the ramaining vertices.
+                curV = vList
+                        .Where(v => v.Dist2Root >= 0)
+                        .OrderBy(v => v.Dist2Root)
+                        .First() as Vertex;
+                ///If the end vertex have shortest distance
+                ///stop searching and generate result.
+                if (curV == end)
+                {
+                    result = true;
+                    route = this.UpTrace(curV);
+                    route.Reverse();
+                    break;
+                }
+                ///Update shortest distance of the adjacent vertex.
+                List<Edge> es = adjacentEdges[curV];
+                foreach (Edge e in es)
+                {
+                    Vertex adjV = e.Begin == curV ?
+                                  e.End : e.Begin;
+                    if ((adjV.Dist2Root < 0) ||
+                        (adjV.Dist2Root > curV.Dist2Root + e.Weight))
+                    {
+                        adjV.Dist2Root = curV.Dist2Root + e.Weight;
+                        adjV.Parent = curV;
+                    }
+                }
+                ///Remove the current vertex from remaining list.
+                vList.Remove(curV);
+            }
+            return result;
         }
     }
 }
