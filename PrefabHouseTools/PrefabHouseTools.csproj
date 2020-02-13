@@ -59,7 +59,7 @@
     <Compile Include="CmdAutoRouteE.cs" />
     <Compile Include="CmdAutoRouteGraph.cs" />
     <Compile Include="CmdSetCircuit.cs" />
-    <Compile Include="Command.cs" />
+    <Compile Include="TestCmd.cs" />
     <Compile Include="CmdAutoRouteEobject.cs" />
     <Compile Include="CmdAutoRouteEform.cs">
       <SubType>Form</SubType>

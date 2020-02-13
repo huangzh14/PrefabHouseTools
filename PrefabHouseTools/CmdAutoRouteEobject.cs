@@ -379,6 +379,9 @@ namespace PrefabHouseTools
     /// unexpect result may occur.
     public class RoomInfoElec : RoomInfo
     {
+        private double fixtureIntervalMargin = 
+            UnitUtils.ConvertToInternalUnits
+            (500,DisplayUnitType.DUT_MILLIMETERS);
         /// The electrical fixtures in the room as a dictionary.
         public Dictionary<ElecSystemInfo,List<FixtureE>> 
             ElecFixturesDic{ get; private set; }
@@ -529,8 +532,8 @@ namespace PrefabHouseTools
             List<double> ys = new List<double>();
             foreach (List<FixtureE> fList in ElecFixturesDic.Values)
             {
-                xs.Add(fList.Average(fe => fe.Origin.X));
-                ys.Add(fList.Average(fe => fe.Origin.Y));
+                xs.Add(fList.Average(fe => fe.OriginNode.X));
+                ys.Add(fList.Average(fe => fe.OriginNode.Y));
             }
             double aX = xs.Average(x => x);
             double aY = ys.Average(y => y);
@@ -624,24 +627,71 @@ namespace PrefabHouseTools
                     XYZ ptThere = crossPt - 0.5 * width * normVec;
                     FixtureE crossPtHere = new FixtureE(ptHere, height,this.Room);
                     FixtureE crossPtThere = new FixtureE(ptThere, height,otherRoom.Room);
-                    path = new PathExWall(crossPtHere, crossPtThere,width);
+                    path = new PathExWall(crossPtHere, crossPtThere);
                     roughL = width + (ptHere - FixCentroid).GetLength()
                         + (ptThere - otherRoom.FixCentroid).GetLength();
                     return true;
                 }
             }
-            path = new PathExWall();
+            path = null;
             roughL = 0;
             return false;
         }
         #endregion
 
-        private PathE FindPath(FixtureE begin,FixtureE end)
+        public PathE FindPath(FixtureE begin,FixtureE end)
         {
-            PathE path = new PathE(begin,end,new List<XYZ>(),0);
+            ///This two bool are true 
+            ///when accessnode is above the ceiling.
+            bool beginIsAbove = 
+                begin.AccessNode.Z > FinishCeilingLevel;
+            bool endIsAbove = 
+                end.AccessNode.Z > FinishCeilingLevel;
+            ///Find the planer route first.
+            List<XYZ> pathNodes = FindPlanerRoute
+                    (begin.AccessNode, end.AccessNode,
+                    StructCeilingLevel);
+            PathE path;
+            ///Case1-Two fixture have same xy position.
+            if (pathNodes == null)
+            {
+                pathNodes = new List<XYZ> 
+                { begin.AccessNode, end.AccessNode };
+            }
+            ///Case2-Both fixture is above the ceiling.
+            else if (beginIsAbove && endIsAbove)
+            {
+                ///Do nothing here.
+            }
+            ///Case3-Begin is above the ceiling.End is not.
+            else if (beginIsAbove)
+            {
+                pathNodes.Add(end.AccessNode);
+            }
+            ///Case4-End is above the ceiling.Begin is not
+            else if (endIsAbove)
+            {
+                pathNodes.Insert(0, begin.AccessNode);
+            }
+            ///Case5-Both are below the ceiling.
+            else
+            {
+                ///Case5.1-Fixtures are close enough.
+                ///The path do not go up to the ceiling.
+                if ((begin.AccessNode - end.AccessNode)
+                    .GetLength() < fixtureIntervalMargin)
+                {
+                    pathNodes = pathNodes
+                        .Select(n => new XYZ(n.X, n.Y, begin.AccessNode.Z))
+                        .ToList();
+                }
+                pathNodes.Insert(0, begin.AccessNode);
+                pathNodes.Add(end.AccessNode);
+            }
+            path = new PathE(begin, end, pathNodes);
             return path;
         }
-        public Graph CreateBasicGraph()
+        private Graph CreateBasicGraph()
         {
             ///Create the basic vertices.
             ///(The endpoint of all the boundaries)
@@ -670,16 +720,21 @@ namespace PrefabHouseTools
         }
         /// <summary>
         /// Find the planer route of two points at given height.
+        /// The result list include the start and end.
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="h"></param>
         /// <returns></returns>
-        public List<XYZ> FindPlanerRoute(XYZ start, XYZ end, double h)
+        private List<XYZ> FindPlanerRoute(XYZ start, XYZ end, double h)
         {
             List<XYZ> route = new List<XYZ>();
             route.Add(new XYZ(start.X, start.Y, h));
             route.Add(new XYZ(end.X, end.Y, h));
+            ///In case the two fixture is vertical overlap.
+            if (route[0].IsAlmostEqualTo(route[1]))
+                return null;
+            ///Create the straight line for further detection.
             Curve sLine = Line.CreateBound(start, end);
 
             ///The simple situation when stright line is ok.
@@ -729,11 +784,14 @@ namespace PrefabHouseTools
                     .SelectMany(e => e.Value)
                     .Distinct().ToList(); }  }
         public FixtureE BaseEquipment { get; }
+        public List<Curve> Wires { get; private set; }
         public ElecSystemInfo(ElectricalSystem system)
         {
             Name = system.Name;
             ElecFixturesDic = 
                 new Dictionary<RoomInfoElec, List<FixtureE>>();
+            ///Try to get the base panel.
+            ///If can't find,prompt the user.
             try
             {
                 BaseEquipment = new FixtureE(system.BaseEquipment);
@@ -743,6 +801,7 @@ namespace PrefabHouseTools
                 throw new Exception("The panel of "
                     + system.Name + " is not set.");
             }
+            Wires = new List<Curve>();
         }
 
         public void AddFixture(FixtureE fixture,RoomInfoElec roomInfoElec)
@@ -750,6 +809,10 @@ namespace PrefabHouseTools
             if (!ElecFixturesDic.ContainsKey(roomInfoElec))
                 ElecFixturesDic.Add(roomInfoElec, new List<FixtureE>());
             ElecFixturesDic[roomInfoElec].Add(fixture);
+        }
+        public void AddWires(List<Curve> wires2add)
+        {
+            Wires.AddRange(wires2add);
         }
     }
 
@@ -759,7 +822,8 @@ namespace PrefabHouseTools
         public Room Room { get; }
         public ElementId ElementId { get; }
         public MEPModel MepModel { get; }
-        public XYZ Origin { get; }
+        public XYZ OriginNode { get; }
+        public XYZ AccessNode { get; private set; }
         public Connector EConnector { get; }
         public FixtureE(FamilyInstance fa)
         {
@@ -778,7 +842,8 @@ namespace PrefabHouseTools
                     ElectricalSystemType est =
                         c.ElectricalSystemType;
                     EConnector = c;
-                    Origin = c.Origin;
+                    OriginNode = c.Origin;
+                    AccessNode = OriginNode;
                     break;
                 }
                 catch
@@ -789,12 +854,35 @@ namespace PrefabHouseTools
         }
         public FixtureE(XYZ location,double height,Room room)
         {
-            this.Origin = new XYZ(location.X, location.Y, height);
+            this.OriginNode = new XYZ(location.X, location.Y, height);
+            this.AccessNode = OriginNode;
             this.Room = room;
         }
         public FixtureE()
         {
 
+        }
+        public void SetAccessNode(RoomInfoElec roomInfoElec)
+        {
+            if (OriginNode.Z >= roomInfoElec.FinishCeilingLevel)
+                AccessNode = new XYZ(OriginNode.X, OriginNode.Y,
+                               roomInfoElec.StructCeilingLevel);
+            else
+            {
+                XYZ originOnGround = new XYZ
+                    (OriginNode.X, OriginNode.Y, 
+                    roomInfoElec.FinishFloorLevel);
+                Curve closeC = roomInfoElec
+                    .BoundaryList
+                    .SelectMany(bc => bc)
+                    .Select(bc => bc.Curve)
+                    .OrderBy(c => c.Project(originOnGround).Distance)
+                    .First();
+                XYZ projectPt = closeC
+                    .Project(originOnGround).XYZPoint;
+                AccessNode = new XYZ
+                    (projectPt.X, projectPt.Y, OriginNode.Z);
+            }
         }
         
     }
@@ -805,14 +893,26 @@ namespace PrefabHouseTools
         public FixtureE Begin { get; private set; }
         public FixtureE End { get; private set; }
         public List<XYZ> Vertices { get; private set; }
+        public List<Curve> Lines { get; private set; }
         public double Cost { get; private set; }
         public PathE(FixtureE begin,FixtureE end,
-            List<XYZ> vertices,double cost)
+            List<XYZ> vertices)
         {
             this.Begin = begin;
             this.End = end;
             this.Vertices = vertices;
-            this.Cost = cost;
+            this.Lines = new List<Curve>();
+            for (int i = 0; i < vertices.Count - 1; i++)
+            {
+                ///Too short curve is not allowed to create.
+                if ((vertices[i] - vertices[i + 1]).GetLength() < 0.01)
+                    continue;
+                Lines.Add(Line.CreateBound
+                    (vertices[i], vertices[i + 1]));
+            }
+            this.Cost = Lines.Count == 0 ? 
+                0 : Lines.Select(l => l.Length)
+                .Aggregate((a, b) => a + b);
         }
         public virtual void Reverse()
         {
@@ -827,20 +927,21 @@ namespace PrefabHouseTools
     {
         private double PathInterval = UnitUtils.ConvertToInternalUnits
             (30, DisplayUnitType.DUT_MILLIMETERS);
-        public PathExWall(FixtureE begin, FixtureE end,double cost)
-            : base(begin,end,new List<XYZ>(),cost)
+        public PathExWall(FixtureE begin, FixtureE end)
+            : base(begin,end,new List<XYZ> 
+            { begin.AccessNode, end.AccessNode })
         {
             CurrentBegin = begin;
             CurrentEnd = end;
             this.counter = 0;
-            XYZ norm = (end.Origin - begin.Origin).Normalize();
+            XYZ norm = (end.OriginNode - begin.OriginNode).Normalize();
             vec = new XYZ(norm.Y, norm.X, 0);
         }
         /// To deal with the void circumstance.
         public PathExWall() :
             base(new FixtureE(),
                 new FixtureE(),
-                new List<XYZ>(),0)
+                new List<XYZ>())
         {
         }
         /// <summary>
@@ -855,13 +956,13 @@ namespace PrefabHouseTools
         public void MoveNext()
         {
             CurrentBegin = new FixtureE
-                (CurrentBegin.Origin + 
+                (CurrentBegin.OriginNode + 
                 PathInterval * ((-1) ^ counter) * counter * vec
-                , CurrentBegin.Origin.Z,CurrentBegin.Room);
+                , CurrentBegin.OriginNode.Z,CurrentBegin.Room);
             CurrentEnd = new FixtureE
-                (CurrentEnd.Origin + 
+                (CurrentEnd.OriginNode + 
                 PathInterval * ((-1) ^ counter) * counter * vec
-                , CurrentEnd.Origin.Z,CurrentEnd.Room);
+                , CurrentEnd.OriginNode.Z,CurrentEnd.Room);
         }
         public void Reset()
         {
@@ -877,7 +978,7 @@ namespace PrefabHouseTools
         public PathExWall CloneCurrent()
         {
             return new PathExWall
-                (this.CurrentBegin, this.CurrentEnd,this.Cost);
+                (this.CurrentBegin, this.CurrentEnd);
         }
     }
 

@@ -190,25 +190,6 @@ namespace PrefabHouseTools
                 roomInfoList.Add(new RoomInfoElec
                     (r,structCeilingH,structFloorH));
             }
-            #region (delete later)Solving adjacency
-            int num = roomInfoList.Count;
-            for (int i = 0; i < num; i++)
-            {
-                roomInfoList[i].AdjacentRooms.Clear();
-            }
-            for (int i = 0; i < num; i++)
-            {
-                for (int j = i + 1; j < num; j++)
-                {
-                    if (roomInfoList[i].IsAdjacentTo(roomInfoList[j]))
-                    {
-                        roomInfoList[i].AdjacentRooms.Add(roomInfoList[j]);
-                        roomInfoList[j].AdjacentRooms.Add(roomInfoList[i]);
-                    }
-                }
-            }
-            #endregion 
-
             ///Get all the electrical system and fixture.
             try
             {
@@ -226,16 +207,17 @@ namespace PrefabHouseTools
                     {
                         FamilyInstance fixture = f as FamilyInstance;
                         if (fixture.Room == null) continue;
-                        var roomInfo = roomInfoList
+                        var rInfoE = roomInfoList
                             .Where(r => r.Room.Id == fixture.Room.Id)
                             .First();
 
-                        if (roomInfo == null)
+                        if (rInfoE == null)
                             continue;
 
                         FixtureE fE = new FixtureE(fixture);
-                        roomInfo.AddFixture(fE, systemInfo);
-                        systemInfo.AddFixture(fE, roomInfo);
+                        fE.SetAccessNode(rInfoE);
+                        rInfoE.AddFixture(fE, systemInfo);
+                        systemInfo.AddFixture(fE, rInfoE);
                     }
                     systemInfoList.Add(systemInfo);
                 }
@@ -244,6 +226,17 @@ namespace PrefabHouseTools
             {
                 TaskDialog.Show("Error", e.Message);
                 return Result.Failed;
+            }
+            ///Add base equipment.
+            foreach (ElecSystemInfo sInfo in systemInfoList)
+            {
+                Room room = sInfo.BaseEquipment.Room;
+                RoomInfoElec rInfo = roomInfoList
+                    .Where(r => r.Room.Name == room.Name)
+                    .FirstOrDefault()
+                    as RoomInfoElec;
+                sInfo.AddFixture(sInfo.BaseEquipment, rInfo);
+                rInfo.AddFixture(sInfo.BaseEquipment, sInfo);
             }
             #endregion
 
@@ -270,7 +263,7 @@ namespace PrefabHouseTools
             RoomInfoElec panelRoomInfo = panelVertex.Object 
                 as RoomInfoElec;
             panelRoomInfo.AssignFixCentroid
-                (systemInfoList[0].BaseEquipment.Origin);
+                (systemInfoList[0].BaseEquipment.OriginNode);
             ///Initialize the edges.
             for (int i = 0; i < vNum; i++)
             {
@@ -293,13 +286,13 @@ namespace PrefabHouseTools
             ///trunk path.
             Edge[] mstRoomD = roomGraph.DijkstraTree(panelVertex);
             #region _Demo Only
-            string result = "";
-            foreach (Vertex v in roomGraph.Vertices)
-            {
-                result += v.Object + " to " 
-                    + v.Parent.Object + "\n";
-            }
-            TaskDialog.Show("Result", result);
+            //string result = "";
+            //foreach (Vertex v in roomGraph.Vertices)
+            //{
+            //    result += v.Object + " to " 
+            //        + v.Parent.Object + "\n";
+            //}
+            //TaskDialog.Show("Result", result);
             #endregion
 
             #endregion
@@ -370,50 +363,95 @@ namespace PrefabHouseTools
             }
             #endregion
 
+
             #region Step5-Calculate the final route.
             ///Add all the route inside rooms to the graph.
+            int sysIndex = 0;
             foreach (Graph sysGraph in sysGraphList)
             {
                 foreach (RoomInfoElec r in roomInfoList)
                 {
-                    List<FixtureE> fs = sysGraph.Vertices
+                    List<Vertex> fixs = sysGraph.Vertices
                         .Where(v => (v.Object as FixtureE)
                                     .Room.Name == r.Room.Name)
-                        .Select(v => (v.Object as FixtureE))
                         .ToList();
+                    int fixsNum = fixs.Count();
+                    for (int i = 0; i < fixsNum; i++)
+                    {
+                        for (int j = i + 1; j < fixsNum; j++)
+                        {
+                            PathE p = r.FindPath
+                                (fixs[i].Object as FixtureE, 
+                                fixs[j].Object as FixtureE);
+                            sysGraph.AddEdge
+                                (new Edge(fixs[i], fixs[j], 
+                                          p, p.Cost));
+                        }
+                    }
                 }
+                Edge[] pathes = sysGraph.KruskalMinTree();
+                ElecSystemInfo eSys = systemInfoList[sysIndex];
+                eSys.AddWires(pathes
+                    .Select(e => e.Object as PathE)
+                    .Select(p => p.Lines)
+                    .SelectMany(c => c)
+                    .ToList());
+                sysIndex++;
             }
             #endregion
 
-            // Modify document within a transaction
-            #region demo only
+            #region Step6-Create the line.
             using (Transaction tx = new Transaction(doc))
             {
-                tx.Start("Demo");
-                
-                string adjan = "";
-                foreach(RoomInfoElec r in roomInfoList)
+                tx.Start("Create Wires");
+                ///Prepare new linestyle color.
+                Categories cats = doc.Settings.Categories;
+                Category lineCat = cats
+                    .get_Item(BuiltInCategory.OST_Lines);
+                List<Color> colors = new List<Color>
                 {
-                    ///Draw model line for demo.
-                    CurveArray curves = r.GetBoundaryCurves();
-                    XYZ originpt = curves.get_Item(0)
-                                   .GetEndPoint(0);
-                    SketchPlane sp = SketchPlane.Create
-                        (doc, Plane.CreateByNormalAndOrigin
-                        (new XYZ(0, 0, 1), originpt));
-                    doc.Create.NewModelCurveArray(curves, sp);
-                    ///Display adjancant info for demo.
-                    adjan += "\n" + r + " is adjacent to:\n";
-                    foreach(RoomInfoElec adjR in r.AdjacentRooms)
+                    new Color(255,0,0),
+                    new Color(0,255,0),
+                    new Color(0,0,255),
+                    new Color(150,150,0),
+                    new Color(0,150,150),
+                    new Color(150,0,150)
+                };
+                short counter = 1;
+                foreach (ElecSystemInfo eSys in systemInfoList)
+                {
+                    ///Create new linestyle.
+                    Category newLineStyleCat = cats.NewSubcategory
+                        (lineCat, "ElectricalLine-" + counter);
+                    doc.Regenerate();
+                    newLineStyleCat.SetLineWeight
+                        (7, GraphicsStyleType.Projection);
+                    newLineStyleCat.LineColor =colors[counter - 1];
+                    Element newLineStyle = 
+                        doc.GetElement(newLineStyleCat.Id);
+
+                    ///Create the model line and set linestyle.
+                    XYZ x0 = new XYZ();
+                    List<ElementId> modelC = new List<ElementId>();
+                    if (eSys.Wires.Count == 0) continue;
+                    foreach (Curve c in eSys.Wires)
                     {
-                        adjan += adjR + "\n";
+                        XYZ x1 = c.GetEndPoint(0);
+                        XYZ x2 = c.GetEndPoint(1);
+                        SketchPlane sp = SketchPlane.Create
+                            (doc,Plane.CreateByThreePoints(x1, x2, x0));
+                        ModelCurve mc = doc.Create.NewModelCurve(c, sp);
+                        mc.LineStyle = newLineStyle;
+                        modelC.Add(mc.Id);
                     }
+                    ///Group all the curves.
+                    doc.Create.NewGroup(modelC);
+                    counter++;
                 }
-                TaskDialog.Show("demo", adjan);
+                
                 tx.Commit();
             }
             #endregion
-
             return Result.Succeeded;
         }
     }

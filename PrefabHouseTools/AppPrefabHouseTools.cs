@@ -30,6 +30,12 @@ namespace PrefabHouseTools
                 thisPath, "PrefabHouseTools.CmdAutoRouteE");
             PushButton AutoRouteB = ribPanel
                 .AddItem(AutoRouteD) as PushButton;
+
+            PushButtonData TestCmdD = new PushButtonData
+                ("TestCmd", "Test", thisPath,
+                "PrefabHouseTools.TestCmd");
+            PushButton TestCmdB = ribPanel
+                .AddItem(TestCmdD) as PushButton;
             return Result.Succeeded;
         }
 

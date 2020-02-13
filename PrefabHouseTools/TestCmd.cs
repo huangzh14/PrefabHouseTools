@@ -12,7 +12,7 @@ using Autodesk.Revit.UI.Selection;
 namespace PrefabHouseTools
 {
     [Transaction(TransactionMode.Manual)]
-    public class Command : IExternalCommand
+    public class TestCmd : IExternalCommand
     {
         public Result Execute(
           ExternalCommandData commandData,
@@ -48,6 +48,16 @@ namespace PrefabHouseTools
             using (Transaction tx = new Transaction(doc))
             {
                 tx.Start("Transaction Name");
+                Categories cats = doc.Settings.Categories;
+                Category lineCat = cats
+                    .get_Item(BuiltInCategory.OST_Lines);
+                Category newLineStyleCat = cats.NewSubcategory
+                    (lineCat, "TestLinestyle");
+                doc.Regenerate();
+                newLineStyleCat.SetLineWeight
+                    (7, GraphicsStyleType.Projection);
+                newLineStyleCat.LineColor = 
+                    new Color(255, 0, 0);
                 tx.Commit();
             }
 

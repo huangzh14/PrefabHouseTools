@@ -281,7 +281,7 @@ namespace PrefabHouseTools
             Edge[] dt = new Edge[VertexCount - 1];
             this.ResetGraph();
             root.Dist2Root = 0;
-            List<Vertex> vList = Vertices;
+            List<Vertex> vList = Vertices.Select(v => v).ToList();
             ///Set current vertex to root.
             var curV = root;
             for (int i = 0; i < VertexCount -1 ; i++)
