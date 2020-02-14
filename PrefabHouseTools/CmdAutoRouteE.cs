@@ -438,7 +438,7 @@ namespace PrefabHouseTools
                         }
                         catch
                         {
-                            ///Do something to deal with name conflict,if needed.
+                            counter++;
                         }
                     } while (newLineStyleCat == null);
                     
