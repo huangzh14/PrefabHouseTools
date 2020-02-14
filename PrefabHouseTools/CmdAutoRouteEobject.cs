@@ -383,7 +383,7 @@ namespace PrefabHouseTools
             UnitUtils.ConvertToInternalUnits
             (500,DisplayUnitType.DUT_MILLIMETERS);
         /// The electrical fixtures in the room as a dictionary.
-        public Dictionary<ElecSystemInfo,List<FixtureE>> 
+        public Dictionary<SystemInfoElec,List<FixtureE>> 
             ElecFixturesDic{ get; private set; }
         ///The electrical fixtures in the room as a list.
         public List<FixtureE> ElecFixtures 
@@ -409,13 +409,13 @@ namespace PrefabHouseTools
                        ,structuralFloorHeight)
         {
             ElecFixturesDic = 
-                new Dictionary<ElecSystemInfo, List<FixtureE>>();
+                new Dictionary<SystemInfoElec, List<FixtureE>>();
             FixCentroid = new XYZ();
             BasicGraph = CreateBasicGraph();
         }
         private Graph BasicGraph { get; }
 
-        public void AddFixture(FixtureE fixture,ElecSystemInfo systemInfo)
+        public void AddFixture(FixtureE fixture,SystemInfoElec systemInfo)
         {
             if (!ElecFixturesDic.ContainsKey(systemInfo))
                 ElecFixturesDic.Add(systemInfo, new List<FixtureE>());
@@ -774,7 +774,7 @@ namespace PrefabHouseTools
         }
     }
 
-    public class ElecSystemInfo
+    public class SystemInfoElec
     {
         public string Name { get; }
         public Dictionary<RoomInfoElec,List<FixtureE>> 
@@ -785,7 +785,7 @@ namespace PrefabHouseTools
                     .Distinct().ToList(); }  }
         public FixtureE BaseEquipment { get; }
         public List<Curve> Wires { get; private set; }
-        public ElecSystemInfo(ElectricalSystem system)
+        public SystemInfoElec(ElectricalSystem system)
         {
             Name = system.Name;
             ElecFixturesDic = 
