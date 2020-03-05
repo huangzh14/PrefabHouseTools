@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrefabHouseTools", "PrefabHouseTools\PrefabHouseTools.csproj", "{BFCA09C2-4D7C-4C40-963B-C208E2920C05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransferData_XJ", "TransferData_XJ\TransferData_XJ.csproj", "{00D083EE-3030-41A6-8FE3-B064DE954FA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{BFCA09C2-4D7C-4C40-963B-C208E2920C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFCA09C2-4D7C-4C40-963B-C208E2920C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFCA09C2-4D7C-4C40-963B-C208E2920C05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00D083EE-3030-41A6-8FE3-B064DE954FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00D083EE-3030-41A6-8FE3-B064DE954FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00D083EE-3030-41A6-8FE3-B064DE954FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00D083EE-3030-41A6-8FE3-B064DE954FA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
