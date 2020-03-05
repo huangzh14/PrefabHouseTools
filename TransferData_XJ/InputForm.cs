@@ -57,7 +57,11 @@ namespace TransferData_XJ
         private void StartModel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            this.Close();
+        }
+
+        private void WallTypeBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
