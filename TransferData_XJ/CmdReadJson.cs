@@ -9,6 +9,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System.IO;
 using System.Windows.Forms;
+using System.Linq;
 #endregion
 
 namespace TransferData_XJ
@@ -23,6 +24,7 @@ namespace TransferData_XJ
         private HouseObjects CurrentHouse 
         { 
             get { return currentHouse; } 
+            ///Convert the units on input.
             set 
             { 
                 currentHouse = value;
@@ -41,15 +43,15 @@ namespace TransferData_XJ
         /// </summary>
         /// <param name="mms"></param>
         /// <returns></returns>
-        public double MmToInch(double mms)
+        public float MmToInch(float mms)
         {
-            return UnitUtils.ConvertToInternalUnits
+            return (float)UnitUtils.ConvertToInternalUnits
                 (mms, DisplayUnitType.DUT_MILLIMETERS);
         }
-        public double? MmToInch(double? mms)
+        public float? MmToInch(float? mms)
         {
             if (mms == null) return null;
-            return MmToInch((double)mms);
+            return MmToInch((float)mms);
         }
         /// <summary>
         /// The method to convert all mm to inch in the house object.
@@ -118,6 +120,7 @@ namespace TransferData_XJ
                     label.Position.X = MmToInch(label.Position.X);
                     label.Position.Y = MmToInch(label.Position.Y);
                 }
+                floor.Height = MmToInch(floor.Height);
             }
         }
         #endregion
@@ -133,78 +136,90 @@ namespace TransferData_XJ
                 Application app = uiapp.Application;
             Document doc = uidoc.Document;
 
+            ///The base info used for wall creation.
             WallType baseWt = null;
             Level baseLevel = null;
             ///Using input form to read json file into current house object.
-            using (InputForm InputJsonForm = new InputForm())
+            try
             {
-                ///List wall type.
-                FilteredElementCollector baseWtCol = 
-                    new FilteredElementCollector(doc)
-                    .WhereElementIsElementType()
-                    .OfCategory(BuiltInCategory.OST_Walls);
-                foreach (Element e in baseWtCol)
+                using (InputForm InputJsonForm = new InputForm())
                 {
-                    WallType wt = e as WallType;
-                    InputJsonForm.WallTypeBox.Items.Add(wt.Name);
-                }
-                ///List levels.
-                FilteredElementCollector levelCol =
-                    new FilteredElementCollector(doc)
-                    .WhereElementIsNotElementType()
-                    .OfCategory(BuiltInCategory.OST_Levels);
-                foreach (Element e in levelCol)
-                {
-                    Level l = e as Level;
-                    InputJsonForm.LevelBox.Items.Add(l.Name);
-                }
-                do
-                {
+                    ///List wall type.
+                    List<WallType> baseWts =
+                        new FilteredElementCollector(doc)
+                        .WhereElementIsElementType()
+                        .OfCategory(BuiltInCategory.OST_Walls)
+                        .Select(e => e as WallType).ToList();
+                    foreach (WallType wt in baseWts)
+                    {
+                        InputJsonForm.WallTypeBox.Items.Add(wt.Name);
+                    }
+                    ///List levels.
+                    List<Level> levels =
+                        new FilteredElementCollector(doc)
+                        .WhereElementIsNotElementType()
+                        .OfCategory(BuiltInCategory.OST_Levels)
+                        .Select(e => e as Level).ToList();
+                    foreach (Level l in levels)
+                    {
+                        InputJsonForm.LevelBox.Items.Add(l.Name);
+                    }
+
                     if (InputJsonForm.ShowDialog() == DialogResult.OK)
                     {
+                     ///Get the house info data.
                         CurrentHouse = InputJsonForm.CurrentHouse;
-                        if ((InputJsonForm.WallTypeBox.SelectedItem != null)&&
-                                (InputJsonForm.LevelBox.SelectedItem != null))
-                        {
-                            foreach (Element e in baseWtCol)
-                            {
-                                WallType wt = e as WallType;
-                                if (wt.Name == InputJsonForm
-                                    .WallTypeBox.SelectedItem as string)
-                                {
-                                    baseWt = wt;
-                                    break;
-                                }
-                            }
-                            foreach (Element e in levelCol)
-                            {
-                                Level l = e as Level;
-                                if (l.Name == InputJsonForm
-                                    .LevelBox.SelectedItem as string)
-                                {
-                                    baseLevel = l;
-                                    break;
-                                }
-                            }
-                            InputJsonForm.Close();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Please choose a wall type and a level");
-                        }
+                        ///Set the base walltype and level according 
+                        ///to form selection.
+                        baseWt = baseWts
+                            .Where(wt => wt.Name ==
+                            InputJsonForm.WallTypeBox.SelectedItem as string)
+                            .First();
+                        baseLevel = levels
+                            .Where(l => l.Name ==
+                            InputJsonForm.LevelBox.SelectedItem as string)
+                            .First();
+                        ///Close the form.
+                        InputJsonForm.Close();
                     }
-                } while (InputJsonForm.IsAccessible);
-                
+
+                }
             }
-  
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", "Something went wrong," +
+                    "details as follow:\n" + e.Message);
+            }
+            
+            ///Create walls.
             using (Transaction tx = new Transaction(doc))
             {
-                tx.Start("Transaction Name");
+                tx.Start("Create walls.");
 
                 ///Create the default wall type.
                 AutoWallTypes = new List<WallType>();
-                baseWt = baseWt.Duplicate("AutoWall-240") as WallType;
+                WallType wt = new FilteredElementCollector(doc)
+                    .WhereElementIsElementType()
+                    .OfCategory(BuiltInCategory.OST_Walls)
+                    .Select(e => e as WallType)
+                    .Where(w => w.Name == "AutoWall-240")
+                    .ToList().FirstOrDefault();
+                if (wt != null)
+                {
+                    baseWt = wt;
+                }
+                else
+                {
+                    baseWt = baseWt.Duplicate("AutoWall-240") as WallType;
+                }
+                ///Create the default material.
                 ElementId autoMaterial = Material.Create(doc, "AutoWallMaterial");
+                Material autoM = doc.GetElement(autoMaterial) as Material;
+                Color colorGrey = new Color(80, 80, 80);
+                autoM.SurfaceForegroundPatternColor = colorGrey;
+                autoM.SurfaceBackgroundPatternColor = colorGrey;
+                autoM.Color = colorGrey;
+
                 baseWt.SetCompoundStructure(
                     CompoundStructure.CreateSingleLayerCompoundStructure
                     (MaterialFunctionAssignment.Structure,
@@ -225,11 +240,11 @@ namespace TransferData_XJ
                         XYZ p2 = new XYZ(wall.P2.X, wall.P2.Y, 0);
                         Curve c = Line.CreateBound(p1, p2);
                         ///Find the right wall type.
-                        foreach (WallType wt in AutoWallTypes)
+                        foreach (WallType wallT in AutoWallTypes)
                         {
-                            if (wt.Width == wall.Thickness)
+                            if ((wallT.Width - wall.Thickness)<0.0001)
                             {
-                                currentWt = wt;
+                                currentWt = wallT;
                                 break;
                             }
                         }
@@ -237,7 +252,7 @@ namespace TransferData_XJ
                         if (currentWt == null)
                         {
                             ///Duplicate a new walltype;
-                            double wallWidthMm = UnitUtils.ConvertFromInternalUnits
+                            float wallWidthMm = (float)UnitUtils.ConvertFromInternalUnits
                                 (wall.Thickness, DisplayUnitType.DUT_MILLIMETERS);
                             currentWt = AutoWallTypes[0].Duplicate
                                 ("AutoWall-"+wallWidthMm) as WallType;
@@ -250,29 +265,13 @@ namespace TransferData_XJ
                             ///Add it to collection.
                             AutoWallTypes.Add(currentWt);
                         }
-                        Wall.Create(doc,new List<Curve> { c }, currentWt.Id, baseLevel.Id, false);
-
+                        Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
+                            floor.Height, 0, false, true);
                     }
                 }
-
                 tx.Commit();
             }
-
             return Result.Succeeded;
-        }
-        private void CreateWall(Document doc,A_Wall wallData)
-        {
-            List<Curve> wallCurve = new List<Curve>();
-            XYZ p1 = new XYZ(wallData.P1.X, wallData.P2.Y, 0);
-            XYZ p2 = new XYZ();
-            foreach (WallType wType in AutoWallTypes)
-            {
-                if (wallData.Thickness == wType.Width)
-                {
-                }
-                
-            }
-            return ;
         }
     }
 }

@@ -10,8 +10,8 @@ namespace TransferData_XJ
 {
     public class A_Point
     {
-        public double X { get; set; }
-        public double Y { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
     }
     public enum A_WallKind
     {
@@ -24,9 +24,9 @@ namespace TransferData_XJ
     {
         public A_Point P1 { get; set; }
         public A_Point P2 { get; set; }
-        public double Thickness { get; set; }
+        public float Thickness { get; set; }
         public A_WallKind Kind { get; set; }
-        public double? Height { get; set; }
+        public float? Height { get; set; }
         public string Uid { get; set; }
     }
 
@@ -47,8 +47,8 @@ namespace TransferData_XJ
     {
         public A_Point P1 { get; set; }
         public A_Point P2 { get; set; }
-        public double Height { get; set; }
-        public double SillHeight { get; set; }
+        public float Height { get; set; }
+        public float SillHeight { get; set; }
         public A_DoorKind Kind { get; set; }
         public A_OpenDirection OpenDirection { get; set; }
         public string Uid { get; set; }
@@ -67,10 +67,10 @@ namespace TransferData_XJ
     {
         public A_Point P1 { get; set; }
         public A_Point P2 { get; set; }
-        public double Height { get; set; }
-        public double SillHeight { get; set; }
+        public float Height { get; set; }
+        public float SillHeight { get; set; }
         public A_WindowKind Kind { get; set; }
-        public double BayDepth { get; set; }
+        public float BayDepth { get; set; }
         public string Uid { get; set; }
         public A_WindowMeta Meta { get; set; }
     }
@@ -82,13 +82,13 @@ namespace TransferData_XJ
     }
     public class A_Cube
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double XSize { get; set; }
-        public double YSize { get; set; }
-        public double Rotation { get; set; }
-        public double? Z { get; set; }
-        public double? ZSize { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float XSize { get; set; }
+        public float YSize { get; set; }
+        public float Rotation { get; set; }
+        public float? Z { get; set; }
+        public float? ZSize { get; set; }
         public A_CubeKind Kind { get; set; }
         public string Uid { get; set; }
     }
@@ -130,7 +130,7 @@ namespace TransferData_XJ
         public IList<A_RoomObjectInfo> Windows { get; set; }
         public IList<A_RoomObjectInfo> Cubes { get; set; }
         public A_RoomKind Kind { get; set; }
-        public double Height { get; set; }
+        public float Height { get; set; }
         public string Uid { get; set; }
         public A_RoomMeta Meta { get; set; }
     }
@@ -151,12 +151,12 @@ namespace TransferData_XJ
         public IList<A_Cube> Cubes { get; set; }
         public IList<A_Room> Rooms { get; set; }
         public IList<A_Label> Labels { get; set; }
-        public double Height { get; set; }
+        public float Height { get; set; }
     }
     public class HouseObjects
     {
         public int Version { get; set; }
-        public double Rotation { get; set; }
+        public float Rotation { get; set; }
         public IList<A_Floor> Floors { get; set; }
         public HouseObjects()
         {
