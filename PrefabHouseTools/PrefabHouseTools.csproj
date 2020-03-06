@@ -70,6 +70,7 @@
     <Compile Include="CmdReadJsonForm.Designer.cs">
       <DependentUpon>CmdReadJsonForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper.cs" />
     <Compile Include="TestCmd.cs" />
     <Compile Include="CmdAutoRouteEobject.cs" />
     <Compile Include="CmdAutoRouteEform.cs">

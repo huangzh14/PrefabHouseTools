@@ -14,8 +14,9 @@ namespace PrefabHouseTools
     {
         public Result OnStartup(UIControlledApplication a)
         {
+            a.CreateRibbonTab("PrefabHouseTools");
             RibbonPanel ribPanel =
-                a.CreateRibbonPanel("PrefabHouseTools");
+                a.CreateRibbonPanel("PrefabHouseTools","PrefabHouseTools");
             string thisPath = Assembly
                 .GetExecutingAssembly().Location;
 
