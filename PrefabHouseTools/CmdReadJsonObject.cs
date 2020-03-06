@@ -33,6 +33,33 @@ namespace PrefabHouseTools
     }
     #endregion
 
+    public class A_OpeningMeta
+    {
+        public int Entrance { get; set; }
+        public string Wall { get; set; }
+    }
+    public class A_Opening
+    {
+        public A_Point P1 { get; set; }
+        public A_Point P2 { get; set; }
+        public float Height { get; set; }
+        public float SillHeight { get; set; }
+        public string Uid { get; set; }
+        public A_OpeningMeta Meta { get; set; }
+        /// <summary>
+        /// This property is not in json.
+        /// </summary>
+        public float Width
+        {
+            get
+            {
+                return (float)Math.Pow
+                    ((Math.Pow((P1.X - P2.X), 2) + Math.Pow((P1.Y - P2.Y), 2)), 0.5);
+            }
+        }
+        public FamilyInstance Instance { get; set; }
+    }
+
     #region Door objects
     public enum A_DoorKind
     {
@@ -44,32 +71,15 @@ namespace PrefabHouseTools
     }
     public class A_DoorMeta
     {
-        public short Entrance { get; set; }
+        public int Entrance { get; set; }
         public string Wall { get; set; }
     }
-    public class A_Door
+    public class A_Door : A_Opening
     {
-        public A_Point P1 { get; set; }
-        public A_Point P2 { get; set; }
-        public float Height { get; set; }
-        public float SillHeight { get; set; }
         public A_DoorKind Kind { get; set; }
         public A_OpenDirection OpenDirection { get; set; }
-        public string Uid { get; set; }
-        public A_DoorMeta Meta { get; set; }
 
-        /// <summary>
-        /// Following is not in json file.
-        /// </summary>
-        public FamilyInstance Door { get; set; }
-        public float Width 
-        { 
-            get
-            {
-                return (float)Math.Pow
-                    ((Math.Pow((P1.X - P2.X),2) + Math.Pow((P1.Y-P2.Y),2)),0.5);
-            } 
-        }
+        
         /// <summary>
         /// Hand and facing orientation correspond to
         /// the property of door family in revit.
@@ -104,16 +114,10 @@ namespace PrefabHouseTools
     {
         public string Wall { get; set; }
     }
-    public class A_Window
+    public class A_Window : A_Opening
     {
-        public A_Point P1 { get; set; }
-        public A_Point P2 { get; set; }
-        public float Height { get; set; }
-        public float SillHeight { get; set; }
         public A_WindowKind Kind { get; set; }
         public float BayDepth { get; set; }
-        public string Uid { get; set; }
-        public A_WindowMeta Meta { get; set; }
     }
     #endregion
 
@@ -198,6 +202,7 @@ namespace PrefabHouseTools
         public IList<A_Window> Windows { get; set; }
         public IList<A_Cube> Cubes { get; set; }
         public IList<A_Room> Rooms { get; set; }
+        public IList<A_Room> Outers { get; set; }
         public IList<A_Label> Labels { get; set; }
         public float Height { get; set; }
     }

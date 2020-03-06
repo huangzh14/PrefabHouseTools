@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
+using System.IO;
 
 namespace PrefabHouseTools
 {
@@ -116,6 +117,52 @@ namespace PrefabHouseTools
             {
                 return null;
             }
+        }
+        public static FamilySymbol FindFamilySymbol
+           (Document doc, BuiltInCategory category, string symbolName,string familyName)
+        {
+            try
+            {
+                return new FilteredElementCollector(doc)
+                    .WhereElementIsElementType()
+                    .OfCategory(category)
+                    .Where(e => e.Name.Equals(symbolName))
+                    .Select(e => e as FamilySymbol)
+                    .First(s => s.Family.Name.Equals(familyName));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public static List<ElementType> FindElementTypes
+            (Document doc, BuiltInCategory category, string targetName)
+        {
+            try
+            {
+                return new FilteredElementCollector(doc)
+                    .WhereElementIsElementType()
+                    .OfCategory(category)
+                    .Where(e => e.Name.Equals(targetName))
+                    .Select(e => e as ElementType)
+                    .ToList();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static bool LoadFamily(Document doc,string familyName,string rfaPath,out Family fa)
+        {
+            fa = Helper.FindElement
+                    (doc, typeof(Family), familyName) as Family;
+            if (fa == null)
+            {
+                if (!doc.LoadFamily(rfaPath, out fa))
+                    return false;
+            }
+            return true;
         }
         #endregion
     }

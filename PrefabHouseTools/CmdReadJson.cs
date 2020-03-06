@@ -103,6 +103,24 @@ namespace PrefabHouseTools
                         contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
                     }
                 }
+                foreach (A_Room outer in floor.Outers)
+                {
+                    foreach (A_Contour contour in outer.Meta.Contours)
+                    {
+                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                    }
+                    foreach (A_Contour contour in outer.Meta.CubeContours)
+                    {
+                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+
+                    }
+                }
                 foreach (A_Label label in floor.Labels)
                 {
                     label.Position.X = Helper.Mm2Feet(label.Position.X);
@@ -168,7 +186,7 @@ namespace PrefabHouseTools
             ///In case the user close the form.
             if (CurrentHouse == null) return Result.Failed;
 
-            #region Step2 Create walls.
+            #region Step2 Create walls and floors.
             ///The base info used for wa creation.
             WallType baseWt = new FilteredElementCollector(doc)
                         .WhereElementIsElementType()
@@ -219,9 +237,9 @@ namespace PrefabHouseTools
                 AutoWallTypes = new List<WallType>();
                 AutoWallTypes.Add(baseWt);
 
-                ///Create the walls.
                 foreach (A_Floor floor in CurrentHouse.Floors)
                 {
+                    ///Create the walls.
                     foreach (A_Wall wa in floor.Walls)
                     {
                         WallType currentWt = null;
@@ -257,9 +275,24 @@ namespace PrefabHouseTools
 
                         ///Create the individual wall
                         wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
-                            floor.Height, 0, false, true);
+                            floor.Height, 0, false, true);  
+                    }
+
+                    ///Create the floor.
+                    CurveArray floorCrv = new CurveArray();
+                    foreach (A_Room outer in floor.Outers)
+                    {
+                        foreach (A_Contour con in outer.Meta.Contours)
+                        {
+                            floorCrv.Append(Line.CreateBound
+                                (new XYZ(con.P1.X, con.P1.Y, baseLevel.Elevation),
+                                 new XYZ(con.P2.X, con.P2.Y, baseLevel.Elevation)));
+                        }
+                        doc.Create.NewFloor(floorCrv, false);
                     }
                 }
+
+                
                 tx.Commit();
             }
             #endregion
@@ -267,93 +300,63 @@ namespace PrefabHouseTools
             #region Step3 Create doors
 
             Family a_DoorF = null;
-            FamilySymbol a_DoorSymbol = null;
-            const string autoDoorName = "auto-Door";
-            const string doorW_Para = "宽度";
-            const string doorH_Para = "高度";
+            const string doorFamilyName = "auto-Door";
+            Family a_WindowF = null;
+            const string windowFamilyName = "auto-Window";
 
             ///Get the path.
             Assembly a = Assembly.GetExecutingAssembly();
             string rootFolder = Path.GetDirectoryName(a.Location);
-            string autoDoorPath = rootFolder + "\\"+autoDoorName +".rfa";
+            string autoDoorPath = rootFolder 
+                + "\\" + doorFamilyName + ".rfa";
+            string autoWindowPath = rootFolder 
+                + "\\" + windowFamilyName + ".rfa";
 
             using (Transaction tx = new Transaction(doc))
             {
                 tx.Start("Create Doors");
-                ///Load the family file.First check if already in the file.
-                a_DoorF = Helper.FindElement
-                    (doc, typeof(Family), autoDoorName) as Family;
-                if (a_DoorF == null)
-                {//Check if the file exist.
-                    if (!File.Exists(autoDoorPath))
-                    {
-                        TaskDialog.Show("错误", "无法找到默认门族，请重新安装插件");
-                        return Result.Failed;
-                    }
-                    doc.LoadFamily(autoDoorPath, out a_DoorF);
-                }
-                ///Get the base symbol to work with.
-                a_DoorSymbol = doc.GetElement
-                    (a_DoorF.GetFamilySymbolIds().First()) 
-                    as FamilySymbol;
+                ///Load the family file.
+                if (!Helper.LoadFamily(doc,doorFamilyName,
+                    autoDoorPath,out a_DoorF))
+                    TaskDialog.Show("错误",
+                        "部分默认族丢失，请重新安装插件");
+                if (!Helper.LoadFamily(doc,windowFamilyName,
+                    autoWindowPath,out a_WindowF))
+                    TaskDialog.Show("错误", 
+                        "部分默认族丢失，请重新安装插件");
 
-                ///Create the door.
-                float doorW, doorH;
-                int doorWmm,doorHmm;
-                string doorTypeName;
                 foreach (A_Floor f in CurrentHouse.Floors)
                 {
                     foreach(A_Door d in f.Doors)
                     {
-                        ///Find the host wall.
-                        Wall hostW = f.Walls
-                            .First(w => w.Uid == d.Meta.Wall).Wall;
-                        ///Find the central point.
-                        XYZ centerPt = new XYZ((d.P1.X + d.P2.X) / 2, 
-                                        (d.P1.Y + d.P2.Y) / 2, 
-                                        baseLevel.Elevation+d.SillHeight);
-                        ///Calculate the width and height of the wall.
-                        doorW = d.Width;
-                        doorH = d.Height;
-                        doorWmm = (int)Math.Round(Helper.Feet2Mm(doorW));
-                        doorHmm = (int)Math.Round(Helper.Feet2Mm(doorH));
-                        doorTypeName = "autoDoor-" + doorWmm + "-" + doorHmm;
-
-                        ///Check if that type already exist.
-                        ElementType existType = Helper.FindElementType
-                            (doc, BuiltInCategory.OST_Doors, doorTypeName);
-                        if (existType != null)
-                        {
-                            a_DoorSymbol = existType as FamilySymbol;
-                        }
-                        else
-                        {
-                            a_DoorSymbol = (FamilySymbol)
-                                a_DoorSymbol.Duplicate(doorTypeName);
-                            a_DoorSymbol.GetParameters(doorW_Para)[0].Set(doorW);
-                            a_DoorSymbol.GetParameters(doorH_Para)[0].Set(doorH);
-                        }
-
-                        ///Create the door.
-                        a_DoorSymbol.Activate();
-                        d.Door = doc.Create.NewFamilyInstance
-                            (centerPt, a_DoorSymbol, hostW, 
-                            StructuralType.NonStructural);
+                        d.Instance = CreateOpening
+                            (doc, f, d, baseLevel, a_DoorF, 
+                            BuiltInCategory.OST_Doors);
 
                         ///Check the direction.
-                        if (!d.Door.FacingOrientation
+                        if (!d.Instance.FacingOrientation
                             .IsAlmostEqualTo(d.FacingOrientation))
                         {
-                            d.Door.flipFacing();
+                            d.Instance.flipFacing();
                             doc.Regenerate();
                         }
-                        if (!d.Door.HandOrientation
+                        if (!d.Instance.HandOrientation
                             .IsAlmostEqualTo(d.HandOrientation))
                         {
-                            d.Door.flipHand();
+                            d.Instance.flipHand();
                             doc.Regenerate();
                         }
                         doc.Regenerate();
+                    }
+                    foreach(A_Window w in f.Windows)
+                    {
+                        w.Instance = CreateOpening
+                            (doc, f, w, baseLevel, a_WindowF,
+                            BuiltInCategory.OST_Windows);
+                        doc.Regenerate();
+                        w.Instance.flipFacing();
+                        doc.Regenerate();
+                        w.Instance.flipFacing();
                     }
                 }
                 tx.Commit();
@@ -362,6 +365,61 @@ namespace PrefabHouseTools
             #endregion
 
             return Result.Succeeded;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="floor"></param>
+        /// <param name="opening"></param>
+        /// <param name="baseLevel"></param>
+        /// <param name="baseFamily"></param>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public FamilyInstance CreateOpening
+            (Document doc,A_Floor floor,A_Opening opening,Level baseLevel
+            ,Family baseFamily,BuiltInCategory category)
+        {
+            ///Get the default family symbol.
+            FamilySymbol openingSymbol = doc.GetElement
+                    (baseFamily.GetFamilySymbolIds().First())
+                    as FamilySymbol; ;
+            ///Find the host wall.
+            Wall hostW = floor.Walls
+                .First(w => w.Uid == opening.Meta.Wall).Wall;
+            ///Find the central point.
+            XYZ centerPt = new XYZ((opening.P1.X + opening.P2.X) / 2,
+                            (opening.P1.Y + opening.P2.Y) / 2,
+                            baseLevel.Elevation + opening.SillHeight);
+
+            ///Calculate the width and height of the door.
+            float doorW = opening.Width;
+            float doorH = opening.Height;
+            int doorWmm = (int)Math.Round(Helper.Feet2Mm(doorW));
+            int doorHmm = (int)Math.Round(Helper.Feet2Mm(doorH));
+            string typeName = doorWmm + "-" + doorHmm;
+
+            ///Check if that symbol already exist.
+            FamilySymbol existSymbol = Helper.FindFamilySymbol
+                (doc, category, typeName, baseFamily.Name);
+            if (existSymbol != null)
+            {
+                openingSymbol = existSymbol;
+            }
+            else
+            {
+                openingSymbol = (FamilySymbol)
+                    openingSymbol.Duplicate(typeName);
+                openingSymbol.GetParameters("宽度")[0].Set(doorW);
+                openingSymbol.GetParameters("高度")[0].Set(doorH);
+            }
+
+            ///Create the door.
+            openingSymbol.Activate();
+            return doc.Create.NewFamilyInstance
+                (centerPt, openingSymbol, hostW,
+                StructuralType.NonStructural);
         }
     }
 }
