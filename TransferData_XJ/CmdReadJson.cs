@@ -6,6 +6,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI.Selection;
 using System.IO;
 using System.Windows.Forms;
@@ -139,6 +140,9 @@ namespace TransferData_XJ
             ///The base info used for wall creation.
             WallType baseWt = null;
             Level baseLevel = null;
+            ElementId baseMaterialid = null;
+            Material baseMaterial = null;
+            Color colorGrey = new Color(80, 80, 80);
             ///Using input form to read json file into current house object.
             try
             {
@@ -190,11 +194,27 @@ namespace TransferData_XJ
                 TaskDialog.Show("Error", "Something went wrong," +
                     "details as follow:\n" + e.Message);
             }
-            
+
+            ///In case the user close the form.
+            if (CurrentHouse == null) return Result.Failed;
             ///Create walls.
             using (Transaction tx = new Transaction(doc))
             {
                 tx.Start("Create walls.");
+
+                ///Create the default material.
+                Material existMa = new FilteredElementCollector(doc)
+                    .OfClass(typeof(Material))
+                    .Select(e => e as Material).ToList()
+                    .Where(m => m.Name == "AutoWallMaterial")
+                    .FirstOrDefault();
+                baseMaterialid = (existMa != null) ? existMa.Id :
+                    Material.Create(doc, "AutoWallMaterial");
+                baseMaterial = doc.GetElement(baseMaterialid) as Material;
+
+                baseMaterial.SurfaceForegroundPatternColor = colorGrey;
+                baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
+                baseMaterial.Color = colorGrey;
 
                 ///Create the default wall type.
                 AutoWallTypes = new List<WallType>();
@@ -204,33 +224,20 @@ namespace TransferData_XJ
                     .Select(e => e as WallType)
                     .Where(w => w.Name == "AutoWall-240")
                     .ToList().FirstOrDefault();
-                if (wt != null)
-                {
-                    baseWt = wt;
-                }
-                else
-                {
-                    baseWt = baseWt.Duplicate("AutoWall-240") as WallType;
-                }
-                ///Create the default material.
-                ElementId autoMaterial = Material.Create(doc, "AutoWallMaterial");
-                Material autoM = doc.GetElement(autoMaterial) as Material;
-                Color colorGrey = new Color(80, 80, 80);
-                autoM.SurfaceForegroundPatternColor = colorGrey;
-                autoM.SurfaceBackgroundPatternColor = colorGrey;
-                autoM.Color = colorGrey;
-
+                baseWt = (wt != null) ? 
+                    wt : baseWt.Duplicate("AutoWall-240") as WallType;
                 baseWt.SetCompoundStructure(
                     CompoundStructure.CreateSingleLayerCompoundStructure
                     (MaterialFunctionAssignment.Structure,
                     UnitUtils.ConvertToInternalUnits(240, DisplayUnitType.DUT_MILLIMETERS),
-                    autoMaterial)
+                    baseMaterialid)
                     );
+
                 ///Create the wallType list and add the base type.
                 AutoWallTypes = new List<WallType>();
                 AutoWallTypes.Add(baseWt);
 
-
+                ///Create the walls.
                 foreach (A_Floor floor in CurrentHouse.Floors)
                 {
                     foreach (A_Wall wall in floor.Walls)
@@ -239,6 +246,7 @@ namespace TransferData_XJ
                         XYZ p1 = new XYZ(wall.P1.X, wall.P1.Y, 0);
                         XYZ p2 = new XYZ(wall.P2.X, wall.P2.Y, 0);
                         Curve c = Line.CreateBound(p1, p2);
+
                         ///Find the right wall type.
                         foreach (WallType wallT in AutoWallTypes)
                         {
@@ -260,11 +268,13 @@ namespace TransferData_XJ
                             CompoundStructure cStru = CompoundStructure
                                 .CreateSingleLayerCompoundStructure
                                 (MaterialFunctionAssignment.Structure,
-                                wall.Thickness,autoMaterial);
+                                wall.Thickness,baseMaterialid);
                             currentWt.SetCompoundStructure(cStru);
                             ///Add it to collection.
                             AutoWallTypes.Add(currentWt);
                         }
+
+                        ///Create the individual wall
                         Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
                             floor.Height, 0, false, true);
                     }
