@@ -61,7 +61,15 @@
     <Compile Include="AppPrefabHouseTools.cs" />
     <Compile Include="CmdAutoRouteE.cs" />
     <Compile Include="CmdAutoRouteGraph.cs" />
+    <Compile Include="CmdReadJson.cs" />
+    <Compile Include="CmdReadJsonObject.cs" />
     <Compile Include="CmdSetCircuit.cs" />
+    <Compile Include="CmdReadJsonForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CmdReadJsonForm.Designer.cs">
+      <DependentUpon>CmdReadJsonForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestCmd.cs" />
     <Compile Include="CmdAutoRouteEobject.cs" />
     <Compile Include="CmdAutoRouteEform.cs">
@@ -78,6 +86,9 @@
   <ItemGroup>
     <EmbeddedResource Include="CmdAutoRouteEform.resx">
       <DependentUpon>CmdAutoRouteEform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CmdReadJsonForm.resx">
+      <DependentUpon>CmdReadJsonForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

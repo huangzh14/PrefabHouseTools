@@ -1,6 +1,6 @@
-﻿namespace TransferData_XJ
+﻿namespace PrefabHouseTools
 {
-    partial class InputForm
+    partial class CmdReadJsonForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.WallTypeBox = new System.Windows.Forms.ListBox();
             this.LevelBox = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ChooseFile = new System.Windows.Forms.Button();
@@ -42,20 +40,6 @@
             this.panel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // WallTypeBox
-            // 
-            this.WallTypeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.WallTypeBox.FormattingEnabled = true;
-            this.WallTypeBox.ItemHeight = 30;
-            this.WallTypeBox.Location = new System.Drawing.Point(8, 58);
-            this.WallTypeBox.Margin = new System.Windows.Forms.Padding(8);
-            this.WallTypeBox.Name = "WallTypeBox";
-            this.WallTypeBox.Size = new System.Drawing.Size(326, 454);
-            this.WallTypeBox.TabIndex = 2;
-            this.WallTypeBox.SelectedIndexChanged += new System.EventHandler(this.WallTypeBox_SelectedIndexChanged);
             // 
             // LevelBox
             // 
@@ -70,15 +54,6 @@
             this.LevelBox.Size = new System.Drawing.Size(326, 274);
             this.LevelBox.TabIndex = 3;
             this.LevelBox.SelectedIndexChanged += new System.EventHandler(this.LevelBox_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(223, 30);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "选择基本墙类型";
             // 
             // label2
             // 
@@ -164,10 +139,8 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.LevelBox, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.WallTypeBox, 0, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 9);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 4;
@@ -178,7 +151,7 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(342, 891);
             this.tableLayoutPanel1.TabIndex = 10;
             // 
-            // InputForm
+            // CmdReadJsonForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 30F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -188,8 +161,9 @@
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(800, 400);
-            this.Name = "InputForm";
+            this.Name = "CmdReadJsonForm";
             this.Text = "InputForm";
+            this.Load += new System.EventHandler(this.CmdReadJsonForm_Load);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -200,9 +174,7 @@
         }
 
         #endregion
-        public System.Windows.Forms.ListBox WallTypeBox;
         public System.Windows.Forms.ListBox LevelBox;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button ChooseFile;

@@ -11,15 +11,15 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace TransferData_XJ
+namespace PrefabHouseTools
 {
-    public partial class InputForm : Form
+    public partial class CmdReadJsonForm : Form
     {
         Pen myPen = null;
         Graphics g = null;
         private int canvasW, canvasH;
-        
-        public InputForm()
+
+        public CmdReadJsonForm()
         {
             InitializeComponent();
             StartModel.Enabled = false;
@@ -32,19 +32,18 @@ namespace TransferData_XJ
             CurrentHouse = null;
         }
 
-        public HouseObjects CurrentHouse { get; set; }
+        public HouseObject CurrentHouse { get; set; }
 
         private void CheckCondition()
         {
             if ((this.CurrentHouse != null) &&
-                (this.LevelBox.SelectedItem != null) &&
-                (this.WallTypeBox.SelectedItem != null))
+                (this.LevelBox.SelectedItem != null))
                 StartModel.Enabled = true;
         }
 
         private void UpdateCurrentSelection(Stream fileStream)
         {
-            CurrentHouse = new HouseObjects();
+            CurrentHouse = new HouseObject();
             using (StreamReader reader = new StreamReader(fileStream))
             {
                 JObject jsonObj = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
@@ -79,14 +78,14 @@ namespace TransferData_XJ
             this.DialogResult = DialogResult.OK;
         }
 
-        private void WallTypeBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void LevelBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.CheckCondition();
         }
 
-        private void LevelBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void CmdReadJsonForm_Load(object sender, EventArgs e)
         {
-            this.CheckCondition();
+
         }
 
         private void PreviewCanvas_Paint(object sender, PaintEventArgs e)
@@ -95,7 +94,7 @@ namespace TransferData_XJ
             List<A_Wall> walls = CurrentHouse.Floors
                 .SelectMany(f => f.Walls).ToList();
             List<A_Point> pts = walls.Select(w => w.P1).ToList();
-            pts.AddRange( walls.Select(w => w.P2));
+            pts.AddRange(walls.Select(w => w.P2));
 
             ///Get the range of the house.
             float minX = pts.OrderBy(p => p.X).First().X;
@@ -110,7 +109,7 @@ namespace TransferData_XJ
             float scaleX = (maxX - minX) / canvasW;
             float scaleY = (maxY - minY) / canvasH;
             float scale = Math.Max(scaleX, scaleY);
-            scale = (float) (scale / 0.9);
+            scale = (float)(scale / 0.9);
 
             foreach (A_Wall wall in walls)
             {

@@ -31,6 +31,12 @@ namespace PrefabHouseTools
             PushButton AutoRouteB = ribPanel
                 .AddItem(AutoRouteD) as PushButton;
 
+            PushButtonData ReadJsonD = new PushButtonData
+                ("CmdReadJson", "Read Json",
+                thisPath, "PrefabHouseTools.CmdReadJson");
+            PushButton ReadJsonB = ribPanel
+                .AddItem(ReadJsonD) as PushButton;
+
             PushButtonData TestCmdD = new PushButtonData
                 ("TestCmd", "Test", thisPath,
                 "PrefabHouseTools.TestCmd");

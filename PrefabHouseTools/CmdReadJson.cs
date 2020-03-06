@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using System.Linq;
 #endregion
 
-namespace TransferData_XJ
+namespace PrefabHouseTools
 {
     [Transaction(TransactionMode.Manual)]
     public class CmdReadJson : IExternalCommand
@@ -22,7 +22,7 @@ namespace TransferData_XJ
         /// Store the current house object.
         /// Contain all the info from input json file.
         /// </summary>
-        private HouseObjects CurrentHouse 
+        private HouseObject CurrentHouse 
         { 
             get { return currentHouse; } 
             ///Convert the units on input.
@@ -32,7 +32,7 @@ namespace TransferData_XJ
                 this.TransferDataUnits(currentHouse);
             } 
         }
-        private HouseObjects currentHouse;
+        private HouseObject currentHouse;
         /// <summary>
         /// Store all the WallTypes already created.
         /// </summary>
@@ -58,7 +58,7 @@ namespace TransferData_XJ
         /// The method to convert all mm to inch in the house object.
         /// </summary>
         /// <param name="house"></param>
-        private void TransferDataUnits(HouseObjects house)
+        private void TransferDataUnits(HouseObject house)
         {
             foreach (A_Floor floor in house.Floors)
             {
@@ -138,7 +138,12 @@ namespace TransferData_XJ
             Document doc = uidoc.Document;
 
             ///The base info used for wall creation.
-            WallType baseWt = null;
+            WallType baseWt = new FilteredElementCollector(doc)
+                        .WhereElementIsElementType()
+                        .OfCategory(BuiltInCategory.OST_Walls)
+                        .Select(e => e as WallType)
+                        .Where(w => w.Kind == WallKind.Basic)
+                        .FirstOrDefault(); ;
             Level baseLevel = null;
             ElementId baseMaterialid = null;
             Material baseMaterial = null;
@@ -146,18 +151,8 @@ namespace TransferData_XJ
             ///Using input form to read json file into current house object.
             try
             {
-                using (InputForm InputJsonForm = new InputForm())
+                using (CmdReadJsonForm InputJsonForm = new CmdReadJsonForm())
                 {
-                    ///List wall type.
-                    List<WallType> baseWts =
-                        new FilteredElementCollector(doc)
-                        .WhereElementIsElementType()
-                        .OfCategory(BuiltInCategory.OST_Walls)
-                        .Select(e => e as WallType).ToList();
-                    foreach (WallType wt in baseWts)
-                    {
-                        InputJsonForm.WallTypeBox.Items.Add(wt.Name);
-                    }
                     ///List levels.
                     List<Level> levels =
                         new FilteredElementCollector(doc)
@@ -175,10 +170,6 @@ namespace TransferData_XJ
                         CurrentHouse = InputJsonForm.CurrentHouse;
                         ///Set the base walltype and level according 
                         ///to form selection.
-                        baseWt = baseWts
-                            .Where(wt => wt.Name ==
-                            InputJsonForm.WallTypeBox.SelectedItem as string)
-                            .First();
                         baseLevel = levels
                             .Where(l => l.Name ==
                             InputJsonForm.LevelBox.SelectedItem as string)

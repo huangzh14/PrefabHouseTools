@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace TransferData_XJ
+namespace PrefabHouseTools
 {
     public class A_Point
     {
@@ -153,12 +153,12 @@ namespace TransferData_XJ
         public IList<A_Label> Labels { get; set; }
         public float Height { get; set; }
     }
-    public class HouseObjects
+    public class HouseObject
     {
         public int Version { get; set; }
         public float Rotation { get; set; }
         public IList<A_Floor> Floors { get; set; }
-        public HouseObjects()
+        public HouseObject()
         {
             Floors = new List<A_Floor>();
             Version = 0;
