@@ -13,18 +13,35 @@ using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 #endregion
+
 
 namespace PrefabHouseTools
 {
+    /// <summary>
+    /// Some basic rules.
+    /// 1-用于自动生成的rfa族文件必须具有“宽度”和“高度”这两个参数用于调整其
+    /// 宽高，且远点应当位于左右中心线的底端。
+    /// </summary>
     [Transaction(TransactionMode.Manual)]
     public class CmdReadJson : IExternalCommand
     {
         /// <summary>
+        /// The names of the default family name of doors and windows.
+        /// </summary>
+        private string[] autoDoorFamilyNames = 
+            { "auto-Door-PASS", "auto-Door-SINGLE","auto-Door-SLIDING" };
+        private string[] autoWindowFamilyNames =
+            {"auto-Window-SLIDING-FRENCH","auto-Window-HINGED",
+             "auto-Window-BAY"};
+
+        /// <summary>
         /// Store the current house object.
         /// Contain all the info from input json file.
         /// </summary>
-        private HouseObject CurrentHouse 
+        public HouseObject CurrentHouse 
         { 
             get { return currentHouse; } 
             ///Convert the units on input.
@@ -39,6 +56,11 @@ namespace PrefabHouseTools
         /// Store all the WallTypes already created.
         /// </summary>
         private List<WallType> AutoWallTypes { get; set; }
+        private List<Level> AllLevels { get; set; }
+        private Level BaseLevel { get; set; }
+        private List<Family> AutoDoorFamilies { get; set; }
+        private List<Family> AutoWindowFamilies { get; set; }
+        private Document activeDoc { get; set; }
 
         #region Unit conversion part.
         /// <summary>
@@ -131,241 +153,230 @@ namespace PrefabHouseTools
         }
         #endregion
 
-        public Result Execute(
-          ExternalCommandData commandData,
-          ref string message,
-          ElementSet elements)
+        #region Set base values.
+        public void Initialize(Document doc)
         {
-            UIApplication uiapp = commandData.Application;
-            UIDocument uidoc = uiapp.ActiveUIDocument;
-            Autodesk.Revit.ApplicationServices.
-                Application app = uiapp.Application;
-            Document doc = uidoc.Document;
+            AutoWallTypes = new List<WallType>();
+            AllLevels = new List<Level>();
+            AutoDoorFamilies = new List<Family>();
+            AutoWindowFamilies = new List<Family>();
+            activeDoc = doc;
+        }
+        public void SetBaseLevel(string levelName)
+        {
+            BaseLevel = AllLevels
+                .First(l => l.Name == levelName as string);
+        }
 
-            #region Step1 Get input
-            Level baseLevel = null;
-            ///Using input form to read json file into current house object.
-            try
-            {
-                using (CmdReadJsonForm InputJsonForm = new CmdReadJsonForm())
-                {
-                    ///List levels.
-                    List<Level> levels =
-                        new FilteredElementCollector(doc)
-                        .WhereElementIsNotElementType()
-                        .OfCategory(BuiltInCategory.OST_Levels)
-                        .Select(e => e as Level).ToList();
-                    foreach (Level l in levels)
-                    {
-                        InputJsonForm.LevelBox.Items.Add(l.Name);
-                    }
+        public void CreateBaseWallType()
+        {
+            ///Create the default material.
+            ElementId baseMaterialid = null;
+            Material baseMaterial = null;
+            Color colorGrey = new Color(80, 80, 80);
+            ///First check if the material already exist.
+            Material existMa = new FilteredElementCollector(activeDoc)
+                .OfClass(typeof(Material))
+                .Select(e => e as Material).ToList()
+                .Where(m => m.Name == "AutoWallMaterial")
+                .FirstOrDefault();
+            baseMaterialid = (existMa != null) ? existMa.Id :
+                Material.Create(activeDoc, "AutoWallMaterial");
+            baseMaterial = activeDoc.GetElement(baseMaterialid) as Material;
+            ///Set the material color.
+            baseMaterial.SurfaceForegroundPatternColor = colorGrey;
+            baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
+            baseMaterial.Color = colorGrey;
 
-                    if (InputJsonForm.ShowDialog() == DialogResult.OK)
-                    {
-                     ///Get the house info data.
-                        CurrentHouse = InputJsonForm.CurrentHouse;
-                        ///Set the base walltype and level according 
-                        ///to form selection.
-                        baseLevel = levels
-                            .Where(l => l.Name ==
-                            InputJsonForm.LevelBox.SelectedItem as string)
-                            .First();
-                        ///Close the form.
-                        InputJsonForm.Close();
-                    }
-
-                }
-            }
-            catch (Exception e)
-            {
-                TaskDialog.Show("Error", "Something went wrong," +
-                    "details as follow:\n" + e.Message);
-            }
-            #endregion
-
-            ///In case the user close the form.
-            if (CurrentHouse == null) return Result.Failed;
-
-            #region Step2 Create walls and floors.
-            ///The base info used for wa creation.
-            WallType baseWt = new FilteredElementCollector(doc)
+            ///Create the default wall type.
+            ///First check if it exist.
+            WallType existWt = new FilteredElementCollector(activeDoc)
+                .WhereElementIsElementType()
+                .OfCategory(BuiltInCategory.OST_Walls)
+                .Select(e => e as WallType)
+                .Where(w => w.Name == "AutoWall-240")
+                .ToList().FirstOrDefault();
+            ///If not exist,create a new one.
+            WallType baseWt = (existWt != null) ?
+                existWt : new FilteredElementCollector(activeDoc)
                         .WhereElementIsElementType()
                         .OfCategory(BuiltInCategory.OST_Walls)
                         .Select(e => e as WallType)
                         .Where(w => w.Kind == WallKind.Basic)
-                        .FirstOrDefault(); ;
-            ElementId baseMaterialid = null;
-            Material baseMaterial = null;
-            Color colorGrey = new Color(80, 80, 80);
-            ///Create walls.
-            using (Transaction tx = new Transaction(doc))
-            {
-                tx.Start("Create walls.");
+                        .FirstOrDefault()
+                        .Duplicate("AutoWall-240") as WallType;
+            ///Set the structure.
+            baseWt.SetCompoundStructure(
+                CompoundStructure.CreateSingleLayerCompoundStructure
+                (MaterialFunctionAssignment.Structure,
+                UnitUtils.ConvertToInternalUnits(240, DisplayUnitType.DUT_MILLIMETERS),
+                baseMaterialid)
+                );
 
-                ///Create the default material.
-                Material existMa = new FilteredElementCollector(doc)
-                    .OfClass(typeof(Material))
-                    .Select(e => e as Material).ToList()
-                    .Where(m => m.Name == "AutoWallMaterial")
-                    .FirstOrDefault();
-                baseMaterialid = (existMa != null) ? existMa.Id :
-                    Material.Create(doc, "AutoWallMaterial");
-                baseMaterial = doc.GetElement(baseMaterialid) as Material;
+            ///Create the wallType list and add the base type.
+            AutoWallTypes = new List<WallType>();
+            AutoWallTypes.Add(baseWt);
+        }
 
-                baseMaterial.SurfaceForegroundPatternColor = colorGrey;
-                baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
-                baseMaterial.Color = colorGrey;
-
-                ///Create the default wa type.
-                AutoWallTypes = new List<WallType>();
-                WallType wt = new FilteredElementCollector(doc)
-                    .WhereElementIsElementType()
-                    .OfCategory(BuiltInCategory.OST_Walls)
-                    .Select(e => e as WallType)
-                    .Where(w => w.Name == "AutoWall-240")
-                    .ToList().FirstOrDefault();
-                baseWt = (wt != null) ? 
-                    wt : baseWt.Duplicate("AutoWall-240") as WallType;
-                baseWt.SetCompoundStructure(
-                    CompoundStructure.CreateSingleLayerCompoundStructure
-                    (MaterialFunctionAssignment.Structure,
-                    UnitUtils.ConvertToInternalUnits(240, DisplayUnitType.DUT_MILLIMETERS),
-                    baseMaterialid)
-                    );
-
-                ///Create the wallType list and add the base type.
-                AutoWallTypes = new List<WallType>();
-                AutoWallTypes.Add(baseWt);
-
-                foreach (A_Floor floor in CurrentHouse.Floors)
-                {
-                    ///Create the walls.
-                    foreach (A_Wall wa in floor.Walls)
-                    {
-                        WallType currentWt = null;
-                        XYZ p1 = new XYZ(wa.P1.X, wa.P1.Y, 0);
-                        XYZ p2 = new XYZ(wa.P2.X, wa.P2.Y, 0);
-                        Curve c = Line.CreateBound(p1, p2);
-
-                        ///Find the right wall type.
-                        foreach (WallType wallT in AutoWallTypes)
-                        {
-                            if ((wallT.Width - wa.Thickness)<0.0001)
-                            {
-                                currentWt = wallT;
-                                break;
-                            }
-                        }
-                        ///If the wall type doesnot exist,create it.
-                        if (currentWt == null)
-                        {
-                            ///Duplicate a new walltype;
-                            float wallWidthMm = Helper.Feet2Mm(wa.Thickness);
-                            currentWt = AutoWallTypes[0].Duplicate
-                                ("AutoWall-"+wallWidthMm) as WallType;
-                            ///Set the width of the new type;
-                            CompoundStructure cStru = CompoundStructure
-                                .CreateSingleLayerCompoundStructure
-                                (MaterialFunctionAssignment.Structure,
-                                wa.Thickness,baseMaterialid);
-                            currentWt.SetCompoundStructure(cStru);
-                            ///Add it to collection.
-                            AutoWallTypes.Add(currentWt);
-                        }
-
-                        ///Create the individual wall
-                        wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
-                            floor.Height, 0, false, true);  
-                    }
-
-                    ///Create the floor.
-                    CurveArray floorCrv = new CurveArray();
-                    foreach (A_Room outer in floor.Outers)
-                    {
-                        foreach (A_Contour con in outer.Meta.Contours)
-                        {
-                            floorCrv.Append(Line.CreateBound
-                                (new XYZ(con.P1.X, con.P1.Y, baseLevel.Elevation),
-                                 new XYZ(con.P2.X, con.P2.Y, baseLevel.Elevation)));
-                        }
-                        doc.Create.NewFloor(floorCrv, false);
-                    }
-                }
-
-                
-                tx.Commit();
-            }
-            #endregion
-
-            #region Step3 Create doors
-
-            Family a_DoorF = null;
-            const string doorFamilyName = "auto-Door";
-            Family a_WindowF = null;
-            const string windowFamilyName = "auto-Window";
-
+        public bool LoadOpeningFamilies(Document doc)
+        {
+            Family doorFam = null;
+            Family windowFam = null;
+            
             ///Get the path.
             Assembly a = Assembly.GetExecutingAssembly();
             string rootFolder = Path.GetDirectoryName(a.Location);
-            string autoDoorPath = rootFolder 
-                + "\\" + doorFamilyName + ".rfa";
-            string autoWindowPath = rootFolder 
-                + "\\" + windowFamilyName + ".rfa";
-
-            using (Transaction tx = new Transaction(doc))
+            foreach (string doorName in autoDoorFamilyNames)
             {
-                tx.Start("Create Doors");
-                ///Load the family file.
-                if (!Helper.LoadFamily(doc,doorFamilyName,
-                    autoDoorPath,out a_DoorF))
-                    TaskDialog.Show("错误",
-                        "部分默认族丢失，请重新安装插件");
-                if (!Helper.LoadFamily(doc,windowFamilyName,
-                    autoWindowPath,out a_WindowF))
-                    TaskDialog.Show("错误", 
-                        "部分默认族丢失，请重新安装插件");
-
-                foreach (A_Floor f in CurrentHouse.Floors)
+                string DoorPath = rootFolder
+                + "\\" + doorName + ".rfa";
+                if (!Helper.LoadFamily(doc, doorName ,DoorPath, out doorFam))
                 {
-                    foreach(A_Door d in f.Doors)
-                    {
-                        d.Instance = CreateOpening
-                            (doc, f, d, baseLevel, a_DoorF, 
-                            BuiltInCategory.OST_Doors);
-
-                        ///Check the direction.
-                        if (!d.Instance.FacingOrientation
-                            .IsAlmostEqualTo(d.FacingOrientation))
-                        {
-                            d.Instance.flipFacing();
-                            doc.Regenerate();
-                        }
-                        if (!d.Instance.HandOrientation
-                            .IsAlmostEqualTo(d.HandOrientation))
-                        {
-                            d.Instance.flipHand();
-                            doc.Regenerate();
-                        }
-                        doc.Regenerate();
-                    }
-                    foreach(A_Window w in f.Windows)
-                    {
-                        w.Instance = CreateOpening
-                            (doc, f, w, baseLevel, a_WindowF,
-                            BuiltInCategory.OST_Windows);
-                        doc.Regenerate();
-                        w.Instance.flipFacing();
-                        doc.Regenerate();
-                        w.Instance.flipFacing();
-                    }
+                    TaskDialog.Show("错误","部分默认门族丢失，请重新安装插件");
+                    return false;
                 }
-                tx.Commit();
+                AutoDoorFamilies.Add(doorFam);
             }
-                
-            #endregion
-
-            return Result.Succeeded;
+            foreach (string windowName in autoWindowFamilyNames)
+            {
+                string windowPath = rootFolder
+                + "\\" + windowName + ".rfa";
+                if (!Helper.LoadFamily(doc, windowName, windowPath, out windowFam))
+                {
+                    TaskDialog.Show("错误", "部分默认窗族丢失，请重新安装插件");
+                    return false;
+                }
+                AutoWindowFamilies.Add(windowFam);
+            }
+            return true;
         }
+        #endregion
+
+        #region The main work.
+        public void CreateWalls
+            (Document doc,HouseObject house,
+            List<WallType> autoTypes,Level baseLevel)
+        {
+            foreach (A_Floor floor in house.Floors)
+            {
+                ///Create the walls.
+                foreach (A_Wall wa in floor.Walls)
+                {
+                    WallType currentWt = null;
+                    XYZ p1 = new XYZ(wa.P1.X, wa.P1.Y, 0);
+                    XYZ p2 = new XYZ(wa.P2.X, wa.P2.Y, 0);
+                    Curve c = Line.CreateBound(p1, p2);
+
+                    ///Find the right wall type.
+                    ///If the type doesnt exist,create a new one.
+                    try
+                    {
+                        currentWt = autoTypes
+                            .First(at => at.Width - wa.Thickness < 0.0001);
+                    }
+                    catch
+                    {
+                        ///Duplicate a new walltype;
+                        float wallWidthMm = Helper.Feet2Mm(wa.Thickness);
+                        currentWt = AutoWallTypes[0].Duplicate
+                            ("AutoWall-" + wallWidthMm) as WallType;
+                        ///Set the width of the new type;
+                        CompoundStructure cStru = CompoundStructure
+                            .CreateSingleLayerCompoundStructure
+                            (MaterialFunctionAssignment.Structure,
+                            wa.Thickness, currentWt.GetCompoundStructure().GetMaterialId(0));
+                        currentWt.SetCompoundStructure(cStru);
+                        ///Add it to collection.
+                        AutoWallTypes.Add(currentWt);
+                    }
+
+                    ///Create the individual wall
+                    wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
+                        floor.Height, 0, false, true);
+                }
+
+                ///Create the floor.
+                CurveArray floorCrv = new CurveArray();
+                foreach (A_Room outer in floor.Outers)
+                {
+                    foreach (A_Contour con in outer.Meta.Contours)
+                    {
+                        floorCrv.Append(Line.CreateBound
+                            (new XYZ(con.P1.X, con.P1.Y, baseLevel.Elevation),
+                             new XYZ(con.P2.X, con.P2.Y, baseLevel.Elevation)));
+                    }
+                    doc.Create.NewFloor(floorCrv, false);
+                }
+            }
+        }
+
+        public void CreateOpenings
+            (Document doc, HouseObject house,
+            Level baseLevel,List<Family>doorFamilies,
+            List<Family>windowFamilies)
+        {
+            foreach (A_Floor f in house.Floors)
+            {
+                foreach (A_Door d in f.Doors)
+                {
+                    ///Find the right doorfamily.
+                    Family doorFam;
+                    switch (d.Kind)
+                    {
+                        case A_DoorKind.PASS:
+                            doorFam = doorFamilies
+                                .First(fa => fa.Name.Contains("PASS"));
+                            break;
+                        case A_DoorKind.SLIDING:
+                            doorFam = doorFamilies
+                                .First(fa => fa.Name.Contains("SLIDING"));
+                            break;
+                        default:
+                            doorFam = doorFamilies
+                                .First(fa => fa.Name.Contains("SINGLE"));
+                            break;
+                    }
+
+                    ///Create the door.
+                    d.Instance = CreateSingleOpening
+                        (doc, f, d, BaseLevel, doorFam,
+                        BuiltInCategory.OST_Doors);
+
+                    ///Check the direction.
+                    if (!d.Instance.FacingOrientation
+                        .IsAlmostEqualTo(d.FacingOrientation))
+                    {
+                        d.Instance.flipFacing();
+                        doc.Regenerate();
+                    }
+                    if (!d.Instance.HandOrientation
+                        .IsAlmostEqualTo(d.HandOrientation))
+                    {
+                        d.Instance.flipHand();
+                        doc.Regenerate();
+                    }
+                    doc.Regenerate();
+                }
+
+                foreach (A_Window w in f.Windows)
+                {
+                    ///Find the right window family.
+                    string test = w.Kind.ToString();
+                    Family windowFam = windowFamilies
+                        .First(wf => wf.Name.Contains(w.Kind.ToString()));
+
+                    ///Create the window.
+                    w.Instance = CreateSingleOpening
+                        (doc, f, w, BaseLevel, windowFam,
+                        BuiltInCategory.OST_Windows);
+                    doc.Regenerate();
+                    w.Instance.flipFacing();
+                    doc.Regenerate();
+                    w.Instance.flipFacing();
+                }
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -377,9 +388,9 @@ namespace PrefabHouseTools
         /// <param name="baseFamily"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public FamilyInstance CreateOpening
-            (Document doc,A_Floor floor,A_Opening opening,Level baseLevel
-            ,Family baseFamily,BuiltInCategory category)
+        public FamilyInstance CreateSingleOpening
+            (Document doc, A_Floor floor, A_Opening opening, Level baseLevel
+            , Family baseFamily, BuiltInCategory category)
         {
             ///Get the default family symbol.
             FamilySymbol openingSymbol = doc.GetElement
@@ -421,5 +432,84 @@ namespace PrefabHouseTools
                 (centerPt, openingSymbol, hostW,
                 StructuralType.NonStructural);
         }
+        #endregion
+
+
+        public Result Execute(
+          ExternalCommandData commandData,
+          ref string message,
+          ElementSet elements)
+        {
+            UIApplication uiapp = commandData.Application;
+            UIDocument uidoc = uiapp.ActiveUIDocument;
+            Autodesk.Revit.ApplicationServices.
+                Application app = uiapp.Application;
+            Document doc = uidoc.Document;
+
+            this.Initialize(doc);
+
+            #region Step1 Get input
+            BaseLevel = null;
+            ///Using input form to read json file into current house object.
+            try
+            {
+                CmdReadJsonForm InputJsonForm = new CmdReadJsonForm(this);
+                ///List levels.
+                    AllLevels = new FilteredElementCollector(doc)
+                        .WhereElementIsNotElementType()
+                        .OfCategory(BuiltInCategory.OST_Levels)
+                        .Select(e => e as Level).ToList();
+                foreach (Level l in AllLevels)
+                {
+                    InputJsonForm.LevelBox.Items.Add(l.Name);
+                }
+                ///InputJsonForm.Show();
+                if (InputJsonForm.ShowDialog() != DialogResult.OK)
+                    return Result.Failed;
+            }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", "Something went wrong," +
+                    "details as follow:\n" + e.Message);
+            }
+            #endregion
+
+            ///In case the user close the form.
+            if (CurrentHouse == null) return Result.Failed;
+
+            #region Step2 Create walls and floors.
+            ///Create walls.
+            using (Transaction tx = new Transaction(doc))
+            {
+                tx.Start("Create walls.");
+
+                CreateBaseWallType();
+
+                CreateWalls(doc, CurrentHouse, AutoWallTypes, BaseLevel);
+               
+                tx.Commit();
+            }
+            #endregion
+
+            #region Step3 Create doors
+
+            using (Transaction tx = new Transaction(doc))
+            {
+                tx.Start("Create Doors");
+
+                if (!this.LoadOpeningFamilies(doc))
+                    return Result.Failed;
+
+                CreateOpenings(doc, CurrentHouse, BaseLevel, 
+                    AutoDoorFamilies, AutoWindowFamilies);
+
+                tx.Commit();
+            }
+            
+            #endregion
+
+            return Result.Succeeded;
+        }
+
     }
 }

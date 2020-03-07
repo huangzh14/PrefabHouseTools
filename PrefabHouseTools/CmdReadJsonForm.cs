@@ -18,21 +18,24 @@ namespace PrefabHouseTools
         Pen myPen = null;
         Graphics g = null;
         private int canvasW, canvasH;
+        private CmdReadJson originCommand;
+        public HouseObject CurrentHouse { get; private set; }
 
-        public CmdReadJsonForm()
+        public CmdReadJsonForm(CmdReadJson command)
         {
             InitializeComponent();
             StartModel.Enabled = false;
-            this.DialogResult = DialogResult.No;
 
+            ///Graphic prepare
             myPen = new Pen(Color.Black);
             g = PreviewCanvas.CreateGraphics();
             canvasW = PreviewCanvas.Width;
             canvasH = PreviewCanvas.Height;
+            ///Data prepare.
+            originCommand = command;
             CurrentHouse = null;
         }
 
-        public HouseObject CurrentHouse { get; set; }
 
         private void CheckCondition()
         {
@@ -41,7 +44,7 @@ namespace PrefabHouseTools
                 StartModel.Enabled = true;
         }
 
-        private void UpdateCurrentSelection(Stream fileStream)
+        private void ReadCurrentSelection(Stream fileStream)
         {
             CurrentHouse = new HouseObject();
             using (StreamReader reader = new StreamReader(fileStream))
@@ -54,6 +57,7 @@ namespace PrefabHouseTools
                 }
             }
         }
+
         private void ChooseFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openJsonFile = new OpenFileDialog())
@@ -64,13 +68,23 @@ namespace PrefabHouseTools
 
                 if (openJsonFile.ShowDialog() == DialogResult.OK)
                 {
-                    Stream fileStream = openJsonFile.OpenFile();
-                    this.UpdateCurrentSelection(fileStream);
-                    fileStream.Close();
+                    try
+                    {
+                        Stream fileStream = openJsonFile.OpenFile();
+                        this.ReadCurrentSelection(fileStream);
+                        fileStream.Close();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("json文件格式错误，请检查输入文件。");
+                    }
+                    
+                    ///Write the data to the command as well.
+                    originCommand.CurrentHouse = this.CurrentHouse;
                     this.CheckCondition();
+                    PreviewCanvas.Refresh();
                 }
             }
-            PreviewCanvas.Refresh();
         }
 
         private void StartModel_Click(object sender, EventArgs e)
@@ -80,6 +94,7 @@ namespace PrefabHouseTools
 
         private void LevelBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            originCommand.SetBaseLevel(LevelBox.SelectedItem as string);
             this.CheckCondition();
         }
 

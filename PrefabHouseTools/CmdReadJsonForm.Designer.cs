@@ -37,6 +37,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -77,10 +78,10 @@
             // ChooseFile
             // 
             this.ChooseFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChooseFile.Location = new System.Drawing.Point(594, 807);
+            this.ChooseFile.Location = new System.Drawing.Point(594, 803);
             this.ChooseFile.Margin = new System.Windows.Forms.Padding(2);
             this.ChooseFile.Name = "ChooseFile";
-            this.ChooseFile.Size = new System.Drawing.Size(211, 58);
+            this.ChooseFile.Size = new System.Drawing.Size(211, 74);
             this.ChooseFile.TabIndex = 0;
             this.ChooseFile.Text = "打开json文件";
             this.ChooseFile.UseVisualStyleBackColor = true;
@@ -89,10 +90,10 @@
             // StartModel
             // 
             this.StartModel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.StartModel.Location = new System.Drawing.Point(411, 803);
+            this.StartModel.Location = new System.Drawing.Point(416, 803);
             this.StartModel.Margin = new System.Windows.Forms.Padding(2);
             this.StartModel.Name = "StartModel";
-            this.StartModel.Size = new System.Drawing.Size(157, 58);
+            this.StartModel.Size = new System.Drawing.Size(157, 74);
             this.StartModel.TabIndex = 1;
             this.StartModel.Text = "开始建模";
             this.StartModel.UseVisualStyleBackColor = true;
@@ -124,10 +125,11 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.ChooseFile);
+            this.panel2.Controls.Add(this.progressBar1);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.PreviewCanvas);
             this.panel2.Controls.Add(this.StartModel);
-            this.panel2.Controls.Add(this.ChooseFile);
             this.panel2.Location = new System.Drawing.Point(351, 4);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(813, 897);
@@ -150,6 +152,14 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(342, 891);
             this.tableLayoutPanel1.TabIndex = 10;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(11, 803);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(373, 40);
+            this.progressBar1.TabIndex = 8;
+            this.progressBar1.Value = 50;
             // 
             // CmdReadJsonForm
             // 
@@ -183,5 +193,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
