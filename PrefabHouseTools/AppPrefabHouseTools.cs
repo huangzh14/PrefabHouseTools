@@ -15,33 +15,35 @@ namespace PrefabHouseTools
         public Result OnStartup(UIControlledApplication a)
         {
             a.CreateRibbonTab("PrefabHouseTools");
-            RibbonPanel ribPanel =
-                a.CreateRibbonPanel("PrefabHouseTools","PrefabHouseTools");
+            RibbonPanel autoModelPanel =
+                a.CreateRibbonPanel("PrefabHouseTools","自动建模");
+            RibbonPanel dataTransferPanel =
+                a.CreateRibbonPanel("PrefabHouseTools", "数据输入和转换");
             string thisPath = Assembly
                 .GetExecutingAssembly().Location;
 
             PushButtonData SetCircuitD = new PushButtonData
                 ("CmdAutoSetCircuit", "Set Circuit",
                 thisPath, "PrefabHouseTools.CmdSetCircuit");
-            PushButton SetCircuitB = ribPanel
+            PushButton SetCircuitB = autoModelPanel
                 .AddItem(SetCircuitD) as PushButton;
 
             PushButtonData AutoRouteD = new PushButtonData
                 ("CmdAutoRouteE", "Auto Route Electrical",
                 thisPath, "PrefabHouseTools.CmdAutoRouteE");
-            PushButton AutoRouteB = ribPanel
+            PushButton AutoRouteB = autoModelPanel
                 .AddItem(AutoRouteD) as PushButton;
 
             PushButtonData ReadJsonD = new PushButtonData
-                ("CmdReadJson", "Read Json",
+                ("CmdReadJson", "Json\n户型转换",
                 thisPath, "PrefabHouseTools.CmdReadJson");
-            PushButton ReadJsonB = ribPanel
+            PushButton ReadJsonB = dataTransferPanel
                 .AddItem(ReadJsonD) as PushButton;
 
             PushButtonData TestCmdD = new PushButtonData
                 ("TestCmd", "Test", thisPath,
                 "PrefabHouseTools.TestCmd");
-            PushButton TestCmdB = ribPanel
+            PushButton TestCmdB = autoModelPanel
                 .AddItem(TestCmdD) as PushButton;
             return Result.Succeeded;
         }

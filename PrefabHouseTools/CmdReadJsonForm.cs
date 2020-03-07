@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
@@ -20,17 +21,15 @@ namespace PrefabHouseTools
         private int canvasW, canvasH;
         private CmdReadJson originCommand;
         public HouseObject CurrentHouse { get; private set; }
+        int totalWorkLoad;
+        int currentWorkLoad;
 
         public CmdReadJsonForm(CmdReadJson command)
         {
             InitializeComponent();
             StartModel.Enabled = false;
 
-            ///Graphic prepare
-            myPen = new Pen(Color.Black);
-            g = PreviewCanvas.CreateGraphics();
-            canvasW = PreviewCanvas.Width;
-            canvasH = PreviewCanvas.Height;
+            
             ///Data prepare.
             originCommand = command;
             CurrentHouse = null;
@@ -42,6 +41,20 @@ namespace PrefabHouseTools
             if ((this.CurrentHouse != null) &&
                 (this.LevelBox.SelectedItem != null))
                 StartModel.Enabled = true;
+        }
+
+        public void SetInitialProgress(CmdReadJson currentCmd)
+        {
+            totalWorkLoad = currentCmd.TotalWorkLoad;
+            currentWorkLoad = 0;
+        }
+        public void UpdateProgress(int progress)
+        {
+            currentWorkLoad += progress;
+            int current = 100 * currentWorkLoad / totalWorkLoad;
+            prograssLabel.Text = current.ToString();
+            prograssLabel.Refresh();
+            this.progressBar1.Value = current;
         }
 
         private void ReadCurrentSelection(Stream fileStream)
@@ -77,6 +90,7 @@ namespace PrefabHouseTools
                     catch
                     {
                         MessageBox.Show("json文件格式错误，请检查输入文件。");
+                        return;
                     }
                     
                     ///Write the data to the command as well.
@@ -89,7 +103,11 @@ namespace PrefabHouseTools
 
         private void StartModel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
+            SetInitialProgress(originCommand);
+            originCommand.DoCreateWalls();
+            originCommand.DoCreateOpenings();
+
+            DialogResult = DialogResult.OK;
         }
 
         private void LevelBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -98,13 +116,25 @@ namespace PrefabHouseTools
             this.CheckCondition();
         }
 
-        private void CmdReadJsonForm_Load(object sender, EventArgs e)
+        private void CmdReadJsonForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
+        }
 
+        private void CmdReadJsonForm_SizeChanged(object sender, EventArgs e)
+        {
+            PreviewCanvas.Refresh();
         }
 
         private void PreviewCanvas_Paint(object sender, PaintEventArgs e)
         {
+            ///Graphic prepare
+            myPen = new Pen(Color.Black);
+            g = PreviewCanvas.CreateGraphics();
+            g.Clear(Color.White);
+            canvasW = PreviewCanvas.Width;
+            canvasH = PreviewCanvas.Height;
+            ///
             if (CurrentHouse == null) return;
             List<A_Wall> walls = CurrentHouse.Floors
                 .SelectMany(f => f.Walls).ToList();

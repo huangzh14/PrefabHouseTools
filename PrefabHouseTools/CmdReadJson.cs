@@ -61,6 +61,9 @@ namespace PrefabHouseTools
         private List<Family> AutoDoorFamilies { get; set; }
         private List<Family> AutoWindowFamilies { get; set; }
         private Document activeDoc { get; set; }
+        CmdReadJsonForm activeForm { get; set; }
+
+        public int TotalWorkLoad { get { return GetTotalWorkLoad(); } }
 
         #region Unit conversion part.
         /// <summary>
@@ -252,6 +255,23 @@ namespace PrefabHouseTools
         }
         #endregion
 
+        #region Progress calculating
+        private int GetTotalWorkLoad()
+        {
+            int total = CurrentHouse.Floors
+                     .SelectMany(f => f.Walls)
+                     .Count();
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Doors)
+                     .Count();
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Windows)
+                     .Count();
+            return total;
+        }
+
+        #endregion
+
         #region The main work.
         public void CreateWalls
             (Document doc,HouseObject house,
@@ -293,6 +313,8 @@ namespace PrefabHouseTools
                     ///Create the individual wall
                     wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
                         floor.Height, 0, false, true);
+
+                    activeForm.UpdateProgress(1);
                 }
 
                 ///Create the floor.
@@ -356,6 +378,8 @@ namespace PrefabHouseTools
                         doc.Regenerate();
                     }
                     doc.Regenerate();
+
+                    activeForm.UpdateProgress(1);
                 }
 
                 foreach (A_Window w in f.Windows)
@@ -373,6 +397,8 @@ namespace PrefabHouseTools
                     w.Instance.flipFacing();
                     doc.Regenerate();
                     w.Instance.flipFacing();
+
+                    activeForm.UpdateProgress(1);
                 }
             }
         }
@@ -432,6 +458,25 @@ namespace PrefabHouseTools
                 (centerPt, openingSymbol, hostW,
                 StructuralType.NonStructural);
         }
+
+        public bool DoCreateWalls()
+        {
+            CreateBaseWallType();
+
+            CreateWalls(activeDoc, CurrentHouse, AutoWallTypes, BaseLevel);
+
+            return true;
+        }
+        public bool DoCreateOpenings()
+        {
+            if (!this.LoadOpeningFamilies(activeDoc))
+                return false;
+
+            CreateOpenings(activeDoc, CurrentHouse, BaseLevel,
+                AutoDoorFamilies, AutoWindowFamilies);
+
+            return true;
+        }
         #endregion
 
 
@@ -447,66 +492,42 @@ namespace PrefabHouseTools
             Document doc = uidoc.Document;
 
             this.Initialize(doc);
-
-            #region Step1 Get input
             BaseLevel = null;
-            ///Using input form to read json file into current house object.
-            try
+
+            using (Transaction tx = new Transaction(doc))
             {
-                CmdReadJsonForm InputJsonForm = new CmdReadJsonForm(this);
-                ///List levels.
+                tx.Start("AutoModel");
+                ///Using input form to read json file into current house object.
+                try
+                {
+                    CmdReadJsonForm InputJsonForm = new CmdReadJsonForm(this);
+                    this.activeForm = InputJsonForm;
+                    ///List levels.
                     AllLevels = new FilteredElementCollector(doc)
                         .WhereElementIsNotElementType()
                         .OfCategory(BuiltInCategory.OST_Levels)
                         .Select(e => e as Level).ToList();
-                foreach (Level l in AllLevels)
-                {
-                    InputJsonForm.LevelBox.Items.Add(l.Name);
+                    foreach (Level l in AllLevels)
+                    {
+                        InputJsonForm.LevelBox.Items.Add(l.Name);
+                    }
+                    ///InputJsonForm.Show();
+                    if (InputJsonForm.ShowDialog() != DialogResult.OK)
+                        return Result.Failed;
                 }
-                ///InputJsonForm.Show();
-                if (InputJsonForm.ShowDialog() != DialogResult.OK)
+                catch (Exception e)
+                {
+                    TaskDialog.Show("Error", "Something went wrong," +
+                        "details as follow:\n" + e.Message);
                     return Result.Failed;
-            }
-            catch (Exception e)
-            {
-                TaskDialog.Show("Error", "Something went wrong," +
-                    "details as follow:\n" + e.Message);
-            }
-            #endregion
-
-            ///In case the user close the form.
-            if (CurrentHouse == null) return Result.Failed;
-
-            #region Step2 Create walls and floors.
-            ///Create walls.
-            using (Transaction tx = new Transaction(doc))
-            {
-                tx.Start("Create walls.");
-
-                CreateBaseWallType();
-
-                CreateWalls(doc, CurrentHouse, AutoWallTypes, BaseLevel);
-               
-                tx.Commit();
-            }
-            #endregion
-
-            #region Step3 Create doors
-
-            using (Transaction tx = new Transaction(doc))
-            {
-                tx.Start("Create Doors");
-
-                if (!this.LoadOpeningFamilies(doc))
-                    return Result.Failed;
-
-                CreateOpenings(doc, CurrentHouse, BaseLevel, 
-                    AutoDoorFamilies, AutoWindowFamilies);
+                }
 
                 tx.Commit();
             }
             
-            #endregion
+
+            ///In case the user close the form.
+            if (CurrentHouse == null) return Result.Failed;
 
             return Result.Succeeded;
         }

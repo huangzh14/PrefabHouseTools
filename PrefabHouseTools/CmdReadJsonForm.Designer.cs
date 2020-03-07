@@ -31,15 +31,17 @@
             this.LevelBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.ChooseFile = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.StartModel = new System.Windows.Forms.Button();
             this.PreviewCanvas = new System.Windows.Forms.Panel();
+            this.prograssLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.panel2.SuspendLayout();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ChooseFile = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // LevelBox
@@ -49,17 +51,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LevelBox.FormattingEnabled = true;
             this.LevelBox.ItemHeight = 30;
-            this.LevelBox.Location = new System.Drawing.Point(8, 582);
+            this.LevelBox.Location = new System.Drawing.Point(8, 573);
             this.LevelBox.Margin = new System.Windows.Forms.Padding(8);
             this.LevelBox.Name = "LevelBox";
-            this.LevelBox.Size = new System.Drawing.Size(326, 274);
+            this.LevelBox.Size = new System.Drawing.Size(257, 274);
             this.LevelBox.TabIndex = 3;
             this.LevelBox.SelectedIndexChanged += new System.EventHandler(this.LevelBox_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 524);
+            this.label2.Location = new System.Drawing.Point(3, 515);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(148, 30);
             this.label2.TabIndex = 5;
@@ -72,68 +74,8 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(0, 912);
+            this.panel1.Size = new System.Drawing.Size(0, 897);
             this.panel1.TabIndex = 8;
-            // 
-            // ChooseFile
-            // 
-            this.ChooseFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChooseFile.Location = new System.Drawing.Point(594, 803);
-            this.ChooseFile.Margin = new System.Windows.Forms.Padding(2);
-            this.ChooseFile.Name = "ChooseFile";
-            this.ChooseFile.Size = new System.Drawing.Size(211, 74);
-            this.ChooseFile.TabIndex = 0;
-            this.ChooseFile.Text = "打开json文件";
-            this.ChooseFile.UseVisualStyleBackColor = true;
-            this.ChooseFile.Click += new System.EventHandler(this.ChooseFile_Click);
-            // 
-            // StartModel
-            // 
-            this.StartModel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.StartModel.Location = new System.Drawing.Point(416, 803);
-            this.StartModel.Margin = new System.Windows.Forms.Padding(2);
-            this.StartModel.Name = "StartModel";
-            this.StartModel.Size = new System.Drawing.Size(157, 74);
-            this.StartModel.TabIndex = 1;
-            this.StartModel.Text = "开始建模";
-            this.StartModel.UseVisualStyleBackColor = true;
-            this.StartModel.Click += new System.EventHandler(this.StartModel_Click);
-            // 
-            // PreviewCanvas
-            // 
-            this.PreviewCanvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.PreviewCanvas.BackColor = System.Drawing.Color.White;
-            this.PreviewCanvas.Location = new System.Drawing.Point(11, 62);
-            this.PreviewCanvas.Name = "PreviewCanvas";
-            this.PreviewCanvas.Size = new System.Drawing.Size(794, 716);
-            this.PreviewCanvas.TabIndex = 6;
-            this.PreviewCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.PreviewCanvas_Paint);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(133, 30);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "户型预览";
-            // 
-            // panel2
-            // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.ChooseFile);
-            this.panel2.Controls.Add(this.progressBar1);
-            this.panel2.Controls.Add(this.label3);
-            this.panel2.Controls.Add(this.PreviewCanvas);
-            this.panel2.Controls.Add(this.StartModel);
-            this.panel2.Location = new System.Drawing.Point(351, 4);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(813, 897);
-            this.panel2.TabIndex = 9;
             // 
             // tableLayoutPanel1
             // 
@@ -150,34 +92,118 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(342, 891);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(273, 876);
             this.tableLayoutPanel1.TabIndex = 10;
+            // 
+            // StartModel
+            // 
+            this.StartModel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.StartModel.Location = new System.Drawing.Point(285, 788);
+            this.StartModel.Margin = new System.Windows.Forms.Padding(2);
+            this.StartModel.Name = "StartModel";
+            this.StartModel.Size = new System.Drawing.Size(157, 74);
+            this.StartModel.TabIndex = 1;
+            this.StartModel.Text = "开始建模";
+            this.StartModel.UseVisualStyleBackColor = true;
+            this.StartModel.Click += new System.EventHandler(this.StartModel_Click);
+            // 
+            // PreviewCanvas
+            // 
+            this.PreviewCanvas.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PreviewCanvas.BackColor = System.Drawing.Color.White;
+            this.PreviewCanvas.Location = new System.Drawing.Point(11, 62);
+            this.PreviewCanvas.Name = "PreviewCanvas";
+            this.PreviewCanvas.Size = new System.Drawing.Size(663, 701);
+            this.PreviewCanvas.TabIndex = 6;
+            this.PreviewCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.PreviewCanvas_Paint);
+            // 
+            // prograssLabel
+            // 
+            this.prograssLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.prograssLabel.AutoSize = true;
+            this.prograssLabel.Location = new System.Drawing.Point(155, 835);
+            this.prograssLabel.Name = "prograssLabel";
+            this.prograssLabel.Size = new System.Drawing.Size(28, 30);
+            this.prograssLabel.TabIndex = 10;
+            this.prograssLabel.Text = "0";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(133, 30);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "户型预览";
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(11, 803);
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(11, 784);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(373, 40);
+            this.progressBar1.Size = new System.Drawing.Size(269, 40);
             this.progressBar1.TabIndex = 8;
-            this.progressBar1.Value = 50;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(11, 835);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(223, 30);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "建模进度：   %";
+            // 
+            // ChooseFile
+            // 
+            this.ChooseFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ChooseFile.Location = new System.Drawing.Point(463, 788);
+            this.ChooseFile.Margin = new System.Windows.Forms.Padding(2);
+            this.ChooseFile.Name = "ChooseFile";
+            this.ChooseFile.Size = new System.Drawing.Size(211, 74);
+            this.ChooseFile.TabIndex = 0;
+            this.ChooseFile.Text = "打开json文件";
+            this.ChooseFile.UseVisualStyleBackColor = true;
+            this.ChooseFile.Click += new System.EventHandler(this.ChooseFile_Click);
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.prograssLabel);
+            this.panel2.Controls.Add(this.ChooseFile);
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.progressBar1);
+            this.panel2.Controls.Add(this.label3);
+            this.panel2.Controls.Add(this.PreviewCanvas);
+            this.panel2.Controls.Add(this.StartModel);
+            this.panel2.Location = new System.Drawing.Point(282, 4);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(682, 882);
+            this.panel2.TabIndex = 9;
             // 
             // CmdReadJsonForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 30F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1168, 912);
+            this.ClientSize = new System.Drawing.Size(968, 897);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(800, 400);
+            this.MinimumSize = new System.Drawing.Size(1000, 500);
             this.Name = "CmdReadJsonForm";
-            this.Text = "InputForm";
-            this.Load += new System.EventHandler(this.CmdReadJsonForm_Load);
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.Text = "模型转换";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CmdReadJsonForm_FormClosing);
+            this.SizeChanged += new System.EventHandler(this.CmdReadJsonForm_SizeChanged);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -187,12 +213,14 @@
         public System.Windows.Forms.ListBox LevelBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button ChooseFile;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button StartModel;
         private System.Windows.Forms.Panel PreviewCanvas;
+        private System.Windows.Forms.Label prograssLabel;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button ChooseFile;
+        private System.Windows.Forms.Panel panel2;
     }
 }

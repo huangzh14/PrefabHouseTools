@@ -33,6 +33,7 @@ namespace PrefabHouseTools
     }
     #endregion
 
+    #region Open objects
     public class A_OpeningMeta
     {
         public int Entrance { get; set; }
@@ -59,6 +60,7 @@ namespace PrefabHouseTools
         }
         public FamilyInstance Instance { get; set; }
     }
+    #endregion
 
     #region Door objects
     public enum A_DoorKind
