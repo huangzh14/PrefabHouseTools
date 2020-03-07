@@ -511,9 +511,9 @@ namespace PrefabHouseTools
                     {
                         InputJsonForm.LevelBox.Items.Add(l.Name);
                     }
-                    ///InputJsonForm.Show();
-                    if (InputJsonForm.ShowDialog() != DialogResult.OK)
-                        return Result.Failed;
+                    InputJsonForm.ShowDialog();
+                    ///if (InputJsonForm.ShowDialog() != DialogResult.OK)
+                    ///    return Result.Failed;
                 }
                 catch (Exception e)
                 {

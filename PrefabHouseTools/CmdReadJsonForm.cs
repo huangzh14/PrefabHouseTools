@@ -108,6 +108,7 @@ namespace PrefabHouseTools
             originCommand.DoCreateOpenings();
 
             DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         private void LevelBox_SelectedIndexChanged(object sender, EventArgs e)
