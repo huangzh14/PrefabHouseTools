@@ -157,7 +157,7 @@ namespace PrefabHouseTools
             SetInitialProgress(originCommand);
             originCommand.DoCreateWalls();
             originCommand.DoCreateOpenings();
-
+            originCommand.DoCreateSockets();
             DialogResult = DialogResult.OK;
             this.Close();
         }

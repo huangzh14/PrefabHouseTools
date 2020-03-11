@@ -36,6 +36,8 @@ namespace PrefabHouseTools
         private string[] autoWindowFamilyNames =
             {"auto-Window-SLIDING-FRENCH","auto-Window-HINGED",
              "auto-Window-BAY"};
+        private string[] autoSocketsNames =
+            {"auto-单相二三极插座"};
 
         /// <summary>
         /// Store the current house object.
@@ -60,6 +62,7 @@ namespace PrefabHouseTools
         private Level BaseLevel { get; set; }
         private List<Family> AutoDoorFamilies { get; set; }
         private List<Family> AutoWindowFamilies { get; set; }
+        private List<Family> AutoSocketFamilies { get; set; }
         private Document activeDoc { get; set; }
         CmdReadJsonForm activeForm { get; set; }
 
@@ -152,9 +155,36 @@ namespace PrefabHouseTools
                     label.Position.Y = Helper.Mm2Feet(label.Position.Y);
                 }
                 floor.Height = Helper.Mm2Feet(floor.Height);
+                foreach (A_Socket socket in floor.Socket)
+                {
+                    socket.X = Helper.Mm2Feet(socket.X);
+                    socket.Y = Helper.Mm2Feet(socket.Y);
+                    socket.Z = Helper.Mm2Feet(socket.Z);
+                }
             }
         }
         #endregion
+
+        #region Progress calculating
+        private int GetTotalWorkLoad()
+        {
+            int total = CurrentHouse.Floors
+                     .SelectMany(f => f.Walls)
+                     .Count();
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Doors)
+                     .Count();
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Windows)
+                     .Count();
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Socket)
+                     .Count();
+            return total;
+        }
+
+        #endregion
+
 
         #region Set base values.
         public void Initialize(Document doc)
@@ -163,6 +193,7 @@ namespace PrefabHouseTools
             AllLevels = new List<Level>();
             AutoDoorFamilies = new List<Family>();
             AutoWindowFamilies = new List<Family>();
+            AutoSocketFamilies = new List<Family>();
             activeDoc = doc;
         }
         public void SetBaseLevel(string levelName)
@@ -253,23 +284,25 @@ namespace PrefabHouseTools
             }
             return true;
         }
-        #endregion
 
-        #region Progress calculating
-        private int GetTotalWorkLoad()
+        public bool LoadSocketsFamilies(Document doc)
         {
-            int total = CurrentHouse.Floors
-                     .SelectMany(f => f.Walls)
-                     .Count();
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Doors)
-                     .Count();
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Windows)
-                     .Count();
-            return total;
+            Family socketFam = null;
+            Assembly a = Assembly.GetExecutingAssembly();
+            string rootFolder = Path.GetDirectoryName(a.Location);
+            foreach (string socketName in autoSocketsNames)
+            {
+                string DoorPath = rootFolder
+                + "\\" + socketName + ".rfa";
+                if (!Helper.LoadFamily(doc, socketName, DoorPath, out socketFam))
+                {
+                    TaskDialog.Show("错误", "部分默认门族丢失，请重新安装插件");
+                    return false;
+                }
+                AutoSocketFamilies.Add(socketFam);
+            }
+            return true;
         }
-
         #endregion
 
         #region The main work.
@@ -459,6 +492,7 @@ namespace PrefabHouseTools
                 StructuralType.NonStructural);
         }
 
+
         public bool DoCreateWalls()
         {
             CreateBaseWallType();
@@ -475,6 +509,72 @@ namespace PrefabHouseTools
             CreateOpenings(activeDoc, CurrentHouse, BaseLevel,
                 AutoDoorFamilies, AutoWindowFamilies);
 
+            return true;
+        }
+        public bool DoCreateSockets()
+        {
+            this.LoadSocketsFamilies(activeDoc);
+
+            Document doc = this.activeDoc;
+            List<A_Socket> allSockets = 
+                CurrentHouse.Floors
+                .SelectMany(f => f.Socket)
+                .ToList();
+            List<A_Wall> allWalls =
+                CurrentHouse.Floors
+                .SelectMany(f => f.Walls)
+                .ToList();
+
+            if (allSockets.Count() == 0)
+                return false;
+
+            foreach (A_Socket soc in allSockets)
+            {
+                XYZ centerPt = new XYZ
+                    (soc.X, soc.Y, soc.Z + BaseLevel.Elevation);
+                XYZ dirPt = new XYZ(0, 0, 1);
+                ///Get all the face of the host wall.
+                Wall hostWall = allWalls
+                    .First(w => w.Uid == soc.related.Uid).Wall;
+                List<Reference> sideFaces =
+                    HostObjectUtils.GetSideFaces
+                    (hostWall, ShellLayerType.Exterior)
+                    .ToList();
+                sideFaces.AddRange(
+                    HostObjectUtils.GetSideFaces
+                    (hostWall, ShellLayerType.Interior)
+                    .ToList());
+
+                Face hostFace = null;
+                foreach (Reference faceR in sideFaces)
+                {
+                    Face tempF = doc.GetElement(faceR)
+                    .GetGeometryObjectFromReference(faceR)
+                    as Face;
+                    if (centerPt.IsAlmostEqualTo
+                        (tempF.Project(centerPt).XYZPoint))
+                    {
+                        hostFace = tempF;
+                        break;
+                    }
+                }
+                if (hostFace == null) continue;
+
+                ///Need to refine later to add more type.
+                Family socFam = AutoSocketFamilies[0];
+                FamilySymbol socSymbol = 
+                    doc.GetElement
+                    (socFam.GetFamilySymbolIds().First()) 
+                    as FamilySymbol;
+
+                socSymbol.Activate();
+                soc.Instance = doc.Create
+                    .NewFamilyInstance
+                    (hostFace, centerPt,dirPt,socSymbol);
+
+                doc.Regenerate();
+                activeForm.UpdateProgress(1);
+            }
             return true;
         }
         #endregion

@@ -208,6 +208,7 @@ namespace PrefabHouseTools
         public float Z;
         public string Name;
         public A_SocketRelate related;
+        public FamilyInstance Instance;
     }
     #endregion
 
