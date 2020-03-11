@@ -16,26 +16,45 @@ namespace PrefabHouseTools
 {
     public partial class CmdReadJsonForm : Form
     {
+        ///The object used for produce the preview.
         Pen myPen = null;
         Graphics g = null;
         private int canvasW, canvasH;
         private CmdReadJson originCommand;
-        public HouseObject CurrentHouse { get; private set; }
-        int totalWorkLoad;
-        int currentWorkLoad;
 
+        /// <summary>
+        /// The object from json file.
+        /// Contain basic house type and layout infos.
+        /// </summary>
+        public HouseObject CurrentHouse { get; private set; }
+        /// <summary>
+        /// The object from json file.
+        /// Contain a list of the soft design of each room.
+        /// </summary>
+        public IList<RoomSoftDesign> roomSoftDesigns { get; private set; }
+
+        ///The index for monitering the progress.
+        int totalWorkLoad,currentWorkLoad;
+
+        /// <summary>
+        /// The initializer of the form.
+        /// </summary>
+        /// <param name="command"></param>
         public CmdReadJsonForm(CmdReadJson command)
         {
             InitializeComponent();
+
+            ///Disable the start button untile all info is acquired.
             StartModel.Enabled = false;
 
-            
             ///Data prepare.
             originCommand = command;
             CurrentHouse = null;
         }
 
-
+        /// <summary>
+        /// Check if the info need for create a house is fullfilled.
+        /// </summary>
         private void CheckCondition()
         {
             if ((this.CurrentHouse != null) &&
@@ -48,6 +67,7 @@ namespace PrefabHouseTools
             totalWorkLoad = currentCmd.TotalWorkLoad;
             currentWorkLoad = 0;
         }
+
         public void UpdateProgress(int progress)
         {
             currentWorkLoad += progress;
@@ -57,16 +77,46 @@ namespace PrefabHouseTools
             this.progressBar1.Value = current;
         }
 
+        #region Choose and read Json file
         private void ReadCurrentSelection(Stream fileStream)
         {
             CurrentHouse = new HouseObject();
+            roomSoftDesigns = new List<RoomSoftDesign>();
             using (StreamReader reader = new StreamReader(fileStream))
             {
                 JObject jsonObj = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
-                IList<JToken> floors = jsonObj["floors"].Children().ToList();
-                foreach (JToken floor in floors)
+
+                try
+                {///Try read the json as only house object.
+
+                    CurrentHouse.Version = jsonObj["version"].ToString();
+                    CurrentHouse.Rotation = jsonObj["rotation"].ToObject<float>();
+                    CurrentHouse.Floors = new List<A_Floor>();
+                    foreach (JToken j in jsonObj["floors"].Children())
+                    {
+                        CurrentHouse.Floors.Add(j.ToObject<A_Floor>());
+                    }
+
+                    if (CurrentHouse.Floors == null)
+                        throw new Exception();
+                }
+                catch
                 {
-                    CurrentHouse.Floors.Add(floor.ToObject<A_Floor>());
+                    try
+                    {///Try read the json as house with soft design.
+                        CurrentHouse = jsonObj["house"].ToObject<HouseObject>();
+                        foreach (JToken j in jsonObj["roomSoftDesigns"].Children())
+                        {
+                            roomSoftDesigns.Add(j.ToObject<RoomSoftDesign>());
+                        }
+
+                        if (CurrentHouse.Floors == null)
+                            throw new Exception();
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
                 }
             }
         }
@@ -100,6 +150,7 @@ namespace PrefabHouseTools
                 }
             }
         }
+        #endregion
 
         private void StartModel_Click(object sender, EventArgs e)
         {

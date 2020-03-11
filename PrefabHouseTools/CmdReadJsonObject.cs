@@ -195,6 +195,62 @@ namespace PrefabHouseTools
     }
     #endregion
 
+    #region Sockets
+    public class A_SocketRelate
+    {
+        public string Kind;
+        public string Uid;
+    }
+    public class A_Socket
+    {
+        public float X;
+        public float Y;
+        public float Z;
+        public string Name;
+        public A_SocketRelate related;
+    }
+    #endregion
+
+    #region SoftDesign
+    public enum FurLayer
+    {
+        basic,floor,child,wall,ceiling
+    }
+    public struct FurItemType
+    {
+        public string Id;
+        public string TypeName;
+        public string Label;
+        public FurLayer Layer;
+        public string Category;
+    }
+    public class Furniture
+    {
+        public FurLayer Layer;
+        public float X;
+        public float Y;
+        public float Rotation;
+        public float XSize;
+        public float YSize;
+        public float ZSize;
+        public string Item;
+        public float? Z;
+        public string Parent;
+        public string Uid;
+        public string Kind;
+        public bool Free;
+        public bool Scalable;
+        public bool Removable;
+        public string Param;
+        public IList<FurItemType> ItemTypes;
+    }
+    public class RoomSoftDesign
+    {
+        public IList<Furniture> Furniture;
+        public string Room;
+    }
+    #endregion
+
     #region Floor and house objects
     public class A_Floor
     {
@@ -207,19 +263,30 @@ namespace PrefabHouseTools
         public IList<A_Room> Outers { get; set; }
         public IList<A_Label> Labels { get; set; }
         public float Height { get; set; }
+
+        public IList<A_Socket> Socket { get; set; }
     }
     public class HouseObject
     {
-        public int Version { get; set; }
+        public string Version { get; set; }
         public float Rotation { get; set; }
         public IList<A_Floor> Floors { get; set; }
         public HouseObject()
         {
             Floors = new List<A_Floor>();
-            Version = 0;
+            Version = "0";
             Rotation = 0;
         }
 
+    }
+
+    #endregion
+
+    #region 家具布局结构总
+    public class HouseWithSoft
+    {
+        public HouseObject House;
+        public IList<RoomSoftDesign> RoomSoftDesigns;
     }
     #endregion
 }
