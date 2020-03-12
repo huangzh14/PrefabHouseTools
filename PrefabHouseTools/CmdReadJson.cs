@@ -37,7 +37,7 @@ namespace PrefabHouseTools
             {"auto-Window-SLIDING-FRENCH","auto-Window-HINGED",
              "auto-Window-BAY"};
         private string[] autoSocketsNames =
-            {"auto-单相二三极插座"};
+            {"auto-单相五孔插座","auto-单相五孔防水插座","auto-网络电视"};
 
         /// <summary>
         /// Store the current house object.
@@ -532,10 +532,12 @@ namespace PrefabHouseTools
             {
                 XYZ centerPt = new XYZ
                     (soc.X, soc.Y, soc.Z + BaseLevel.Elevation);
-                XYZ dirPt = new XYZ(0, 0, 1);
+                XYZ dirPt = new XYZ
+                    (0-soc.Orientation.Y, soc.Orientation.X, 0);
+
                 ///Get all the face of the host wall.
                 Wall hostWall = allWalls
-                    .First(w => w.Uid == soc.related.Uid).Wall;
+                    .First(w => w.Uid == soc.Related.Uid).Wall;
 
                 List<Reference> sideFaces =
                     HostObjectUtils.GetSideFaces
@@ -547,23 +549,38 @@ namespace PrefabHouseTools
                     .ToList());
 
                 ///Find the face where the socket is located.
-                Reference hostFace = null;
-                foreach (Reference faceR in sideFaces)
-                {
-                    Face tempF = doc.GetElement(faceR)
-                    .GetGeometryObjectFromReference(faceR)
-                    as Face;
-                    if (centerPt.IsAlmostEqualTo
-                        (tempF.Project(centerPt).XYZPoint))
-                    {
-                        hostFace = faceR;
-                        break;
-                    }
-                }
+                Reference hostFace = sideFaces
+                          .OrderBy(f => centerPt.DistanceTo
+                                        ((doc.GetElement(f)
+                                        .GetGeometryObjectFromReference(f)
+                                        as Face)
+                                        .Project(centerPt).XYZPoint))
+                          .First();
                 if (hostFace == null) continue;
 
-                ///Need to refine later to add more type.
-                Family socFam = AutoSocketFamilies[0];
+                ///Choose the type.
+                Family socFam ;
+                switch (soc.Tag)
+                {
+                    case "五孔":
+                        socFam = AutoSocketFamilies
+                            .First(s => 
+                            (s.Name.Contains("五孔")) &&
+                            (!s.Name.Contains("防水")));
+                        break;
+                    case "五孔防水":
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains("五孔防水"));
+                        break;
+                    case "网络电视":
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains("网络电视"));
+                        break;
+                    default:
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains(soc.Tag));
+                        break;
+                }
                 FamilySymbol socSymbol = 
                     doc.GetElement
                     (socFam.GetFamilySymbolIds().First()) 

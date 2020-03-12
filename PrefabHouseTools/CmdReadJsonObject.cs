@@ -203,12 +203,14 @@ namespace PrefabHouseTools
     }
     public class A_Socket
     {
-        public float X;
-        public float Y;
-        public float Z;
-        public string Name;
-        public A_SocketRelate related;
-        public FamilyInstance Instance;
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+        public string Name { get; set; }
+        public A_SocketRelate Related { get; set; }
+        public string Tag { get; set; }
+        public A_Point Orientation { get; set; }
+        public FamilyInstance Instance { get; set; }
     }
     #endregion
 
