@@ -536,6 +536,7 @@ namespace PrefabHouseTools
                 ///Get all the face of the host wall.
                 Wall hostWall = allWalls
                     .First(w => w.Uid == soc.related.Uid).Wall;
+
                 List<Reference> sideFaces =
                     HostObjectUtils.GetSideFaces
                     (hostWall, ShellLayerType.Exterior)
@@ -545,7 +546,8 @@ namespace PrefabHouseTools
                     (hostWall, ShellLayerType.Interior)
                     .ToList());
 
-                Face hostFace = null;
+                ///Find the face where the socket is located.
+                Reference hostFace = null;
                 foreach (Reference faceR in sideFaces)
                 {
                     Face tempF = doc.GetElement(faceR)
@@ -554,7 +556,7 @@ namespace PrefabHouseTools
                     if (centerPt.IsAlmostEqualTo
                         (tempF.Project(centerPt).XYZPoint))
                     {
-                        hostFace = tempF;
+                        hostFace = faceR;
                         break;
                     }
                 }
