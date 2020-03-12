@@ -1,0 +1,4691 @@
+
+{
+    "house": {
+        "version": 4,
+        "rotation": 0,
+        "floors": [
+            {
+                "number": 0,
+                "walls": [
+                    {
+                        "p1": {
+                            "x": 4023.63,
+                            "y": 11990.55
+                        },
+                        "p2": {
+                            "x": 7553.52,
+                            "y": 11990.55
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000000",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 7553.52,
+                            "y": 12591.69
+                        },
+                        "p2": {
+                            "x": 7553.52,
+                            "y": 11990.55
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000001",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 7553.52,
+                            "y": 11990.55
+                        },
+                        "p2": {
+                            "x": 7553.52,
+                            "y": 9587.28
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000002",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 7553.52,
+                            "y": 9587.28
+                        },
+                        "p2": {
+                            "x": 7553.52,
+                            "y": 7413.63
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000003",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            },
+                            "p2Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 7553.52,
+                            "y": 7413.63
+                        },
+                        "p2": {
+                            "x": 9957.87,
+                            "y": 7413.63
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000004",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 9957.87,
+                            "y": 7413.63
+                        },
+                        "p2": {
+                            "x": 9957.87,
+                            "y": 6011.4
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000005",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 11360.7,
+                            "y": 6011.4
+                        },
+                        "p2": {
+                            "x": 9957.87,
+                            "y": 6011.4
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000006",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 9957.87,
+                            "y": 6011.4
+                        },
+                        "p2": {
+                            "x": 8124.48,
+                            "y": 6011.4
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000007",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8124.48,
+                            "y": 6011.4
+                        },
+                        "p2": {
+                            "x": 8124.48,
+                            "y": 1248.72
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000008",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8124.48,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 8124.48,
+                            "y": 0
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000009",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 11360.7,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 8124.48,
+                            "y": 1248.72
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000000a",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8124.48,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 1248.72
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000000b",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4023.63,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 524.16,
+                            "y": 1248.72
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000000c",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4023.63,
+                            "y": 0
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 1248.72
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000000d",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4023.63,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 7260.12
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000000e",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4023.63,
+                            "y": 9294.45
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 11990.55
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000000f",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4023.63,
+                            "y": 11990.55
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 12591.69
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000010",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 7553.52,
+                            "y": 12591.69
+                        },
+                        "p2": {
+                            "x": 9957.87,
+                            "y": 12591.69
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000011",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 9957.87,
+                            "y": 12591.69
+                        },
+                        "p2": {
+                            "x": 9957.87,
+                            "y": 9587.28
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000012",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 9957.87,
+                            "y": 9587.28
+                        },
+                        "p2": {
+                            "x": 7553.52,
+                            "y": 9587.28
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000013",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8124.48,
+                            "y": 0
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 0
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000014",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 1033.11,
+                            "y": 12591.69
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 12591.69
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000015",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 1033.11,
+                            "y": 9294.45
+                        },
+                        "p2": {
+                            "x": 1033.11,
+                            "y": 12591.69
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000016",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 0,
+                            "y": 9294.45
+                        },
+                        "p2": {
+                            "x": 1033.11,
+                            "y": 9294.45
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000017",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 1033.11,
+                            "y": 9294.45
+                        },
+                        "p2": {
+                            "x": 2760.03,
+                            "y": 9294.45
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000018",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 9294.45
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 9294.45
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000019",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 0,
+                            "y": 5441.22
+                        },
+                        "p2": {
+                            "x": 0,
+                            "y": 7260.12
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000001a",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 0,
+                            "y": 7260.12
+                        },
+                        "p2": {
+                            "x": 0,
+                            "y": 9294.45
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000001b",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 0,
+                            "y": 7260.12
+                        },
+                        "p2": {
+                            "x": 2760.03,
+                            "y": 7260.12
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000001c",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 7260.12
+                        },
+                        "p2": {
+                            "x": 4023.63,
+                            "y": 7260.12
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000001d",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 5441.22
+                        },
+                        "p2": {
+                            "x": 524.16,
+                            "y": 5441.22
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000001e",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": 0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 524.16,
+                            "y": 5441.22
+                        },
+                        "p2": {
+                            "x": 0,
+                            "y": 5441.22
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "000000001f",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 11360.7,
+                            "y": 6011.4
+                        },
+                        "p2": {
+                            "x": 11360.7,
+                            "y": 1248.72
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000020",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 524.16,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 524.16,
+                            "y": 5441.22
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000021",
+                        "meta": {
+                            "p1Padding": {
+                                "left": 120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 5441.22
+                        },
+                        "p2": {
+                            "x": 2760.03,
+                            "y": 7260.12
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000022",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": 120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 7260.12
+                        },
+                        "p2": {
+                            "x": 2760.03,
+                            "y": 9294.45
+                        },
+                        "thickness": 240,
+                        "kind": "BEARING",
+                        "height": null,
+                        "curve": null,
+                        "uid": "0000000023",
+                        "meta": {
+                            "p1Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            },
+                            "p2Padding": {
+                                "left": -120.0,
+                                "right": -120.0
+                            }
+                        }
+                    }
+                ],
+                "doors": [
+                    {
+                        "p1": {
+                            "x": 9957.87,
+                            "y": 7104.805
+                        },
+                        "p2": {
+                            "x": 9957.87,
+                            "y": 6303.455
+                        },
+                        "height": 2100,
+                        "sillHeight": 0,
+                        "kind": "SINGLE",
+                        "openDirection": "CLOCKWISE",
+                        "uid": "0000010000",
+                        "meta": {
+                            "entrance": 2,
+                            "wall": "0000000005"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 3715.335,
+                            "y": 9294.45
+                        },
+                        "p2": {
+                            "x": 3021.525,
+                            "y": 9294.45
+                        },
+                        "height": 2100,
+                        "sillHeight": 0,
+                        "kind": "SINGLE",
+                        "openDirection": "CLOCKWISE",
+                        "uid": "0000010001",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "0000000019"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8416.98,
+                            "y": 6011.4
+                        },
+                        "p2": {
+                            "x": 9095.58,
+                            "y": 6011.4
+                        },
+                        "height": 2100,
+                        "sillHeight": 0,
+                        "kind": "SINGLE",
+                        "openDirection": "CLOCKWISE",
+                        "uid": "0000010002",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "0000000007"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 5610.536
+                        },
+                        "p2": {
+                            "x": 2760.03,
+                            "y": 6257.464
+                        },
+                        "height": 2100,
+                        "sillHeight": 0,
+                        "kind": "SINGLE",
+                        "openDirection": "ANTI_CLOCKWISE",
+                        "uid": "0000010003",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "0000000022"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 2760.03,
+                            "y": 9060.31
+                        },
+                        "p2": {
+                            "x": 2760.03,
+                            "y": 8351.38
+                        },
+                        "height": 2100,
+                        "sillHeight": 0,
+                        "kind": "SINGLE",
+                        "openDirection": "CLOCKWISE",
+                        "uid": "0000010004",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "0000000023"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 7553.52,
+                            "y": 9857.345
+                        },
+                        "p2": {
+                            "x": 7553.52,
+                            "y": 11754.345
+                        },
+                        "height": 2400,
+                        "sillHeight": 0,
+                        "kind": "SLIDING",
+                        "openDirection": "WHATEVER",
+                        "uid": "0000010005",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "0000000002"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4487.85,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 7712.85,
+                            "y": 1248.72
+                        },
+                        "height": 2400,
+                        "sillHeight": 0,
+                        "kind": "SLIDING",
+                        "openDirection": "WHATEVER",
+                        "uid": "0000010006",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "000000000b"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 3730.35,
+                            "y": 7260.12
+                        },
+                        "p2": {
+                            "x": 3030.35,
+                            "y": 7260.12
+                        },
+                        "height": 2100,
+                        "sillHeight": 0,
+                        "kind": "SINGLE",
+                        "openDirection": "ANTI_CLOCKWISE",
+                        "uid": "0000010007",
+                        "meta": {
+                            "entrance": 0,
+                            "wall": "000000001d"
+                        }
+                    }
+                ],
+                "windows": [
+                    {
+                        "p1": {
+                            "x": 0,
+                            "y": 7486.623
+                        },
+                        "p2": {
+                            "x": 0,
+                            "y": 8480.998
+                        },
+                        "height": 1700,
+                        "sillHeight": 900,
+                        "kind": "SLIDING",
+                        "bayDepth": 0,
+                        "uid": "0000020000",
+                        "meta": {
+                            "wall": "000000001b"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 0,
+                            "y": 5984.806
+                        },
+                        "p2": {
+                            "x": 0,
+                            "y": 6961.634
+                        },
+                        "height": 1700,
+                        "sillHeight": 900,
+                        "kind": "SLIDING",
+                        "bayDepth": 0,
+                        "uid": "0000020001",
+                        "meta": {
+                            "wall": "000000001a"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 1974.96,
+                            "y": 12591.69
+                        },
+                        "p2": {
+                            "x": 3266.64,
+                            "y": 12591.69
+                        },
+                        "height": 1700,
+                        "sillHeight": 900,
+                        "kind": "SLIDING",
+                        "bayDepth": 0,
+                        "uid": "0000020002",
+                        "meta": {
+                            "wall": "0000000015"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 4947.93,
+                            "y": 11990.55
+                        },
+                        "p2": {
+                            "x": 6614.01,
+                            "y": 11990.55
+                        },
+                        "height": 1700,
+                        "sillHeight": 900,
+                        "kind": "SLIDING",
+                        "bayDepth": 0,
+                        "uid": "0000020003",
+                        "meta": {
+                            "wall": "0000000000"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8215.74,
+                            "y": 12591.69
+                        },
+                        "p2": {
+                            "x": 9327.24,
+                            "y": 12591.69
+                        },
+                        "height": 1700,
+                        "sillHeight": 900,
+                        "kind": "SLIDING",
+                        "bayDepth": 0,
+                        "uid": "0000020004",
+                        "meta": {
+                            "wall": "0000000011"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 8004.48,
+                            "y": 0
+                        },
+                        "p2": {
+                            "x": 4143.63,
+                            "y": 0
+                        },
+                        "height": 2450,
+                        "sillHeight": 150,
+                        "kind": "FRENCH",
+                        "bayDepth": 0,
+                        "uid": "0000020005",
+                        "meta": {
+                            "wall": "0000000014"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 1320.35,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 3082.95,
+                            "y": 1248.72
+                        },
+                        "height": 1500,
+                        "sillHeight": 1200,
+                        "kind": "BAY",
+                        "bayDepth": 800,
+                        "uid": "0000020006",
+                        "meta": {
+                            "wall": "000000000c"
+                        }
+                    },
+                    {
+                        "p1": {
+                            "x": 9095.58,
+                            "y": 1248.72
+                        },
+                        "p2": {
+                            "x": 10640.35,
+                            "y": 1248.72
+                        },
+                        "height": 1500,
+                        "sillHeight": 1200,
+                        "kind": "BAY",
+                        "bayDepth": 800,
+                        "uid": "0000020007",
+                        "meta": {
+                            "wall": "000000000a"
+                        }
+                    }
+                ],
+                "cubes": [],
+                "rooms": [
+                    {
+                        "walls": [
+                            {
+                                "uid": "0000000011",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000012",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000013",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000002",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000001",
+                                "reversed": true
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010005",
+                                "reversed": false
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020004",
+                                "reversed": false
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "KITCHEN",
+                        "height": 0,
+                        "uid": "0000040001",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010005"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 7673.52,
+                                        "y": 12471.69
+                                    },
+                                    "p2": {
+                                        "x": 9837.87,
+                                        "y": 12471.69
+                                    },
+                                    "uid": "0000060017",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000011"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 9837.87,
+                                        "y": 12471.69
+                                    },
+                                    "p2": {
+                                        "x": 9837.87,
+                                        "y": 9707.28
+                                    },
+                                    "uid": "0000060018",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000012"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 9837.87,
+                                        "y": 9707.28
+                                    },
+                                    "p2": {
+                                        "x": 7673.52,
+                                        "y": 9707.28
+                                    },
+                                    "uid": "0000060019",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000013"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7673.52,
+                                        "y": 9707.28
+                                    },
+                                    "p2": {
+                                        "x": 7673.52,
+                                        "y": 11990.55
+                                    },
+                                    "uid": "000006001a",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000002"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7673.52,
+                                        "y": 11990.55
+                                    },
+                                    "p2": {
+                                        "x": 7673.52,
+                                        "y": 12471.69
+                                    },
+                                    "uid": "000006001b",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000001"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "0000000002",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000003",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000004",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000005",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000007",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000008",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000b",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000e",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000001d",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000023",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000019",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000f",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000000",
+                                "reversed": false
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010005",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000010000",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000010002",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000010006",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000010007",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000010004",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000010001",
+                                "reversed": true
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020003",
+                                "reversed": false
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "LIVING_ROOM",
+                        "height": 0,
+                        "uid": "0000040002",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010000"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 7433.52,
+                                        "y": 11870.55
+                                    },
+                                    "p2": {
+                                        "x": 7433.52,
+                                        "y": 9587.28
+                                    },
+                                    "uid": "000006001c",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000002"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7433.52,
+                                        "y": 9587.28
+                                    },
+                                    "p2": {
+                                        "x": 7433.52,
+                                        "y": 7293.63
+                                    },
+                                    "uid": "000006001d",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000003"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7433.52,
+                                        "y": 7293.63
+                                    },
+                                    "p2": {
+                                        "x": 9837.87,
+                                        "y": 7293.63
+                                    },
+                                    "uid": "000006001e",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000004"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 9837.87,
+                                        "y": 7293.63
+                                    },
+                                    "p2": {
+                                        "x": 9837.87,
+                                        "y": 6131.4
+                                    },
+                                    "uid": "000006001f",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000005"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 9837.87,
+                                        "y": 6131.4
+                                    },
+                                    "p2": {
+                                        "x": 8004.48,
+                                        "y": 6131.4
+                                    },
+                                    "uid": "0000060020",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000007"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8004.48,
+                                        "y": 6131.4
+                                    },
+                                    "p2": {
+                                        "x": 8004.48,
+                                        "y": 1368.72
+                                    },
+                                    "uid": "0000060021",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000008"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8004.48,
+                                        "y": 1368.72
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 1368.72
+                                    },
+                                    "uid": "0000060022",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000b"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 1368.72
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 7380.12
+                                    },
+                                    "uid": "0000060023",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000e"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 7380.12
+                                    },
+                                    "p2": {
+                                        "x": 2880.03,
+                                        "y": 7380.12
+                                    },
+                                    "uid": "0000060024",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001d"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2880.03,
+                                        "y": 7380.12
+                                    },
+                                    "p2": {
+                                        "x": 2880.03,
+                                        "y": 9174.45
+                                    },
+                                    "uid": "0000060025",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000023"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2880.03,
+                                        "y": 9174.45
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 9174.45
+                                    },
+                                    "uid": "0000060026",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000019"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 9174.45
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 11870.55
+                                    },
+                                    "uid": "0000060027",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000f"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 11870.55
+                                    },
+                                    "p2": {
+                                        "x": 7433.52,
+                                        "y": 11870.55
+                                    },
+                                    "uid": "0000060028",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000000"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "000000000f",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000019",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000018",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000016",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000015",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000010",
+                                "reversed": true
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010001",
+                                "reversed": false
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020002",
+                                "reversed": false
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "BEDROOM",
+                        "height": 0,
+                        "uid": "0000040003",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010001"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": 11990.55
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": 9414.45
+                                    },
+                                    "uid": "0000060029",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000f"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": 9414.45
+                                    },
+                                    "p2": {
+                                        "x": 2760.03,
+                                        "y": 9414.45
+                                    },
+                                    "uid": "000006002a",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000019"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2760.03,
+                                        "y": 9414.45
+                                    },
+                                    "p2": {
+                                        "x": 1153.11,
+                                        "y": 9414.45
+                                    },
+                                    "uid": "000006002b",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000018"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 1153.11,
+                                        "y": 9414.45
+                                    },
+                                    "p2": {
+                                        "x": 1153.11,
+                                        "y": 12471.69
+                                    },
+                                    "uid": "000006002c",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000016"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 1153.11,
+                                        "y": 12471.69
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": 12471.69
+                                    },
+                                    "uid": "000006002d",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000015"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": 12471.69
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": 11990.55
+                                    },
+                                    "uid": "000006002e",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000010"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "0000000006",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000020",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000a",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000008",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000007",
+                                "reversed": true
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010002",
+                                "reversed": false
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020007",
+                                "reversed": true
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "BEDROOM",
+                        "height": 0,
+                        "uid": "0000040004",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010002"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 9957.87,
+                                        "y": 5891.4
+                                    },
+                                    "p2": {
+                                        "x": 11240.7,
+                                        "y": 5891.4
+                                    },
+                                    "uid": "000006002f",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000006"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 11240.7,
+                                        "y": 5891.4
+                                    },
+                                    "p2": {
+                                        "x": 11240.7,
+                                        "y": 1368.72
+                                    },
+                                    "uid": "0000060030",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000020"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 11240.7,
+                                        "y": 1368.72
+                                    },
+                                    "p2": {
+                                        "x": 8244.48,
+                                        "y": 1368.72
+                                    },
+                                    "uid": "0000060031",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000a"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8244.48,
+                                        "y": 1368.72
+                                    },
+                                    "p2": {
+                                        "x": 8244.48,
+                                        "y": 5891.4
+                                    },
+                                    "uid": "0000060032",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000008"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8244.48,
+                                        "y": 5891.4
+                                    },
+                                    "p2": {
+                                        "x": 9957.87,
+                                        "y": 5891.4
+                                    },
+                                    "uid": "0000060033",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000007"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "0000000009",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000014",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000d",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000b",
+                                "reversed": true
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010006",
+                                "reversed": false
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020005",
+                                "reversed": false
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "BALCONY",
+                        "height": 0,
+                        "uid": "0000040005",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010006"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 8004.48,
+                                        "y": 1128.72
+                                    },
+                                    "p2": {
+                                        "x": 8004.48,
+                                        "y": 120
+                                    },
+                                    "uid": "0000060034",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000009"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8004.48,
+                                        "y": 120
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 120
+                                    },
+                                    "uid": "0000060035",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000014"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 120
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 1128.72
+                                    },
+                                    "uid": "0000060036",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000d"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 1128.72
+                                    },
+                                    "p2": {
+                                        "x": 8004.48,
+                                        "y": 1128.72
+                                    },
+                                    "uid": "0000060037",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000b"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "000000000c",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000021",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000001e",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000022",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000001d",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000000e",
+                                "reversed": true
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010003",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000010007",
+                                "reversed": true
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020006",
+                                "reversed": true
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "BEDROOM",
+                        "height": 0,
+                        "uid": "0000040006",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010007"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": 1368.72
+                                    },
+                                    "p2": {
+                                        "x": 644.16,
+                                        "y": 1368.72
+                                    },
+                                    "uid": "0000060038",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000c"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 644.16,
+                                        "y": 1368.72
+                                    },
+                                    "p2": {
+                                        "x": 644.16,
+                                        "y": 5321.22
+                                    },
+                                    "uid": "0000060039",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000021"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 644.16,
+                                        "y": 5321.22
+                                    },
+                                    "p2": {
+                                        "x": 2880.03,
+                                        "y": 5321.22
+                                    },
+                                    "uid": "000006003a",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001e"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2880.03,
+                                        "y": 5321.22
+                                    },
+                                    "p2": {
+                                        "x": 2880.03,
+                                        "y": 7140.12
+                                    },
+                                    "uid": "000006003b",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000022"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2880.03,
+                                        "y": 7140.12
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": 7140.12
+                                    },
+                                    "uid": "000006003c",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001d"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": 7140.12
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": 1368.72
+                                    },
+                                    "uid": "000006003d",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000e"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "0000000018",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000023",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000001c",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000001b",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000017",
+                                "reversed": false
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010004",
+                                "reversed": false
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020000",
+                                "reversed": false
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "BATHROOM",
+                        "height": 0,
+                        "uid": "0000040007",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010004"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 1033.11,
+                                        "y": 9174.45
+                                    },
+                                    "p2": {
+                                        "x": 2640.03,
+                                        "y": 9174.45
+                                    },
+                                    "uid": "000006003e",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000018"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2640.03,
+                                        "y": 9174.45
+                                    },
+                                    "p2": {
+                                        "x": 2640.03,
+                                        "y": 7380.12
+                                    },
+                                    "uid": "000006003f",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000023"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2640.03,
+                                        "y": 7380.12
+                                    },
+                                    "p2": {
+                                        "x": 120,
+                                        "y": 7380.12
+                                    },
+                                    "uid": "0000060040",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001c"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 120,
+                                        "y": 7380.12
+                                    },
+                                    "p2": {
+                                        "x": 120,
+                                        "y": 9174.45
+                                    },
+                                    "uid": "0000060041",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001b"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 120,
+                                        "y": 9174.45
+                                    },
+                                    "p2": {
+                                        "x": 1033.11,
+                                        "y": 9174.45
+                                    },
+                                    "uid": "0000060042",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000017"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    },
+                    {
+                        "walls": [
+                            {
+                                "uid": "000000001a",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000001c",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000022",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000001e",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "000000001f",
+                                "reversed": false
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010003",
+                                "reversed": true
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020001",
+                                "reversed": false
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "BATHROOM",
+                        "height": 0,
+                        "uid": "0000040008",
+                        "meta": {
+                            "entranceDoors": [
+                                "0000010003"
+                            ],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 120,
+                                        "y": 5561.22
+                                    },
+                                    "p2": {
+                                        "x": 120,
+                                        "y": 7140.12
+                                    },
+                                    "uid": "0000060043",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001a"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 120,
+                                        "y": 7140.12
+                                    },
+                                    "p2": {
+                                        "x": 2640.03,
+                                        "y": 7140.12
+                                    },
+                                    "uid": "0000060044",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001c"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2640.03,
+                                        "y": 7140.12
+                                    },
+                                    "p2": {
+                                        "x": 2640.03,
+                                        "y": 5561.22
+                                    },
+                                    "uid": "0000060045",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000022"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 2640.03,
+                                        "y": 5561.22
+                                    },
+                                    "p2": {
+                                        "x": 524.16,
+                                        "y": 5561.22
+                                    },
+                                    "uid": "0000060046",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001e"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 524.16,
+                                        "y": 5561.22
+                                    },
+                                    "p2": {
+                                        "x": 120,
+                                        "y": 5561.22
+                                    },
+                                    "uid": "0000060047",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001f"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    }
+                ],
+                "outers": [
+                    {
+                        "walls": [
+                            {
+                                "uid": "0000000001",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000000",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000010",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000015",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000016",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000017",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000001b",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000001a",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000001f",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000021",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000000c",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000000d",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000014",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000009",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "000000000a",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000020",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000006",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000000005",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000004",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000003",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000013",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000012",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000000011",
+                                "reversed": true
+                            }
+                        ],
+                        "doors": [
+                            {
+                                "uid": "0000010000",
+                                "reversed": true
+                            }
+                        ],
+                        "windows": [
+                            {
+                                "uid": "0000020003",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000020002",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000020000",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000020001",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000020006",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000020005",
+                                "reversed": true
+                            },
+                            {
+                                "uid": "0000020007",
+                                "reversed": false
+                            },
+                            {
+                                "uid": "0000020004",
+                                "reversed": true
+                            }
+                        ],
+                        "cubes": [],
+                        "kind": "OUTER",
+                        "height": 0,
+                        "uid": "0000040000",
+                        "meta": {
+                            "entranceDoors": [],
+                            "contours": [
+                                {
+                                    "p1": {
+                                        "x": 7433.52,
+                                        "y": 12711.69
+                                    },
+                                    "p2": {
+                                        "x": 7433.52,
+                                        "y": 12110.55
+                                    },
+                                    "uid": "0000060000",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000001"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7433.52,
+                                        "y": 12110.55
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 12110.55
+                                    },
+                                    "uid": "0000060001",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000000"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 12110.55
+                                    },
+                                    "p2": {
+                                        "x": 4143.63,
+                                        "y": 12711.69
+                                    },
+                                    "uid": "0000060002",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000010"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 4143.63,
+                                        "y": 12711.69
+                                    },
+                                    "p2": {
+                                        "x": 913.11,
+                                        "y": 12711.69
+                                    },
+                                    "uid": "0000060003",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000015"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 913.11,
+                                        "y": 12711.69
+                                    },
+                                    "p2": {
+                                        "x": 913.11,
+                                        "y": 9414.45
+                                    },
+                                    "uid": "0000060004",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000016"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 913.11,
+                                        "y": 9414.45
+                                    },
+                                    "p2": {
+                                        "x": -120,
+                                        "y": 9414.45
+                                    },
+                                    "uid": "0000060005",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000017"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": -120,
+                                        "y": 9414.45
+                                    },
+                                    "p2": {
+                                        "x": -120,
+                                        "y": 7260.12
+                                    },
+                                    "uid": "0000060006",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001b"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": -120,
+                                        "y": 7260.12
+                                    },
+                                    "p2": {
+                                        "x": -120,
+                                        "y": 5321.22
+                                    },
+                                    "uid": "0000060007",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001a"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": -120,
+                                        "y": 5321.22
+                                    },
+                                    "p2": {
+                                        "x": 404.16,
+                                        "y": 5321.22
+                                    },
+                                    "uid": "0000060008",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000001f"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 404.16,
+                                        "y": 5321.22
+                                    },
+                                    "p2": {
+                                        "x": 404.16,
+                                        "y": 1128.72
+                                    },
+                                    "uid": "0000060009",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000021"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 404.16,
+                                        "y": 1128.72
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": 1128.72
+                                    },
+                                    "uid": "000006000a",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000c"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": 1128.72
+                                    },
+                                    "p2": {
+                                        "x": 3903.63,
+                                        "y": -120
+                                    },
+                                    "uid": "000006000b",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000d"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 3903.63,
+                                        "y": -120
+                                    },
+                                    "p2": {
+                                        "x": 8244.48,
+                                        "y": -120
+                                    },
+                                    "uid": "000006000c",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000014"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8244.48,
+                                        "y": -120
+                                    },
+                                    "p2": {
+                                        "x": 8244.48,
+                                        "y": 1128.72
+                                    },
+                                    "uid": "000006000d",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000009"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 8244.48,
+                                        "y": 1128.72
+                                    },
+                                    "p2": {
+                                        "x": 11480.7,
+                                        "y": 1128.72
+                                    },
+                                    "uid": "000006000e",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "000000000a"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 11480.7,
+                                        "y": 1128.72
+                                    },
+                                    "p2": {
+                                        "x": 11480.7,
+                                        "y": 6131.4
+                                    },
+                                    "uid": "000006000f",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000020"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 11480.7,
+                                        "y": 6131.4
+                                    },
+                                    "p2": {
+                                        "x": 10077.87,
+                                        "y": 6131.4
+                                    },
+                                    "uid": "0000060010",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000006"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 10077.87,
+                                        "y": 6131.4
+                                    },
+                                    "p2": {
+                                        "x": 10077.87,
+                                        "y": 7533.63
+                                    },
+                                    "uid": "0000060011",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000005"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 10077.87,
+                                        "y": 7533.63
+                                    },
+                                    "p2": {
+                                        "x": 7673.52,
+                                        "y": 7533.63
+                                    },
+                                    "uid": "0000060012",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000004"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7673.52,
+                                        "y": 7533.63
+                                    },
+                                    "p2": {
+                                        "x": 7673.52,
+                                        "y": 9467.28
+                                    },
+                                    "uid": "0000060013",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000003"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 7673.52,
+                                        "y": 9467.28
+                                    },
+                                    "p2": {
+                                        "x": 10077.87,
+                                        "y": 9467.28
+                                    },
+                                    "uid": "0000060014",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000013"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 10077.87,
+                                        "y": 9467.28
+                                    },
+                                    "p2": {
+                                        "x": 10077.87,
+                                        "y": 12711.69
+                                    },
+                                    "uid": "0000060015",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000012"
+                                    }
+                                },
+                                {
+                                    "p1": {
+                                        "x": 10077.87,
+                                        "y": 12711.69
+                                    },
+                                    "p2": {
+                                        "x": 7433.52,
+                                        "y": 12711.69
+                                    },
+                                    "uid": "0000060016",
+                                    "height": null,
+                                    "curve": null,
+                                    "related": {
+                                        "kind": "WALL",
+                                        "uid": "0000000011"
+                                    }
+                                }
+                            ],
+                            "cubeContours": [],
+                            "extraContours": []
+                        }
+                    }
+                ],
+                "labels": [
+                    {
+                        "position": {
+                            "x": 9733.538,
+                            "y": 3429.805
+                        },
+                        "key": "RoomType",
+                        "value": "BEDROOM"
+                    },
+                    {
+                        "position": {
+                            "x": 8885.668,
+                            "y": 11040.776
+                        },
+                        "key": "RoomType",
+                        "value": "KITCHEN"
+                    },
+                    {
+                        "position": {
+                            "x": 5915.732,
+                            "y": 5818.441
+                        },
+                        "key": "RoomType",
+                        "value": "LIVING_ROOM"
+                    },
+                    {
+                        "position": {
+                            "x": 6074.055,
+                            "y": 624.36
+                        },
+                        "key": "RoomType",
+                        "value": "BALCONY"
+                    },
+                    {
+                        "position": {
+                            "x": 2361.236,
+                            "y": 11114.732
+                        },
+                        "key": "RoomType",
+                        "value": "BEDROOM"
+                    },
+                    {
+                        "position": {
+                            "x": 2705.055,
+                            "y": 3791.4
+                        },
+                        "key": "RoomType",
+                        "value": "BEDROOM"
+                    },
+                    {
+                        "position": {
+                            "x": 1411.047,
+                            "y": 8095.306
+                        },
+                        "key": "RoomType",
+                        "value": "BATHROOM"
+                    },
+                    {
+                        "position": {
+                            "x": 1431.43,
+                            "y": 6459.939
+                        },
+                        "key": "RoomType",
+                        "value": "BATHROOM"
+                    }
+                ],
+                "height": 2800,
+                "presetCameras": [],
+                "_extras": {
+                    "viewBox": [
+                        0,
+                        0,
+                        11360.7,
+                        12591.69
+                    ]
+                },
+                "socket": [
+                    {
+                        "x": 3903.63,
+                        "y": 9777.46,
+                        "z": 300,
+                        "name": "五孔插座-墙中点备用",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000f"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 11240.7,
+                        "y": 1980.06,
+                        "z": 300,
+                        "name": "五孔插座-墙中点备用",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000020"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 3903.63,
+                        "y": 5680.67,
+                        "z": 300,
+                        "name": "五孔插座-墙中点备用",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000e"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 4143.63,
+                        "y": 10770.55,
+                        "z": 300,
+                        "name": "五孔插座-关联餐桌",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000f"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 4143.63,
+                        "y": 9370.55,
+                        "z": 300,
+                        "name": "五孔插座-关联餐桌",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000f"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 8004.48,
+                        "y": 4853,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000008"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 8004.48,
+                        "y": 2147,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000008"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 4143.63,
+                        "y": 1485,
+                        "z": 300,
+                        "name": "五孔插座-关联空调(立式)",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000e"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 1153.11,
+                        "y": 11757.45,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000016"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 3103.63,
+                        "y": 12471.69,
+                        "z": 300,
+                        "name": "五孔插座-关联书桌",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000015"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 0,
+                            "y": -1
+                        }
+                    },
+                    {
+                        "x": 11240.7,
+                        "y": 5134.4,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000020"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 11240.7,
+                        "y": 2648.4,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000020"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 8244.48,
+                        "y": 1968.72,
+                        "z": 300,
+                        "name": "五孔插座-关联书桌",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000008"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 8244.48,
+                        "y": 4184.4,
+                        "z": 300,
+                        "name": "五孔插座-关联电视",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000008"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 8244.48,
+                        "y": 3598.4,
+                        "z": 300,
+                        "name": "网络电视插座-关联电视",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000008"
+                        },
+                        "tag": "网络电视",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 4143.63,
+                        "y": 420,
+                        "z": 1300,
+                        "name": "五孔插座-关联洗衣机",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000d"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 644.16,
+                        "y": 2078.22,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000021"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 644.16,
+                        "y": 4564.22,
+                        "z": 300,
+                        "name": "五孔插座-关联床",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000021"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 644.16,
+                        "y": 1971.72,
+                        "z": 300,
+                        "name": "五孔插座-关联书桌",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000021"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 3903.63,
+                        "y": 3614.22,
+                        "z": 300,
+                        "name": "五孔插座-关联电视",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000e"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 3903.63,
+                        "y": 3028.22,
+                        "z": 300,
+                        "name": "网络电视插座-关联电视",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000e"
+                        },
+                        "tag": "网络电视",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 1690.03,
+                        "y": 7380.12,
+                        "z": 300,
+                        "name": "五孔插座-关联坐便器",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000001c"
+                        },
+                        "tag": "五孔防水",
+                        "orientation": {
+                            "x": 0,
+                            "y": 1
+                        }
+                    },
+                    {
+                        "x": 1690.03,
+                        "y": 7140.12,
+                        "z": 300,
+                        "name": "五孔插座-关联坐便器",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000001c"
+                        },
+                        "tag": "五孔防水",
+                        "orientation": {
+                            "x": 0,
+                            "y": -1
+                        }
+                    },
+                    {
+                        "x": 3903.63,
+                        "y": 10138.26,
+                        "z": 300,
+                        "name": "五孔插座-备用-门",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000f"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 8244.48,
+                        "y": 5182.8,
+                        "z": 300,
+                        "name": "五孔插座-备用-门",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "0000000008"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": 1,
+                            "y": 0
+                        }
+                    },
+                    {
+                        "x": 3903.63,
+                        "y": 6410.12,
+                        "z": 300,
+                        "name": "五孔插座-备用-门",
+                        "related": {
+                            "kind": "WALL",
+                            "uid": "000000000e"
+                        },
+                        "tag": "五孔",
+                        "orientation": {
+                            "x": -1,
+                            "y": 0
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "roomSoftDesigns": [
+        {
+            "furniture": [],
+            "room": "0000040001",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 4893.63,
+                    "y": 10070.55,
+                    "rotation": 90,
+                    "xSize": 800,
+                    "ySize": 1500,
+                    "zSize": 750,
+                    "item": "1151059907336736770",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000002005c83",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10026,
+                            "typeName": "餐桌",
+                            "label": "table-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 4543.63,
+                    "y": 11720.55,
+                    "rotation": 90,
+                    "xSize": 300,
+                    "ySize": 800,
+                    "zSize": 850,
+                    "item": "1150694481570304001",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000002005c84",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10045,
+                            "typeName": "边柜",
+                            "label": "cabinet-side",
+                            "layer": "basic",
+                            "category": "mesh"
+                        },
+                        {
+                            "id": 10044,
+                            "typeName": "餐边柜",
+                            "label": "cabinet-meal",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 5243.63,
+                    "y": 9396.05,
+                    "rotation": 270,
+                    "xSize": 449,
+                    "ySize": 449,
+                    "zSize": 817,
+                    "item": "1151013567449796609",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000002005c85",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 4543.63,
+                    "y": 9396.05,
+                    "rotation": 270,
+                    "xSize": 449,
+                    "ySize": 449,
+                    "zSize": 817,
+                    "item": "1151013567449796609",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000002005c86",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 5243.63,
+                    "y": 10745.05,
+                    "rotation": 90,
+                    "xSize": 449,
+                    "ySize": 449,
+                    "zSize": 817,
+                    "item": "1151013567449796609",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000002005c87",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 4543.63,
+                    "y": 10745.05,
+                    "rotation": 90,
+                    "xSize": 449,
+                    "ySize": 449,
+                    "zSize": 817,
+                    "item": "1151013567449796609",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000002005c88",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 7521,
+                    "y": 3500,
+                    "rotation": 180,
+                    "xSize": 900,
+                    "ySize": 2020,
+                    "zSize": 700,
+                    "z": null,
+                    "parent": null,
+                    "uid": "created-sofa",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10012,
+                            "typeName": "沙发",
+                            "label": "sofa",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 4320,
+                    "y": 1953,
+                    "rotation": 0,
+                    "xSize": 300,
+                    "ySize": 550,
+                    "zSize": 1800,
+                    "z": null,
+                    "parent": null,
+                    "uid": "created-ac",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "typeName": "立式空调",
+                            "label": "ac",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "wall",
+                    "x": 4143.63,
+                    "y": 10070.55,
+                    "rotation": 0,
+                    "xSize": 300,
+                    "ySize": 799,
+                    "zSize": 139,
+                    "item": "1151018564946235394",
+                    "z": 1200,
+                    "parent": null,
+                    "uid": "000002005c89",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10058,
+                            "typeName": "壁架",
+                            "label": "ledge",
+                            "layer": "wall",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040002",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 1903.11,
+                    "y": 10414.45,
+                    "rotation": 270,
+                    "xSize": 2000,
+                    "ySize": 1500,
+                    "zSize": 821,
+                    "item": "1150657268753108994",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000300325c",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10035,
+                            "typeName": "单人床",
+                            "label": "bed-1",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 3103.63,
+                    "y": 12122.19,
+                    "rotation": 90,
+                    "xSize": 699,
+                    "ySize": 1600,
+                    "zSize": 750,
+                    "item": "1151057975067021314",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000300325d",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10027,
+                            "typeName": "书桌",
+                            "label": "table-desk",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 3103.63,
+                    "y": 11548.19,
+                    "rotation": 270,
+                    "xSize": 349,
+                    "ySize": 349,
+                    "zSize": 635,
+                    "item": "1151010373378248706",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000300325e",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10020,
+                            "typeName": "儿童椅",
+                            "label": "chair-child",
+                            "layer": "basic",
+                            "category": "mesh"
+                        },
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 3753.63,
+                    "y": 10940.475,
+                    "rotation": 180,
+                    "xSize": 300,
+                    "ySize": 1600.0,
+                    "zSize": 2400,
+                    "item": null,
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000300325f",
+                    "kind": "GROUPING",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null
+                },
+                {
+                    "layer": "basic",
+                    "x": 3753.63,
+                    "y": 11340.475,
+                    "rotation": 180,
+                    "xSize": 300,
+                    "ySize": 800,
+                    "zSize": 2400,
+                    "item": "1150684530521149441",
+                    "z": null,
+                    "parent": "00000300325f",
+                    "uid": "000003003260",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10049,
+                            "typeName": "书柜/书架",
+                            "label": "bookcase",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 3753.63,
+                    "y": 10540.475,
+                    "rotation": 180,
+                    "xSize": 300,
+                    "ySize": 800,
+                    "zSize": 2400,
+                    "item": "1150684530521149441",
+                    "z": null,
+                    "parent": "00000300325f",
+                    "uid": "000003003261",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10049,
+                            "typeName": "书柜/书架",
+                            "label": "bookcase",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 1453.11,
+                    "y": 11971.69,
+                    "rotation": 0,
+                    "xSize": 600,
+                    "ySize": 1000,
+                    "zSize": 2400,
+                    "item": "1151069830003036162",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000003003262",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10051,
+                            "typeName": "平开门衣柜",
+                            "label": "wardrobe-hinged",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040003",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 10240.7,
+                    "y": 5591.4,
+                    "rotation": 90,
+                    "xSize": 600,
+                    "ySize": 2000,
+                    "zSize": 2400,
+                    "item": "1151069981161558018",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de8c",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10051,
+                            "typeName": "平开门衣柜",
+                            "label": "wardrobe-hinged",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 11040.7,
+                    "y": 4991.4,
+                    "rotation": 180,
+                    "xSize": 400,
+                    "ySize": 400,
+                    "zSize": 450,
+                    "item": "1151067237587619841",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de8d",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10024,
+                            "typeName": "边几",
+                            "label": "table-tea-side",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 10240.7,
+                    "y": 3891.4,
+                    "rotation": 180,
+                    "xSize": 2000,
+                    "ySize": 1800,
+                    "zSize": 821,
+                    "item": "1150659646847979522",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de8e",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10034,
+                            "typeName": "双人床",
+                            "label": "bed-2",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 11040.7,
+                    "y": 2791.4,
+                    "rotation": 180,
+                    "xSize": 400,
+                    "ySize": 400,
+                    "zSize": 450,
+                    "item": "1151067237587619841",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de8f",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10024,
+                            "typeName": "边几",
+                            "label": "table-tea-side",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 8444.48,
+                    "y": 3891.4,
+                    "rotation": 0,
+                    "xSize": 400,
+                    "ySize": 1800,
+                    "zSize": 400,
+                    "item": "1150946160257536002",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de90",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10054,
+                            "typeName": "电视柜",
+                            "label": "cabinet-tv",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 8544.48,
+                    "y": 1968.72,
+                    "rotation": 0,
+                    "xSize": 600,
+                    "ySize": 1200,
+                    "zSize": 750,
+                    "item": "1151057840530526209",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de91",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10027,
+                            "typeName": "书桌",
+                            "label": "table-desk",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 9018.98,
+                    "y": 1968.72,
+                    "rotation": 180,
+                    "xSize": 349,
+                    "ySize": 349,
+                    "zSize": 635,
+                    "item": "1151010373378248706",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000400de92",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10020,
+                            "typeName": "儿童椅",
+                            "label": "chair-child",
+                            "layer": "basic",
+                            "category": "mesh"
+                        },
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "wall",
+                    "x": 8294.48,
+                    "y": 3891.4,
+                    "rotation": 0,
+                    "xSize": 100,
+                    "ySize": 1000,
+                    "zSize": 600,
+                    "item": "1151075047150981122",
+                    "z": 800,
+                    "parent": null,
+                    "uid": "00000400de93",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10099,
+                            "typeName": "壁挂电视",
+                            "label": "tv-wall",
+                            "layer": "wall",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040004",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 4443.63,
+                    "y": 420.0,
+                    "rotation": 270,
+                    "xSize": 600,
+                    "ySize": 600,
+                    "zSize": 849,
+                    "item": "1151078786523992066",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000500b1f1",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10104,
+                            "typeName": "滚筒洗衣机",
+                            "label": "wm-drum",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040005",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 1394.16,
+                    "y": 5021.22,
+                    "rotation": 90,
+                    "xSize": 600,
+                    "ySize": 1500,
+                    "zSize": 2400,
+                    "item": "1151069906565861378",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000006003248",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10051,
+                            "typeName": "平开门衣柜",
+                            "label": "wardrobe-hinged",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 844.16,
+                    "y": 4421.22,
+                    "rotation": 0,
+                    "xSize": 400,
+                    "ySize": 400,
+                    "zSize": 450,
+                    "item": "1151067237587619841",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000006003249",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10024,
+                            "typeName": "边几",
+                            "label": "table-tea-side",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 1644.16,
+                    "y": 3321.22,
+                    "rotation": 0,
+                    "xSize": 2000,
+                    "ySize": 1800,
+                    "zSize": 821,
+                    "item": "1150659646847979522",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000600324a",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10034,
+                            "typeName": "双人床",
+                            "label": "bed-2",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 894.16,
+                    "y": 1971.72,
+                    "rotation": 0,
+                    "xSize": 500,
+                    "ySize": 899,
+                    "zSize": 750,
+                    "item": "1151057613991972865",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000600324b",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10027,
+                            "typeName": "书桌",
+                            "label": "table-desk",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 1318.66,
+                    "y": 1971.72,
+                    "rotation": 180,
+                    "xSize": 349,
+                    "ySize": 349,
+                    "zSize": 635,
+                    "item": "1151010373378248706",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000600324c",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10020,
+                            "typeName": "儿童椅",
+                            "label": "chair-child",
+                            "layer": "basic",
+                            "category": "mesh"
+                        },
+                        {
+                            "id": 10012,
+                            "typeName": "餐椅",
+                            "label": "chair-dining",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 3703.63,
+                    "y": 3321.22,
+                    "rotation": 180,
+                    "xSize": 400,
+                    "ySize": 1800,
+                    "zSize": 400,
+                    "item": "1150946160257536002",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000600324d",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10054,
+                            "typeName": "电视柜",
+                            "label": "cabinet-tv",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "wall",
+                    "x": 3853.63,
+                    "y": 3321.22,
+                    "rotation": 180,
+                    "xSize": 100,
+                    "ySize": 1250,
+                    "zSize": 750,
+                    "item": "1151079399458607105",
+                    "z": 800,
+                    "parent": null,
+                    "uid": "00000600324e",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10099,
+                            "typeName": "壁挂电视",
+                            "label": "tv-wall",
+                            "layer": "wall",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040006",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 2190.03,
+                    "y": 7630.12,
+                    "rotation": 270,
+                    "xSize": 500,
+                    "ySize": 900,
+                    "zSize": 1350,
+                    "item": "1151036661958709249",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000007005968",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": []
+                },
+                {
+                    "layer": "basic",
+                    "x": 1307.03,
+                    "y": 7730.12,
+                    "rotation": 270,
+                    "xSize": 700,
+                    "ySize": 466,
+                    "zSize": 863,
+                    "item": "1151027870919823362",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000007005969",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10200,
+                            "typeName": "普通坐便器",
+                            "label": "n-commode",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "wall",
+                    "x": 718.0,
+                    "y": 7380.12,
+                    "rotation": 270,
+                    "xSize": 587,
+                    "ySize": 296,
+                    "zSize": 1414,
+                    "item": "1151032827257556994",
+                    "z": 1500,
+                    "parent": null,
+                    "uid": "00000700596a",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10116,
+                            "typeName": "淋浴喷头",
+                            "label": "shower-head",
+                            "layer": "wall",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 570.0,
+                    "y": 8277.285,
+                    "rotation": 0,
+                    "xSize": 900,
+                    "ySize": -1794.33,
+                    "zSize": 1927,
+                    "item": "1151033402720260098",
+                    "z": null,
+                    "parent": null,
+                    "uid": "00000700596b",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10118,
+                            "typeName": "边淋浴房",
+                            "label": "shower-side",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040007",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        },
+        {
+            "furniture": [
+                {
+                    "layer": "basic",
+                    "x": 2190.03,
+                    "y": 6890.12,
+                    "rotation": 90,
+                    "xSize": 500,
+                    "ySize": 900,
+                    "zSize": 1350,
+                    "item": "1151036661958709249",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000008007f97",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": []
+                },
+                {
+                    "layer": "basic",
+                    "x": 1307.03,
+                    "y": 6790.12,
+                    "rotation": 90,
+                    "xSize": 700,
+                    "ySize": 466,
+                    "zSize": 863,
+                    "item": "1151027870919823362",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000008007f98",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10200,
+                            "typeName": "普通坐便器",
+                            "label": "n-commode",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "wall",
+                    "x": 718.0,
+                    "y": 7140.12,
+                    "rotation": 90,
+                    "xSize": 587,
+                    "ySize": 296,
+                    "zSize": 1414,
+                    "item": "1151032827257556994",
+                    "z": 1500,
+                    "parent": null,
+                    "uid": "000008007f99",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10116,
+                            "typeName": "淋浴喷头",
+                            "label": "shower-head",
+                            "layer": "wall",
+                            "category": "mesh"
+                        }
+                    ]
+                },
+                {
+                    "layer": "basic",
+                    "x": 570.0,
+                    "y": 6350.67,
+                    "rotation": 0,
+                    "xSize": 900,
+                    "ySize": 1578.9,
+                    "zSize": 1927,
+                    "item": "1151033402720260098",
+                    "z": null,
+                    "parent": null,
+                    "uid": "000008007f9a",
+                    "kind": "FURNITURE",
+                    "free": true,
+                    "scalable": false,
+                    "removable": true,
+                    "param": null,
+                    "itemTypes": [
+                        {
+                            "id": 10118,
+                            "typeName": "边淋浴房",
+                            "label": "shower-side",
+                            "layer": "basic",
+                            "category": "mesh"
+                        }
+                    ]
+                }
+            ],
+            "room": "0000040008",
+            "defaultCamera": null,
+            "surfaces": [],
+            "floors": [],
+            "ceilings": [],
+            "cameras": [],
+            "reflections": [],
+            "lights": []
+        }
+    ]
+}

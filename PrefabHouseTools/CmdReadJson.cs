@@ -36,6 +36,8 @@ namespace PrefabHouseTools
         private string[] autoWindowFamilyNames =
             {"auto-Window-SLIDING-FRENCH","auto-Window-HINGED",
              "auto-Window-BAY"};
+        private string[] autoSocketsNames =
+            {"auto-单相五孔插座","auto-单相五孔防水插座","auto-网络电视"};
 
         /// <summary>
         /// Store the current house object.
@@ -60,8 +62,9 @@ namespace PrefabHouseTools
         private Level BaseLevel { get; set; }
         private List<Family> AutoDoorFamilies { get; set; }
         private List<Family> AutoWindowFamilies { get; set; }
-        private Document activeDoc { get; set; }
-        CmdReadJsonForm activeForm { get; set; }
+        private List<Family> AutoSocketFamilies { get; set; }
+        private Document ActiveDoc { get; set; }
+        CmdReadJsonForm ActiveForm { get; set; }
 
         public int TotalWorkLoad { get { return GetTotalWorkLoad(); } }
 
@@ -72,89 +75,134 @@ namespace PrefabHouseTools
         /// <param name="house"></param>
         private void TransferDataUnits(HouseObject house)
         {
-            foreach (A_Floor floor in house.Floors)
+            try
             {
-                foreach (A_Wall wa in floor.Walls)
+                foreach (A_Floor floor in house.Floors)
                 {
-                    wa.P1.X = Helper.Mm2Feet(wa.P1.X);
-                    wa.P1.Y = Helper.Mm2Feet(wa.P1.Y);
-                    wa.P2.X = Helper.Mm2Feet(wa.P2.X);
-                    wa.P2.Y = Helper.Mm2Feet(wa.P2.Y);
-                    wa.Thickness = Helper.Mm2Feet(wa.Thickness);
-                    wa.Height = Helper.Mm2Feet(wa.Height);
-                }
-                foreach (A_Door door in floor.Doors)
-                {
-                    door.P1.X = Helper.Mm2Feet(door.P1.X);
-                    door.P1.Y = Helper.Mm2Feet(door.P1.Y);
-                    door.P2.X = Helper.Mm2Feet(door.P2.X);
-                    door.P2.Y = Helper.Mm2Feet(door.P2.Y);
-                    door.Height = Helper.Mm2Feet(door.Height);
-                    door.SillHeight = Helper.Mm2Feet(door.SillHeight);
-                }
-                foreach (A_Window window in floor.Windows)
-                {
-                    window.P1.X = Helper.Mm2Feet(window.P1.X);
-                    window.P1.Y = Helper.Mm2Feet(window.P1.Y);
-                    window.P2.X = Helper.Mm2Feet(window.P2.X);
-                    window.P2.Y = Helper.Mm2Feet(window.P2.Y);
-                    window.Height = Helper.Mm2Feet(window.Height);
-                    window.SillHeight = Helper.Mm2Feet(window.SillHeight);
-                    window.BayDepth = Helper.Mm2Feet(window.BayDepth);
-                }
-                foreach (A_Cube cube in floor.Cubes)
-                {
-                    cube.X = Helper.Mm2Feet(cube.X);
-                    cube.Y = Helper.Mm2Feet(cube.Y);
-                    cube.XSize = Helper.Mm2Feet(cube.XSize);
-                    cube.YSize = Helper.Mm2Feet(cube.YSize);
-                    cube.Z = Helper.Mm2Feet(cube.Z);
-                    cube.ZSize = Helper.Mm2Feet(cube.ZSize);
-                }
-                foreach (A_Room room in floor.Rooms)
-                {
-                    foreach (A_Contour contour in room.Meta.Contours)
+                    foreach (A_Wall wa in floor.Walls)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        wa.P1.X = Helper.Mm2Feet(wa.P1.X);
+                        wa.P1.Y = Helper.Mm2Feet(wa.P1.Y);
+                        wa.P2.X = Helper.Mm2Feet(wa.P2.X);
+                        wa.P2.Y = Helper.Mm2Feet(wa.P2.Y);
+                        wa.Thickness = Helper.Mm2Feet(wa.Thickness);
+                        wa.Height = Helper.Mm2Feet(wa.Height);
                     }
-                    foreach (A_Contour contour in room.Meta.CubeContours)
+                    foreach (A_Door door in floor.Doors)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        door.P1.X = Helper.Mm2Feet(door.P1.X);
+                        door.P1.Y = Helper.Mm2Feet(door.P1.Y);
+                        door.P2.X = Helper.Mm2Feet(door.P2.X);
+                        door.P2.Y = Helper.Mm2Feet(door.P2.Y);
+                        door.Height = Helper.Mm2Feet(door.Height);
+                        door.SillHeight = Helper.Mm2Feet(door.SillHeight);
                     }
-                }
-                foreach (A_Room outer in floor.Outers)
-                {
-                    foreach (A_Contour contour in outer.Meta.Contours)
+                    foreach (A_Window window in floor.Windows)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        window.P1.X = Helper.Mm2Feet(window.P1.X);
+                        window.P1.Y = Helper.Mm2Feet(window.P1.Y);
+                        window.P2.X = Helper.Mm2Feet(window.P2.X);
+                        window.P2.Y = Helper.Mm2Feet(window.P2.Y);
+                        window.Height = Helper.Mm2Feet(window.Height);
+                        window.SillHeight = Helper.Mm2Feet(window.SillHeight);
+                        window.BayDepth = Helper.Mm2Feet(window.BayDepth);
                     }
-                    foreach (A_Contour contour in outer.Meta.CubeContours)
+                    foreach (A_Cube cube in floor.Cubes)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        cube.X = Helper.Mm2Feet(cube.X);
+                        cube.Y = Helper.Mm2Feet(cube.Y);
+                        cube.XSize = Helper.Mm2Feet(cube.XSize);
+                        cube.YSize = Helper.Mm2Feet(cube.YSize);
+                        cube.Z = Helper.Mm2Feet(cube.Z);
+                        cube.ZSize = Helper.Mm2Feet(cube.ZSize);
+                    }
+                    foreach (A_Room room in floor.Rooms)
+                    {
+                        foreach (A_Contour contour in room.Meta.Contours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        }
+                        foreach (A_Contour contour in room.Meta.CubeContours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        }
+                    }
+                    foreach (A_Room outer in floor.Outers)
+                    {
+                        foreach (A_Contour contour in outer.Meta.Contours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        }
+                        foreach (A_Contour contour in outer.Meta.CubeContours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
 
+                        }
+                    }
+                    foreach (A_Label label in floor.Labels)
+                    {
+                        label.Position.X = Helper.Mm2Feet(label.Position.X);
+                        label.Position.Y = Helper.Mm2Feet(label.Position.Y);
+                    }
+                    floor.Height = Helper.Mm2Feet(floor.Height);
+
+
+                    if (floor.Socket == null)
+                    {
+                        floor.Socket = new List<A_Socket>();
+                    }
+                    foreach (A_Socket socket in floor.Socket)
+                    {
+                        socket.X = Helper.Mm2Feet(socket.X);
+                        socket.Y = Helper.Mm2Feet(socket.Y);
+                        socket.Z = Helper.Mm2Feet(socket.Z);
                     }
                 }
-                foreach (A_Label label in floor.Labels)
-                {
-                    label.Position.X = Helper.Mm2Feet(label.Position.X);
-                    label.Position.Y = Helper.Mm2Feet(label.Position.Y);
-                }
-                floor.Height = Helper.Mm2Feet(floor.Height);
             }
+            catch
+            {
+                throw new Exception("Json数据不完整或数据损坏，请检查数据文件。");
+            }
+            
         }
         #endregion
+
+        #region Progress calculating
+        const int wallWorkLoad = 1;
+        const int doorWorkLoad = 5;
+        const int windowWorkLoad = 5;
+        const int socketWorkLoad = 5;
+        private int GetTotalWorkLoad()
+        {
+            int total = CurrentHouse.Floors
+                     .SelectMany(f => f.Walls)
+                     .Count()*wallWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Doors)
+                     .Count()*doorWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Windows)
+                     .Count()*windowWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Socket)
+                     .Count()*socketWorkLoad;
+            return total;
+        }
+
+        #endregion
+
 
         #region Set base values.
         public void Initialize(Document doc)
@@ -163,7 +211,8 @@ namespace PrefabHouseTools
             AllLevels = new List<Level>();
             AutoDoorFamilies = new List<Family>();
             AutoWindowFamilies = new List<Family>();
-            activeDoc = doc;
+            AutoSocketFamilies = new List<Family>();
+            ActiveDoc = doc;
         }
         public void SetBaseLevel(string levelName)
         {
@@ -178,14 +227,14 @@ namespace PrefabHouseTools
             Material baseMaterial = null;
             Color colorGrey = new Color(80, 80, 80);
             ///First check if the material already exist.
-            Material existMa = new FilteredElementCollector(activeDoc)
+            Material existMa = new FilteredElementCollector(ActiveDoc)
                 .OfClass(typeof(Material))
                 .Select(e => e as Material).ToList()
                 .Where(m => m.Name == "AutoWallMaterial")
                 .FirstOrDefault();
             baseMaterialid = (existMa != null) ? existMa.Id :
-                Material.Create(activeDoc, "AutoWallMaterial");
-            baseMaterial = activeDoc.GetElement(baseMaterialid) as Material;
+                Material.Create(ActiveDoc, "AutoWallMaterial");
+            baseMaterial = ActiveDoc.GetElement(baseMaterialid) as Material;
             ///Set the material color.
             baseMaterial.SurfaceForegroundPatternColor = colorGrey;
             baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
@@ -193,7 +242,7 @@ namespace PrefabHouseTools
 
             ///Create the default wall type.
             ///First check if it exist.
-            WallType existWt = new FilteredElementCollector(activeDoc)
+            WallType existWt = new FilteredElementCollector(ActiveDoc)
                 .WhereElementIsElementType()
                 .OfCategory(BuiltInCategory.OST_Walls)
                 .Select(e => e as WallType)
@@ -201,7 +250,7 @@ namespace PrefabHouseTools
                 .ToList().FirstOrDefault();
             ///If not exist,create a new one.
             WallType baseWt = (existWt != null) ?
-                existWt : new FilteredElementCollector(activeDoc)
+                existWt : new FilteredElementCollector(ActiveDoc)
                         .WhereElementIsElementType()
                         .OfCategory(BuiltInCategory.OST_Walls)
                         .Select(e => e as WallType)
@@ -217,15 +266,11 @@ namespace PrefabHouseTools
                 );
 
             ///Create the wallType list and add the base type.
-            AutoWallTypes = new List<WallType>();
-            AutoWallTypes.Add(baseWt);
+            AutoWallTypes = new List<WallType> { baseWt };
         }
 
         public bool LoadOpeningFamilies(Document doc)
         {
-            Family doorFam = null;
-            Family windowFam = null;
-            
             ///Get the path.
             Assembly a = Assembly.GetExecutingAssembly();
             string rootFolder = Path.GetDirectoryName(a.Location);
@@ -233,7 +278,7 @@ namespace PrefabHouseTools
             {
                 string DoorPath = rootFolder
                 + "\\" + doorName + ".rfa";
-                if (!Helper.LoadFamily(doc, doorName ,DoorPath, out doorFam))
+                if (!Helper.LoadFamily(doc, doorName ,DoorPath, out Family doorFam))
                 {
                     TaskDialog.Show("错误","部分默认门族丢失，请重新安装插件");
                     return false;
@@ -244,7 +289,7 @@ namespace PrefabHouseTools
             {
                 string windowPath = rootFolder
                 + "\\" + windowName + ".rfa";
-                if (!Helper.LoadFamily(doc, windowName, windowPath, out windowFam))
+                if (!Helper.LoadFamily(doc, windowName, windowPath, out Family windowFam))
                 {
                     TaskDialog.Show("错误", "部分默认窗族丢失，请重新安装插件");
                     return false;
@@ -253,23 +298,24 @@ namespace PrefabHouseTools
             }
             return true;
         }
-        #endregion
 
-        #region Progress calculating
-        private int GetTotalWorkLoad()
+        public bool LoadSocketsFamilies(Document doc)
         {
-            int total = CurrentHouse.Floors
-                     .SelectMany(f => f.Walls)
-                     .Count();
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Doors)
-                     .Count();
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Windows)
-                     .Count();
-            return total;
+            Assembly a = Assembly.GetExecutingAssembly();
+            string rootFolder = Path.GetDirectoryName(a.Location);
+            foreach (string socketName in autoSocketsNames)
+            {
+                string DoorPath = rootFolder
+                + "\\" + socketName + ".rfa";
+                if (!Helper.LoadFamily(doc, socketName, DoorPath, out Family socketFam))
+                {
+                    TaskDialog.Show("错误", "部分默认门族丢失，请重新安装插件");
+                    return false;
+                }
+                AutoSocketFamilies.Add(socketFam);
+            }
+            return true;
         }
-
         #endregion
 
         #region The main work.
@@ -314,7 +360,7 @@ namespace PrefabHouseTools
                     wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
                         floor.Height, 0, false, true);
 
-                    activeForm.UpdateProgress(1);
+                    ActiveForm.UpdateProgress(wallWorkLoad);
                 }
 
                 ///Create the floor.
@@ -361,25 +407,32 @@ namespace PrefabHouseTools
 
                     ///Create the door.
                     d.Instance = CreateSingleOpening
-                        (doc, f, d, BaseLevel, doorFam,
+                        (doc, f, d, baseLevel, doorFam,
                         BuiltInCategory.OST_Doors);
 
+                    bool fliped = false;
                     ///Check the direction.
+                    doc.Regenerate();
                     if (!d.Instance.FacingOrientation
                         .IsAlmostEqualTo(d.FacingOrientation))
                     {
                         d.Instance.flipFacing();
-                        doc.Regenerate();
+                        fliped = true;
                     }
                     if (!d.Instance.HandOrientation
                         .IsAlmostEqualTo(d.HandOrientation))
                     {
                         d.Instance.flipHand();
-                        doc.Regenerate();
+                        fliped = true;
                     }
-                    doc.Regenerate();
+                    if (!fliped)
+                    {
+                        d.Instance.flipFacing();
+                        d.Instance.flipFacing();
+                    }
 
-                    activeForm.UpdateProgress(1);
+                    ///Update the progress.
+                    ActiveForm.UpdateProgress(doorWorkLoad);
                 }
 
                 foreach (A_Window w in f.Windows)
@@ -398,7 +451,7 @@ namespace PrefabHouseTools
                     doc.Regenerate();
                     w.Instance.flipFacing();
 
-                    activeForm.UpdateProgress(1);
+                    ActiveForm.UpdateProgress(windowWorkLoad);
                 }
             }
         }
@@ -459,22 +512,107 @@ namespace PrefabHouseTools
                 StructuralType.NonStructural);
         }
 
+
         public bool DoCreateWalls()
         {
             CreateBaseWallType();
 
-            CreateWalls(activeDoc, CurrentHouse, AutoWallTypes, BaseLevel);
+            CreateWalls(ActiveDoc, CurrentHouse, AutoWallTypes, BaseLevel);
 
             return true;
         }
         public bool DoCreateOpenings()
         {
-            if (!this.LoadOpeningFamilies(activeDoc))
+            if (!this.LoadOpeningFamilies(ActiveDoc))
                 return false;
 
-            CreateOpenings(activeDoc, CurrentHouse, BaseLevel,
+            CreateOpenings(ActiveDoc, CurrentHouse, BaseLevel,
                 AutoDoorFamilies, AutoWindowFamilies);
 
+            return true;
+        }
+        public bool DoCreateSockets()
+        {
+            this.LoadSocketsFamilies(ActiveDoc);
+
+            Document doc = this.ActiveDoc;
+            List<A_Socket> allSockets = 
+                CurrentHouse.Floors
+                .SelectMany(f => f.Socket)
+                .ToList();
+            List<A_Wall> allWalls =
+                CurrentHouse.Floors
+                .SelectMany(f => f.Walls)
+                .ToList();
+
+            if (allSockets.Count() == 0)
+                return false;
+
+            foreach (A_Socket soc in allSockets)
+            {
+                XYZ centerPt = new XYZ
+                    (soc.X, soc.Y, soc.Z + BaseLevel.Elevation);
+                XYZ dirPt = new XYZ
+                    (0-soc.Orientation.Y, soc.Orientation.X, 0);
+
+                ///Get all the face of the host wall.
+                Wall hostWall = allWalls
+                    .First(w => w.Uid == soc.Related.Uid).Wall;
+
+                List<Reference> sideFaces =
+                    HostObjectUtils.GetSideFaces
+                    (hostWall, ShellLayerType.Exterior)
+                    .ToList();
+                sideFaces.AddRange(
+                    HostObjectUtils.GetSideFaces
+                    (hostWall, ShellLayerType.Interior)
+                    .ToList());
+
+                ///Find the face where the socket is located.
+                Reference hostFace = sideFaces
+                          .OrderBy(f => centerPt.DistanceTo
+                                        ((doc.GetElement(f)
+                                        .GetGeometryObjectFromReference(f)
+                                        as Face)
+                                        .Project(centerPt).XYZPoint))
+                          .First();
+                if (hostFace == null) continue;
+
+                ///Choose the type.
+                Family socFam ;
+                switch (soc.Tag)
+                {
+                    case "五孔":
+                        socFam = AutoSocketFamilies
+                            .First(s => 
+                            (s.Name.Contains("五孔")) &&
+                            (!s.Name.Contains("防水")));
+                        break;
+                    case "五孔防水":
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains("五孔防水"));
+                        break;
+                    case "网络电视":
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains("网络电视"));
+                        break;
+                    default:
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains(soc.Tag));
+                        break;
+                }
+                FamilySymbol socSymbol = 
+                    doc.GetElement
+                    (socFam.GetFamilySymbolIds().First()) 
+                    as FamilySymbol;
+
+                socSymbol.Activate();
+                soc.Instance = doc.Create
+                    .NewFamilyInstance
+                    (hostFace, centerPt,dirPt,socSymbol);
+
+                ActiveForm.UpdateProgress(socketWorkLoad);
+            }
             return true;
         }
         #endregion
@@ -501,7 +639,7 @@ namespace PrefabHouseTools
                 try
                 {
                     CmdReadJsonForm InputJsonForm = new CmdReadJsonForm(this);
-                    this.activeForm = InputJsonForm;
+                    this.ActiveForm = InputJsonForm;
                     ///List levels.
                     AllLevels = new FilteredElementCollector(doc)
                         .WhereElementIsNotElementType()
@@ -511,9 +649,9 @@ namespace PrefabHouseTools
                     {
                         InputJsonForm.LevelBox.Items.Add(l.Name);
                     }
-                    ///InputJsonForm.Show();
-                    if (InputJsonForm.ShowDialog() != DialogResult.OK)
-                        return Result.Failed;
+                    InputJsonForm.ShowDialog();
+                    ///if (InputJsonForm.ShowDialog() != DialogResult.OK)
+                    ///    return Result.Failed;
                 }
                 catch (Exception e)
                 {

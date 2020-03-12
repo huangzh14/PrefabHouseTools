@@ -90,7 +90,7 @@ namespace PrefabHouseTools
         {
             get
             {
-                return new XYZ(P1.X - P2.X, P1.Y - P2.Y, 0);
+                return new XYZ(P1.X - P2.X, P1.Y - P2.Y, 0).Normalize();
             }
         }
         public XYZ FacingOrientation
@@ -99,9 +99,9 @@ namespace PrefabHouseTools
             {
                 if (this.OpenDirection == A_OpenDirection.CLOCKWISE)
                 {
-                    return new XYZ(P1.Y - P2.Y, P2.X - P1.X, 0);
+                    return new XYZ(P2.Y - P1.Y, P1.X - P2.X, 0).Normalize();
                 }
-                return new XYZ(P2.Y - P1.Y, P1.X - P2.X, 0);
+                return new XYZ(P1.Y - P2.Y, P2.X - P1.X, 0).Normalize();
             }
         }
     }
@@ -195,6 +195,65 @@ namespace PrefabHouseTools
     }
     #endregion
 
+    #region Sockets
+    public class A_SocketRelate
+    {
+        public string Kind;
+        public string Uid;
+    }
+    public class A_Socket
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+        public string Name { get; set; }
+        public A_SocketRelate Related { get; set; }
+        public string Tag { get; set; }
+        public A_Point Orientation { get; set; }
+        public FamilyInstance Instance { get; set; }
+    }
+    #endregion
+
+    #region SoftDesign
+    public enum FurLayer
+    {
+        basic,floor,child,wall,ceiling
+    }
+    public struct FurItemType
+    {
+        public string Id;
+        public string TypeName;
+        public string Label;
+        public FurLayer Layer;
+        public string Category;
+    }
+    public class Furniture
+    {
+        public FurLayer Layer;
+        public float X;
+        public float Y;
+        public float Rotation;
+        public float XSize;
+        public float YSize;
+        public float ZSize;
+        public string Item;
+        public float? Z;
+        public string Parent;
+        public string Uid;
+        public string Kind;
+        public bool Free;
+        public bool Scalable;
+        public bool Removable;
+        public string Param;
+        public IList<FurItemType> ItemTypes;
+    }
+    public class RoomSoftDesign
+    {
+        public IList<Furniture> Furniture;
+        public string Room;
+    }
+    #endregion
+
     #region Floor and house objects
     public class A_Floor
     {
@@ -207,19 +266,30 @@ namespace PrefabHouseTools
         public IList<A_Room> Outers { get; set; }
         public IList<A_Label> Labels { get; set; }
         public float Height { get; set; }
+
+        public IList<A_Socket> Socket { get; set; }
     }
     public class HouseObject
     {
-        public int Version { get; set; }
+        public string Version { get; set; }
         public float Rotation { get; set; }
         public IList<A_Floor> Floors { get; set; }
         public HouseObject()
         {
             Floors = new List<A_Floor>();
-            Version = 0;
+            Version = "0";
             Rotation = 0;
         }
 
+    }
+
+    #endregion
+
+    #region 家具布局结构总
+    public class HouseWithSoft
+    {
+        public HouseObject House;
+        public IList<RoomSoftDesign> RoomSoftDesigns;
     }
     #endregion
 }
