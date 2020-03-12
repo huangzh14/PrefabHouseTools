@@ -90,7 +90,7 @@ namespace PrefabHouseTools
         {
             get
             {
-                return new XYZ(P1.X - P2.X, P1.Y - P2.Y, 0);
+                return new XYZ(P1.X - P2.X, P1.Y - P2.Y, 0).Normalize();
             }
         }
         public XYZ FacingOrientation
@@ -99,9 +99,9 @@ namespace PrefabHouseTools
             {
                 if (this.OpenDirection == A_OpenDirection.CLOCKWISE)
                 {
-                    return new XYZ(P1.Y - P2.Y, P2.X - P1.X, 0);
+                    return new XYZ(P2.Y - P1.Y, P1.X - P2.X, 0).Normalize();
                 }
-                return new XYZ(P2.Y - P1.Y, P1.X - P2.X, 0);
+                return new XYZ(P1.Y - P2.Y, P2.X - P1.X, 0).Normalize();
             }
         }
     }

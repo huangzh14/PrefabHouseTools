@@ -75,93 +75,107 @@ namespace PrefabHouseTools
         /// <param name="house"></param>
         private void TransferDataUnits(HouseObject house)
         {
-            foreach (A_Floor floor in house.Floors)
+            try
             {
-                foreach (A_Wall wa in floor.Walls)
+                foreach (A_Floor floor in house.Floors)
                 {
-                    wa.P1.X = Helper.Mm2Feet(wa.P1.X);
-                    wa.P1.Y = Helper.Mm2Feet(wa.P1.Y);
-                    wa.P2.X = Helper.Mm2Feet(wa.P2.X);
-                    wa.P2.Y = Helper.Mm2Feet(wa.P2.Y);
-                    wa.Thickness = Helper.Mm2Feet(wa.Thickness);
-                    wa.Height = Helper.Mm2Feet(wa.Height);
-                }
-                foreach (A_Door door in floor.Doors)
-                {
-                    door.P1.X = Helper.Mm2Feet(door.P1.X);
-                    door.P1.Y = Helper.Mm2Feet(door.P1.Y);
-                    door.P2.X = Helper.Mm2Feet(door.P2.X);
-                    door.P2.Y = Helper.Mm2Feet(door.P2.Y);
-                    door.Height = Helper.Mm2Feet(door.Height);
-                    door.SillHeight = Helper.Mm2Feet(door.SillHeight);
-                }
-                foreach (A_Window window in floor.Windows)
-                {
-                    window.P1.X = Helper.Mm2Feet(window.P1.X);
-                    window.P1.Y = Helper.Mm2Feet(window.P1.Y);
-                    window.P2.X = Helper.Mm2Feet(window.P2.X);
-                    window.P2.Y = Helper.Mm2Feet(window.P2.Y);
-                    window.Height = Helper.Mm2Feet(window.Height);
-                    window.SillHeight = Helper.Mm2Feet(window.SillHeight);
-                    window.BayDepth = Helper.Mm2Feet(window.BayDepth);
-                }
-                foreach (A_Cube cube in floor.Cubes)
-                {
-                    cube.X = Helper.Mm2Feet(cube.X);
-                    cube.Y = Helper.Mm2Feet(cube.Y);
-                    cube.XSize = Helper.Mm2Feet(cube.XSize);
-                    cube.YSize = Helper.Mm2Feet(cube.YSize);
-                    cube.Z = Helper.Mm2Feet(cube.Z);
-                    cube.ZSize = Helper.Mm2Feet(cube.ZSize);
-                }
-                foreach (A_Room room in floor.Rooms)
-                {
-                    foreach (A_Contour contour in room.Meta.Contours)
+                    foreach (A_Wall wa in floor.Walls)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        wa.P1.X = Helper.Mm2Feet(wa.P1.X);
+                        wa.P1.Y = Helper.Mm2Feet(wa.P1.Y);
+                        wa.P2.X = Helper.Mm2Feet(wa.P2.X);
+                        wa.P2.Y = Helper.Mm2Feet(wa.P2.Y);
+                        wa.Thickness = Helper.Mm2Feet(wa.Thickness);
+                        wa.Height = Helper.Mm2Feet(wa.Height);
                     }
-                    foreach (A_Contour contour in room.Meta.CubeContours)
+                    foreach (A_Door door in floor.Doors)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        door.P1.X = Helper.Mm2Feet(door.P1.X);
+                        door.P1.Y = Helper.Mm2Feet(door.P1.Y);
+                        door.P2.X = Helper.Mm2Feet(door.P2.X);
+                        door.P2.Y = Helper.Mm2Feet(door.P2.Y);
+                        door.Height = Helper.Mm2Feet(door.Height);
+                        door.SillHeight = Helper.Mm2Feet(door.SillHeight);
                     }
-                }
-                foreach (A_Room outer in floor.Outers)
-                {
-                    foreach (A_Contour contour in outer.Meta.Contours)
+                    foreach (A_Window window in floor.Windows)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        window.P1.X = Helper.Mm2Feet(window.P1.X);
+                        window.P1.Y = Helper.Mm2Feet(window.P1.Y);
+                        window.P2.X = Helper.Mm2Feet(window.P2.X);
+                        window.P2.Y = Helper.Mm2Feet(window.P2.Y);
+                        window.Height = Helper.Mm2Feet(window.Height);
+                        window.SillHeight = Helper.Mm2Feet(window.SillHeight);
+                        window.BayDepth = Helper.Mm2Feet(window.BayDepth);
                     }
-                    foreach (A_Contour contour in outer.Meta.CubeContours)
+                    foreach (A_Cube cube in floor.Cubes)
                     {
-                        contour.P1.X = Helper.Mm2Feet(contour.P1.X);
-                        contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
-                        contour.P2.X = Helper.Mm2Feet(contour.P2.X);
-                        contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        cube.X = Helper.Mm2Feet(cube.X);
+                        cube.Y = Helper.Mm2Feet(cube.Y);
+                        cube.XSize = Helper.Mm2Feet(cube.XSize);
+                        cube.YSize = Helper.Mm2Feet(cube.YSize);
+                        cube.Z = Helper.Mm2Feet(cube.Z);
+                        cube.ZSize = Helper.Mm2Feet(cube.ZSize);
+                    }
+                    foreach (A_Room room in floor.Rooms)
+                    {
+                        foreach (A_Contour contour in room.Meta.Contours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        }
+                        foreach (A_Contour contour in room.Meta.CubeContours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        }
+                    }
+                    foreach (A_Room outer in floor.Outers)
+                    {
+                        foreach (A_Contour contour in outer.Meta.Contours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
+                        }
+                        foreach (A_Contour contour in outer.Meta.CubeContours)
+                        {
+                            contour.P1.X = Helper.Mm2Feet(contour.P1.X);
+                            contour.P1.Y = Helper.Mm2Feet(contour.P1.Y);
+                            contour.P2.X = Helper.Mm2Feet(contour.P2.X);
+                            contour.P2.Y = Helper.Mm2Feet(contour.P2.Y);
 
+                        }
                     }
-                }
-                foreach (A_Label label in floor.Labels)
-                {
-                    label.Position.X = Helper.Mm2Feet(label.Position.X);
-                    label.Position.Y = Helper.Mm2Feet(label.Position.Y);
-                }
-                floor.Height = Helper.Mm2Feet(floor.Height);
-                foreach (A_Socket socket in floor.Socket)
-                {
-                    socket.X = Helper.Mm2Feet(socket.X);
-                    socket.Y = Helper.Mm2Feet(socket.Y);
-                    socket.Z = Helper.Mm2Feet(socket.Z);
+                    foreach (A_Label label in floor.Labels)
+                    {
+                        label.Position.X = Helper.Mm2Feet(label.Position.X);
+                        label.Position.Y = Helper.Mm2Feet(label.Position.Y);
+                    }
+                    floor.Height = Helper.Mm2Feet(floor.Height);
+
+
+                    if (floor.Socket == null)
+                    {
+                        floor.Socket = new List<A_Socket>();
+                    }
+                    foreach (A_Socket socket in floor.Socket)
+                    {
+                        socket.X = Helper.Mm2Feet(socket.X);
+                        socket.Y = Helper.Mm2Feet(socket.Y);
+                        socket.Z = Helper.Mm2Feet(socket.Z);
+                    }
                 }
             }
+            catch
+            {
+                throw new Exception("Json数据不完整或数据损坏，请检查数据文件。");
+            }
+            
         }
         #endregion
 
@@ -397,21 +411,28 @@ namespace PrefabHouseTools
                         (doc, f, d, BaseLevel, doorFam,
                         BuiltInCategory.OST_Doors);
 
+                    bool fliped = false;
                     ///Check the direction.
+                    doc.Regenerate();
                     if (!d.Instance.FacingOrientation
                         .IsAlmostEqualTo(d.FacingOrientation))
                     {
                         d.Instance.flipFacing();
-                        doc.Regenerate();
+                        fliped = true;
                     }
                     if (!d.Instance.HandOrientation
                         .IsAlmostEqualTo(d.HandOrientation))
                     {
                         d.Instance.flipHand();
-                        doc.Regenerate();
+                        fliped = true;
                     }
-                    doc.Regenerate();
+                    if (!fliped)
+                    {
+                        d.Instance.flipFacing();
+                        d.Instance.flipFacing();
+                    }
 
+                    ///Update the progress.
                     activeForm.UpdateProgress(1);
                 }
 
@@ -591,7 +612,6 @@ namespace PrefabHouseTools
                     .NewFamilyInstance
                     (hostFace, centerPt,dirPt,socSymbol);
 
-                doc.Regenerate();
                 activeForm.UpdateProgress(1);
             }
             return true;
