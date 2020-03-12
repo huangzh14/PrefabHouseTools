@@ -63,8 +63,8 @@ namespace PrefabHouseTools
         private List<Family> AutoDoorFamilies { get; set; }
         private List<Family> AutoWindowFamilies { get; set; }
         private List<Family> AutoSocketFamilies { get; set; }
-        private Document activeDoc { get; set; }
-        CmdReadJsonForm activeForm { get; set; }
+        private Document ActiveDoc { get; set; }
+        CmdReadJsonForm ActiveForm { get; set; }
 
         public int TotalWorkLoad { get { return GetTotalWorkLoad(); } }
 
@@ -180,20 +180,24 @@ namespace PrefabHouseTools
         #endregion
 
         #region Progress calculating
+        const int wallWorkLoad = 1;
+        const int doorWorkLoad = 5;
+        const int windowWorkLoad = 5;
+        const int socketWorkLoad = 5;
         private int GetTotalWorkLoad()
         {
             int total = CurrentHouse.Floors
                      .SelectMany(f => f.Walls)
-                     .Count();
+                     .Count()*wallWorkLoad;
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Doors)
-                     .Count();
+                     .Count()*doorWorkLoad;
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Windows)
-                     .Count();
+                     .Count()*windowWorkLoad;
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Socket)
-                     .Count();
+                     .Count()*socketWorkLoad;
             return total;
         }
 
@@ -208,7 +212,7 @@ namespace PrefabHouseTools
             AutoDoorFamilies = new List<Family>();
             AutoWindowFamilies = new List<Family>();
             AutoSocketFamilies = new List<Family>();
-            activeDoc = doc;
+            ActiveDoc = doc;
         }
         public void SetBaseLevel(string levelName)
         {
@@ -223,14 +227,14 @@ namespace PrefabHouseTools
             Material baseMaterial = null;
             Color colorGrey = new Color(80, 80, 80);
             ///First check if the material already exist.
-            Material existMa = new FilteredElementCollector(activeDoc)
+            Material existMa = new FilteredElementCollector(ActiveDoc)
                 .OfClass(typeof(Material))
                 .Select(e => e as Material).ToList()
                 .Where(m => m.Name == "AutoWallMaterial")
                 .FirstOrDefault();
             baseMaterialid = (existMa != null) ? existMa.Id :
-                Material.Create(activeDoc, "AutoWallMaterial");
-            baseMaterial = activeDoc.GetElement(baseMaterialid) as Material;
+                Material.Create(ActiveDoc, "AutoWallMaterial");
+            baseMaterial = ActiveDoc.GetElement(baseMaterialid) as Material;
             ///Set the material color.
             baseMaterial.SurfaceForegroundPatternColor = colorGrey;
             baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
@@ -238,7 +242,7 @@ namespace PrefabHouseTools
 
             ///Create the default wall type.
             ///First check if it exist.
-            WallType existWt = new FilteredElementCollector(activeDoc)
+            WallType existWt = new FilteredElementCollector(ActiveDoc)
                 .WhereElementIsElementType()
                 .OfCategory(BuiltInCategory.OST_Walls)
                 .Select(e => e as WallType)
@@ -246,7 +250,7 @@ namespace PrefabHouseTools
                 .ToList().FirstOrDefault();
             ///If not exist,create a new one.
             WallType baseWt = (existWt != null) ?
-                existWt : new FilteredElementCollector(activeDoc)
+                existWt : new FilteredElementCollector(ActiveDoc)
                         .WhereElementIsElementType()
                         .OfCategory(BuiltInCategory.OST_Walls)
                         .Select(e => e as WallType)
@@ -262,15 +266,11 @@ namespace PrefabHouseTools
                 );
 
             ///Create the wallType list and add the base type.
-            AutoWallTypes = new List<WallType>();
-            AutoWallTypes.Add(baseWt);
+            AutoWallTypes = new List<WallType> { baseWt };
         }
 
         public bool LoadOpeningFamilies(Document doc)
         {
-            Family doorFam = null;
-            Family windowFam = null;
-            
             ///Get the path.
             Assembly a = Assembly.GetExecutingAssembly();
             string rootFolder = Path.GetDirectoryName(a.Location);
@@ -278,7 +278,7 @@ namespace PrefabHouseTools
             {
                 string DoorPath = rootFolder
                 + "\\" + doorName + ".rfa";
-                if (!Helper.LoadFamily(doc, doorName ,DoorPath, out doorFam))
+                if (!Helper.LoadFamily(doc, doorName ,DoorPath, out Family doorFam))
                 {
                     TaskDialog.Show("错误","部分默认门族丢失，请重新安装插件");
                     return false;
@@ -289,7 +289,7 @@ namespace PrefabHouseTools
             {
                 string windowPath = rootFolder
                 + "\\" + windowName + ".rfa";
-                if (!Helper.LoadFamily(doc, windowName, windowPath, out windowFam))
+                if (!Helper.LoadFamily(doc, windowName, windowPath, out Family windowFam))
                 {
                     TaskDialog.Show("错误", "部分默认窗族丢失，请重新安装插件");
                     return false;
@@ -301,14 +301,13 @@ namespace PrefabHouseTools
 
         public bool LoadSocketsFamilies(Document doc)
         {
-            Family socketFam = null;
             Assembly a = Assembly.GetExecutingAssembly();
             string rootFolder = Path.GetDirectoryName(a.Location);
             foreach (string socketName in autoSocketsNames)
             {
                 string DoorPath = rootFolder
                 + "\\" + socketName + ".rfa";
-                if (!Helper.LoadFamily(doc, socketName, DoorPath, out socketFam))
+                if (!Helper.LoadFamily(doc, socketName, DoorPath, out Family socketFam))
                 {
                     TaskDialog.Show("错误", "部分默认门族丢失，请重新安装插件");
                     return false;
@@ -361,7 +360,7 @@ namespace PrefabHouseTools
                     wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
                         floor.Height, 0, false, true);
 
-                    activeForm.UpdateProgress(1);
+                    ActiveForm.UpdateProgress(wallWorkLoad);
                 }
 
                 ///Create the floor.
@@ -408,7 +407,7 @@ namespace PrefabHouseTools
 
                     ///Create the door.
                     d.Instance = CreateSingleOpening
-                        (doc, f, d, BaseLevel, doorFam,
+                        (doc, f, d, baseLevel, doorFam,
                         BuiltInCategory.OST_Doors);
 
                     bool fliped = false;
@@ -433,7 +432,7 @@ namespace PrefabHouseTools
                     }
 
                     ///Update the progress.
-                    activeForm.UpdateProgress(1);
+                    ActiveForm.UpdateProgress(doorWorkLoad);
                 }
 
                 foreach (A_Window w in f.Windows)
@@ -452,7 +451,7 @@ namespace PrefabHouseTools
                     doc.Regenerate();
                     w.Instance.flipFacing();
 
-                    activeForm.UpdateProgress(1);
+                    ActiveForm.UpdateProgress(windowWorkLoad);
                 }
             }
         }
@@ -518,25 +517,25 @@ namespace PrefabHouseTools
         {
             CreateBaseWallType();
 
-            CreateWalls(activeDoc, CurrentHouse, AutoWallTypes, BaseLevel);
+            CreateWalls(ActiveDoc, CurrentHouse, AutoWallTypes, BaseLevel);
 
             return true;
         }
         public bool DoCreateOpenings()
         {
-            if (!this.LoadOpeningFamilies(activeDoc))
+            if (!this.LoadOpeningFamilies(ActiveDoc))
                 return false;
 
-            CreateOpenings(activeDoc, CurrentHouse, BaseLevel,
+            CreateOpenings(ActiveDoc, CurrentHouse, BaseLevel,
                 AutoDoorFamilies, AutoWindowFamilies);
 
             return true;
         }
         public bool DoCreateSockets()
         {
-            this.LoadSocketsFamilies(activeDoc);
+            this.LoadSocketsFamilies(ActiveDoc);
 
-            Document doc = this.activeDoc;
+            Document doc = this.ActiveDoc;
             List<A_Socket> allSockets = 
                 CurrentHouse.Floors
                 .SelectMany(f => f.Socket)
@@ -612,7 +611,7 @@ namespace PrefabHouseTools
                     .NewFamilyInstance
                     (hostFace, centerPt,dirPt,socSymbol);
 
-                activeForm.UpdateProgress(1);
+                ActiveForm.UpdateProgress(socketWorkLoad);
             }
             return true;
         }
@@ -640,7 +639,7 @@ namespace PrefabHouseTools
                 try
                 {
                     CmdReadJsonForm InputJsonForm = new CmdReadJsonForm(this);
-                    this.activeForm = InputJsonForm;
+                    this.ActiveForm = InputJsonForm;
                     ///List levels.
                     AllLevels = new FilteredElementCollector(doc)
                         .WhereElementIsNotElementType()

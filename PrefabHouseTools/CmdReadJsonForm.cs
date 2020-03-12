@@ -31,7 +31,7 @@ namespace PrefabHouseTools
         /// The object from json file.
         /// Contain a list of the soft design of each room.
         /// </summary>
-        public IList<RoomSoftDesign> roomSoftDesigns { get; private set; }
+        public IList<RoomSoftDesign> RoomSoftDesigns { get; private set; }
 
         ///The index for monitering the progress.
         int totalWorkLoad,currentWorkLoad;
@@ -81,7 +81,7 @@ namespace PrefabHouseTools
         private void ReadCurrentSelection(Stream fileStream)
         {
             CurrentHouse = new HouseObject();
-            roomSoftDesigns = new List<RoomSoftDesign>();
+            RoomSoftDesigns = new List<RoomSoftDesign>();
             using (StreamReader reader = new StreamReader(fileStream))
             {
                 JObject jsonObj = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
@@ -107,7 +107,7 @@ namespace PrefabHouseTools
                         CurrentHouse = jsonObj["house"].ToObject<HouseObject>();
                         foreach (JToken j in jsonObj["roomSoftDesigns"].Children())
                         {
-                            roomSoftDesigns.Add(j.ToObject<RoomSoftDesign>());
+                            RoomSoftDesigns.Add(j.ToObject<RoomSoftDesign>());
                         }
 
                         if (CurrentHouse.Floors == null)
