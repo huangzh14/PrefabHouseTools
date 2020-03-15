@@ -215,21 +215,21 @@ namespace PrefabHouseTools
     #endregion
 
     #region SoftDesign
-    public enum FurLayer
+    public enum A_FurLayer
     {
         basic,floor,child,wall,ceiling
     }
-    public struct FurItemType
+    public struct A_FurItemType
     {
         public string Id;
         public string TypeName;
         public string Label;
-        public FurLayer Layer;
+        public A_FurLayer Layer;
         public string Category;
     }
-    public class Furniture
+    public class A_Furniture
     {
-        public FurLayer Layer;
+        public A_FurLayer Layer;
         public float X;
         public float Y;
         public float Rotation;
@@ -245,11 +245,15 @@ namespace PrefabHouseTools
         public bool Scalable;
         public bool Removable;
         public string Param;
-        public IList<FurItemType> ItemTypes;
+        public IList<A_FurItemType> ItemTypes;
+        /// <summary>
+        /// 用于家具种类识别
+        /// </summary>
+        public int YinMm;
     }
     public class RoomSoftDesign
     {
-        public IList<Furniture> Furniture;
+        public IList<A_Furniture> Furniture;
         public string Room;
     }
     #endregion

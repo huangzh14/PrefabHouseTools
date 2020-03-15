@@ -24,6 +24,7 @@ namespace PrefabHouseTools
     /// Some basic rules.
     /// 1-用于自动生成的rfa族文件必须具有“宽度”和“高度”这两个参数用于调整其
     /// 宽高，且远点应当位于左右中心线的底端。
+    /// 2-对于每个新加入的任务，需要增加单位转换代码和工作进度更新代码
     /// </summary>
     [Transaction(TransactionMode.Manual)]
     public class CmdReadJson : IExternalCommand
@@ -37,7 +38,7 @@ namespace PrefabHouseTools
             {"auto-Window-SLIDING-FRENCH","auto-Window-HINGED",
              "auto-Window-BAY"};
         private string[] autoSocketsNames =
-            {"auto-单相五孔插座","auto-单相五孔防水插座","auto-网络电视"};
+            {"auto-插座-单相五孔","auto-插座-单相五孔防水","auto-插座-网络电视"};
 
         /// <summary>
         /// Store the current house object.
@@ -54,6 +55,17 @@ namespace PrefabHouseTools
             } 
         }
         private HouseObject currentHouse;
+        public List<RoomSoftDesign> RoomSoftDesigns
+        {
+            get { return roomSoftDesigns; }
+            set
+            {
+                this.roomSoftDesigns = value;
+                this.TransferDataUnits(roomSoftDesigns);
+            }
+        }
+        private List<RoomSoftDesign> roomSoftDesigns;
+
         /// <summary>
         /// Store all the WallTypes already created.
         /// </summary>
@@ -63,6 +75,8 @@ namespace PrefabHouseTools
         private List<Family> AutoDoorFamilies { get; set; }
         private List<Family> AutoWindowFamilies { get; set; }
         private List<Family> AutoSocketFamilies { get; set; }
+
+
         private Document ActiveDoc { get; set; }
         CmdReadJsonForm ActiveForm { get; set; }
 
@@ -177,6 +191,23 @@ namespace PrefabHouseTools
             }
             
         }
+
+        private void TransferDataUnits(List<RoomSoftDesign> softDesignsInput)
+        {
+            foreach (RoomSoftDesign rsf in softDesignsInput)
+            {
+                foreach (A_Furniture fur in rsf.Furniture)
+                {
+                    fur.X = Helper.Mm2Feet(fur.X);
+                    fur.YinMm = (int)Math.Round(fur.Y);
+                    fur.Y = Helper.Mm2Feet(fur.Y);
+                    fur.XSize = Helper.Mm2Feet(fur.XSize);
+                    fur.YSize = Helper.Mm2Feet(fur.YSize);
+                    fur.ZSize = Helper.Mm2Feet(fur.ZSize);
+                    fur.Z = Helper.Mm2Feet(fur.Z);
+                }
+            }
+        }
         #endregion
 
         #region Progress calculating
@@ -184,20 +215,24 @@ namespace PrefabHouseTools
         const int doorWorkLoad = 5;
         const int windowWorkLoad = 5;
         const int socketWorkLoad = 5;
+        const int furnitureWorkLoad = 3;
         private int GetTotalWorkLoad()
         {
             int total = CurrentHouse.Floors
                      .SelectMany(f => f.Walls)
-                     .Count()*wallWorkLoad;
+                     .Count() * wallWorkLoad;
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Doors)
-                     .Count()*doorWorkLoad;
+                     .Count() * doorWorkLoad;
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Windows)
-                     .Count()*windowWorkLoad;
+                     .Count() * windowWorkLoad;
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Socket)
-                     .Count()*socketWorkLoad;
+                     .Count() * socketWorkLoad;
+            total += RoomSoftDesigns
+                     .SelectMany(r => r.Furniture)
+                     .Count() * furnitureWorkLoad;
             return total;
         }
 
@@ -613,6 +648,81 @@ namespace PrefabHouseTools
 
                 ActiveForm.UpdateProgress(socketWorkLoad);
             }
+            return true;
+        }
+
+        public bool DoCreateFurniture()
+        {
+            Document doc = ActiveDoc;
+            DWGImportOptions inOpt = new DWGImportOptions();
+            Autodesk.Revit.DB.View inView = 
+                new FilteredElementCollector(doc)
+                .OfCategory(BuiltInCategory.OST_Views)
+                .Select(e => e as Autodesk.Revit.DB.View)
+                .First(v => v.GenLevel.Name == BaseLevel.Name);
+            List<A_Furniture> allFurniture = 
+                RoomSoftDesigns
+                .SelectMany(r => r.Furniture)
+                .ToList();
+
+            ///Find the file
+            Assembly a = Assembly.GetExecutingAssembly();
+            string furnitureFolder = 
+                Path.GetDirectoryName(a.Location)
+                +"\\CmdReadJsonFiles\\FurnitureDWG";
+            string currentFurPath = string.Empty;
+
+            string[] dwgNames = 
+                new DirectoryInfo(furnitureFolder)
+                .GetFiles("*.dwg")
+                .Select(f => f.Name).ToArray();
+            foreach (A_Furniture fur in allFurniture)
+            {
+                if (!fur.Kind.Contains("FURNITURE")) continue;
+
+                var currentFurniture = dwgNames
+                    .Where(s => s.Contains(fur.ItemTypes[0].Label));
+                string confirmedFurniture;
+                try
+                {
+                    if (currentFurniture == null)
+                        continue;
+                    else if (currentFurniture.Count() == 1)
+                        confirmedFurniture = currentFurniture.First();
+                    else if (currentFurniture.Count() > 1)
+                        confirmedFurniture = currentFurniture
+                            .First(f => f.Contains(fur.YinMm.ToString()));
+                    else continue;
+                }
+                catch
+                {
+                    continue;
+                }
+
+                if (confirmedFurniture == null) continue;
+
+                currentFurPath = furnitureFolder + "\\" + confirmedFurniture;
+
+                inOpt.ReferencePoint = new XYZ(fur.X, fur.Y, BaseLevel.Elevation);
+                ///Import dwg and unpin it.
+                doc.Import
+                    (currentFurPath, inOpt, inView, 
+                    out ElementId insertId);
+                doc.Regenerate();
+                Element currentFur = doc.GetElement(insertId);
+                if (currentFur.Pinned) currentFur.Pinned = false;
+
+                XYZ axis1 = new XYZ(fur.X, fur.Y, BaseLevel.Elevation);
+                XYZ axis2 = new XYZ(fur.X, fur.Y, BaseLevel.Elevation + 10);
+                Line rotateAxis = Line.CreateBound(axis1, axis2);
+                
+                ///Some problems to be fixed here about rotating direction.
+                ElementTransformUtils.RotateElement
+                    (doc, insertId, rotateAxis, Math.PI*fur.Rotation/180);
+            }
+
+            ActiveForm.UpdateProgress(furnitureWorkLoad);
+
             return true;
         }
         #endregion

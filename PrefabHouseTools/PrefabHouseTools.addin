@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
   <AddIn Type="Command">
-    <Text>Command PrefabHouseTools</Text>
+    <Text>Test Cmd</Text>
     <Description>Some description for PrefabHouseTools</Description>
     <Assembly>PrefabHouseTools.dll</Assembly>
-    <FullClassName>PrefabHouseTools.Command</FullClassName>
+    <FullClassName>PrefabHouseTools.TestCmd</FullClassName>
     <ClientId>e08addfe-24a7-4cad-b7fe-61b7215a69f8</ClientId>
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>

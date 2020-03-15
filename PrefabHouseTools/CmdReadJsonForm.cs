@@ -145,6 +145,9 @@ namespace PrefabHouseTools
                     
                     ///Write the data to the command as well.
                     originCommand.CurrentHouse = this.CurrentHouse;
+                    originCommand.RoomSoftDesigns = this.RoomSoftDesigns.ToList();
+
+                    ///Update form.
                     this.CheckCondition();
                     PreviewCanvas.Refresh();
                 }
@@ -158,6 +161,7 @@ namespace PrefabHouseTools
             originCommand.DoCreateWalls();
             originCommand.DoCreateOpenings();
             originCommand.DoCreateSockets();
+            originCommand.DoCreateFurniture();
             DialogResult = DialogResult.OK;
             this.Close();
         }

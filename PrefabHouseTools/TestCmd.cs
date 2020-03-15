@@ -7,6 +7,9 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using System.Reflection;
+using System.IO;
+using System.Linq;
 #endregion
 
 namespace PrefabHouseTools
@@ -48,6 +51,18 @@ namespace PrefabHouseTools
             using (Transaction tx = new Transaction(doc))
             {
                 tx.Start("Transaction Name");
+
+                Assembly a = Assembly.GetExecutingAssembly();
+                string furnitureFolder =
+                    Path.GetDirectoryName(a.Location)
+                    + "\\CmdReadJsonFiles\\FurnitureDWG";
+                string currentFurPath = string.Empty;
+
+                string[] dwgNames =
+                    new DirectoryInfo(furnitureFolder)
+                    .GetFiles("*.dwg")
+                    .Select(f => f.Name).ToArray();
+
                 Categories cats = doc.Settings.Categories;
                 Category lineCat = cats
                     .get_Item(BuiltInCategory.OST_Lines);
