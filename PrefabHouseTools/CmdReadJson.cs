@@ -199,7 +199,7 @@ namespace PrefabHouseTools
                 foreach (A_Furniture fur in rsf.Furniture)
                 {
                     fur.X = Helper.Mm2Feet(fur.X);
-                    fur.YinMm = (int)Math.Round(fur.Y);
+                    fur.YSizeMm = (int)Math.Round(fur.YSize);
                     fur.Y = Helper.Mm2Feet(fur.Y);
                     fur.XSize = Helper.Mm2Feet(fur.XSize);
                     fur.YSize = Helper.Mm2Feet(fur.YSize);
@@ -271,8 +271,8 @@ namespace PrefabHouseTools
                 Material.Create(ActiveDoc, "AutoWallMaterial");
             baseMaterial = ActiveDoc.GetElement(baseMaterialid) as Material;
             ///Set the material color.
-            baseMaterial.SurfaceForegroundPatternColor = colorGrey;
-            baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
+            ///baseMaterial.SurfaceForegroundPatternColor = colorGrey;
+            ///baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
             baseMaterial.Color = colorGrey;
 
             ///Create the default wall type.
@@ -655,6 +655,8 @@ namespace PrefabHouseTools
         {
             Document doc = ActiveDoc;
             DWGImportOptions inOpt = new DWGImportOptions();
+            inOpt.Placement = ImportPlacement.Centered;
+
             Autodesk.Revit.DB.View inView = 
                 new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_Views)
@@ -691,7 +693,7 @@ namespace PrefabHouseTools
                         confirmedFurniture = currentFurniture.First();
                     else if (currentFurniture.Count() > 1)
                         confirmedFurniture = currentFurniture
-                            .First(f => f.Contains(fur.YinMm.ToString()));
+                            .First(f => f.Contains(fur.YSizeMm.ToString()));
                     else continue;
                 }
                 catch
@@ -718,7 +720,9 @@ namespace PrefabHouseTools
                 
                 ///Some problems to be fixed here about rotating direction.
                 ElementTransformUtils.RotateElement
-                    (doc, insertId, rotateAxis, Math.PI*fur.Rotation/180);
+                    (doc, insertId, rotateAxis, -Math.PI*fur.Rotation/180);
+
+
             }
 
             ActiveForm.UpdateProgress(furnitureWorkLoad);

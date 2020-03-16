@@ -249,7 +249,7 @@ namespace PrefabHouseTools
         /// <summary>
         /// 用于家具种类识别
         /// </summary>
-        public int YinMm;
+        public int YSizeMm;
     }
     public class RoomSoftDesign
     {
