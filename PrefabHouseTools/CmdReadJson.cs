@@ -683,7 +683,7 @@ namespace PrefabHouseTools
                 if (!fur.Kind.Contains("FURNITURE")) continue;
 
                 var currentFurniture = dwgNames
-                    .Where(s => s.Contains(fur.ItemTypes[0].Label));
+                    .Where(s => s.Contains(fur.Item));
                 string confirmedFurniture;
                 try
                 {
@@ -705,7 +705,9 @@ namespace PrefabHouseTools
 
                 currentFurPath = furnitureFolder + "\\" + confirmedFurniture;
 
-                inOpt.ReferencePoint = new XYZ(fur.X, fur.Y, BaseLevel.Elevation);
+                inOpt.ReferencePoint = fur.Z == null ?
+                    new XYZ(fur.X, fur.Y, BaseLevel.Elevation + fur.ZSize * 0.5) :
+                    new XYZ(fur.X, fur.Y, (double)fur.Z + BaseLevel.Elevation + fur.ZSize * 0.5);
                 ///Import dwg and unpin it.
                 doc.Import
                     (currentFurPath, inOpt, inView, 
@@ -720,12 +722,11 @@ namespace PrefabHouseTools
                 
                 ///Some problems to be fixed here about rotating direction.
                 ElementTransformUtils.RotateElement
-                    (doc, insertId, rotateAxis, -Math.PI*fur.Rotation/180);
+                    (doc, insertId, rotateAxis, Math.PI*fur.Rotation/180);
 
-
+                ActiveForm.UpdateProgress(furnitureWorkLoad);
             }
 
-            ActiveForm.UpdateProgress(furnitureWorkLoad);
 
             return true;
         }

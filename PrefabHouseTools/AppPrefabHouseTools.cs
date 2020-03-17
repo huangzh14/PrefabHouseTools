@@ -40,6 +40,12 @@ namespace PrefabHouseTools
             PushButton ReadJsonB = dataTransferPanel
                 .AddItem(ReadJsonD) as PushButton;
 
+            PushButtonData BatchRenameD = new PushButtonData
+                ("CmdBatchRename", "批量重命名",
+                thisPath, "PrefabHouseTools.CmdBatchRename");
+            PushButton BatchRenameB = dataTransferPanel
+                .AddItem(BatchRenameD) as PushButton;
+
             PushButtonData TestCmdD = new PushButtonData
                 ("TestCmd", "Test", thisPath,
                 "PrefabHouseTools.TestCmd");
