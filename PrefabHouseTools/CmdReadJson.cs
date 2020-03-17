@@ -655,7 +655,6 @@ namespace PrefabHouseTools
         {
             Document doc = ActiveDoc;
             DWGImportOptions inOpt = new DWGImportOptions();
-            inOpt.Placement = ImportPlacement.Centered;
 
             Autodesk.Revit.DB.View inView = 
                 new FilteredElementCollector(doc)
@@ -708,6 +707,10 @@ namespace PrefabHouseTools
                 inOpt.ReferencePoint = fur.Z == null ?
                     new XYZ(fur.X, fur.Y, BaseLevel.Elevation + fur.ZSize * 0.5) :
                     new XYZ(fur.X, fur.Y, (double)fur.Z + BaseLevel.Elevation + fur.ZSize * 0.5);
+
+                inOpt.Placement = fur.Layer == A_FurLayer.wall ?
+                    ImportPlacement.Origin : ImportPlacement.Centered;
+
                 ///Import dwg and unpin it.
                 doc.Import
                     (currentFurPath, inOpt, inView, 
