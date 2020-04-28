@@ -249,7 +249,8 @@ namespace PrefabHouseTools
         /// <summary>
         /// 用于家具种类识别
         /// </summary>
-        public int YSizeMm;
+        public ElementId ElementId;
+        public XYZ RefPoint;
     }
     public class RoomSoftDesign
     {

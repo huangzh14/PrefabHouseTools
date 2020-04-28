@@ -51,6 +51,29 @@
     <StartAction>Program</StartAction>
     <StartProgram>$(ProgramW6432)\Autodesk\Revit 2018\Revit.exe</StartProgram>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2017|AnyCPU'">
+    <OutputPath>bin\Debug2017\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(ProgramW6432)\Autodesk\Revit 2017\Revit.exe</StartProgram>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug2019|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug2019\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(ProgramW6432)\Autodesk\Revit 2019\Revit.exe</StartProgram>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -63,12 +86,28 @@
       <HintPath>$(ProgramW6432)\Autodesk\Revit 2020\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RevitAPI" Condition="'$(Configuration)' == 'Debug2019'">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit 2019\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI" Condition="'$(Configuration)' == 'Debug2019'">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit 2019\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="RevitAPI" Condition="'$(Configuration)' == 'Debug2018'">
       <HintPath>$(ProgramW6432)\Autodesk\Revit 2018\RevitAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RevitAPIUI" Condition="'$(Configuration)' == 'Debug2018'">
       <HintPath>$(ProgramW6432)\Autodesk\Revit 2018\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPI" Condition="'$(Configuration)' == 'Debug2017'">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit 2017\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI" Condition="'$(Configuration)' == 'Debug2017'">
+      <HintPath>$(ProgramW6432)\Autodesk\Revit 2017\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -137,22 +176,37 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if ($(Configuration) == Debug2020) goto 2020
-if ($(Configuration) == Debug2018) goto 2018
+    <PostBuildEvent>
+      if ($(Configuration) == Debug2020) goto 2020
+      if ($(Configuration) == Debug2019) goto 2019
+      if ($(Configuration) == Debug2018) goto 2018
+      if ($(Configuration) == Debug2017) goto 2017
 
-:2020
-if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2020"
-if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2020"
-if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)\CmdReadJsonFiles\2020\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2020"
-goto exit
+      :2020
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2020"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2020"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)\CmdReadJsonFiles\2020\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2020"
+      goto exit
 
-:2018
-if exist "$(AppData)\Autodesk\REVIT\Addins\2018" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2018"
-if exist "$(AppData)\Autodesk\REVIT\Addins\2018" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2018"
-if exist "$(AppData)\Autodesk\REVIT\Addins\2018" copy "$(ProjectDir)\CmdReadJsonFiles\2018\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2018"
-goto exit
+      :2019
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2019" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2019"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2019" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2019"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2019" copy "$(ProjectDir)\CmdReadJsonFiles\2019\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2019"
+      goto exit
 
-:exit</PostBuildEvent>
+      :2018
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2018" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2018"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2018" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2018"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2018" copy "$(ProjectDir)\CmdReadJsonFiles\2018\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2018"
+      goto exit
+
+      :2017
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2017" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2017"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2017" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2017"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2017" copy "$(ProjectDir)\CmdReadJsonFiles\2017\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2017"
+      goto exit
+
+      :exit</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

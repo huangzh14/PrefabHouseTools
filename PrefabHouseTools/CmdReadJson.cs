@@ -29,8 +29,9 @@ namespace PrefabHouseTools
     [Transaction(TransactionMode.Manual)]
     public class CmdReadJson : IExternalCommand
     {
+        #region 常量设置/Constant define
         /// <summary>
-        /// The names of the default family name of doors and windows.
+        /// 自动载入组的名称
         /// </summary>
         private string[] autoDoorFamilyNames = 
             { "auto-Door-PASS", "auto-Door-SINGLE","auto-Door-SLIDING" };
@@ -39,10 +40,20 @@ namespace PrefabHouseTools
              "auto-Window-BAY"};
         private string[] autoSocketsNames =
             {"auto-插座-单相五孔","auto-插座-单相五孔防水","auto-插座-网络电视"};
-
         /// <summary>
-        /// Store the current house object.
-        /// Contain all the info from input json file.
+        /// 关于建立各项构件的工作量系数
+        /// 用于进度条的显示
+        /// </summary>
+        const int wallWorkLoad = 1;
+        const int doorWorkLoad = 5;
+        const int windowWorkLoad = 5;
+        const int socketWorkLoad = 2;
+        const int furnitureWorkLoad = 50;
+        #endregion
+
+        #region 参数设置/Parameter define
+        /// <summary>
+        /// 当前的HouseObject,用于存储json文件中读取的信息
         /// </summary>
         public HouseObject CurrentHouse 
         { 
@@ -55,6 +66,9 @@ namespace PrefabHouseTools
             } 
         }
         private HouseObject currentHouse;
+        /// <summary>
+        /// 当前的RoomSoftDesigh，用于存储json文件中读取的软装信息
+        /// </summary>
         public List<RoomSoftDesign> RoomSoftDesigns
         {
             get { return roomSoftDesigns; }
@@ -67,22 +81,43 @@ namespace PrefabHouseTools
         private List<RoomSoftDesign> roomSoftDesigns;
 
         /// <summary>
-        /// Store all the WallTypes already created.
+        /// 已创建的基本墙类型
         /// </summary>
         private List<WallType> AutoWallTypes { get; set; }
+        /// <summary>
+        /// 标高信息
+        /// </summary>
         private List<Level> AllLevels { get; set; }
         private Level BaseLevel { get; set; }
+        /// <summary>
+        /// 已载入的自动门族
+        /// </summary>
         private List<Family> AutoDoorFamilies { get; set; }
+        /// <summary>
+        /// 已载入的自动窗族
+        /// </summary>
         private List<Family> AutoWindowFamilies { get; set; }
+        /// <summary>
+        /// 已载入的自动插座族
+        /// </summary>
         private List<Family> AutoSocketFamilies { get; set; }
 
-
+        /// <summary>
+        /// 当前文件对象存储和调用
+        /// </summary>
         private Document ActiveDoc { get; set; }
+        /// <summary>
+        /// 当前交互视窗存储和调用
+        /// </summary>
         CmdReadJsonForm ActiveForm { get; set; }
 
+        /// <summary>
+        /// 总工作量参数
+        /// </summary>
         public int TotalWorkLoad { get { return GetTotalWorkLoad(); } }
+        #endregion
 
-        #region Unit conversion part.
+        #region 单位转换（毫米-英寸,角度-弧度）/Unit conversion part.
         /// <summary>
         /// The method to convert all mm to inch in the house object.
         /// </summary>
@@ -199,23 +234,18 @@ namespace PrefabHouseTools
                 foreach (A_Furniture fur in rsf.Furniture)
                 {
                     fur.X = Helper.Mm2Feet(fur.X);
-                    fur.YSizeMm = (int)Math.Round(fur.YSize);
                     fur.Y = Helper.Mm2Feet(fur.Y);
                     fur.XSize = Helper.Mm2Feet(fur.XSize);
                     fur.YSize = Helper.Mm2Feet(fur.YSize);
                     fur.ZSize = Helper.Mm2Feet(fur.ZSize);
                     fur.Z = Helper.Mm2Feet(fur.Z);
+                    fur.Rotation = (float)Math.PI * fur.Rotation / 180;
                 }
             }
         }
         #endregion
 
-        #region Progress calculating
-        const int wallWorkLoad = 1;
-        const int doorWorkLoad = 5;
-        const int windowWorkLoad = 5;
-        const int socketWorkLoad = 5;
-        const int furnitureWorkLoad = 3;
+        #region 建模进度更新/Progress calculating
         private int GetTotalWorkLoad()
         {
             int total = CurrentHouse.Floors
@@ -238,8 +268,11 @@ namespace PrefabHouseTools
 
         #endregion
 
-
-        #region Set base values.
+        #region 设置默认值和导入默认族/Set base values.
+        /// <summary>
+        /// 命令初始化，重新设置数据和连接当前文件
+        /// </summary>
+        /// <param name="doc"></param>
         public void Initialize(Document doc)
         {
             AutoWallTypes = new List<WallType>();
@@ -249,12 +282,19 @@ namespace PrefabHouseTools
             AutoSocketFamilies = new List<Family>();
             ActiveDoc = doc;
         }
+        /// <summary>
+        /// 指定输入字符串对应的标高为基准标高
+        /// </summary>
+        /// <param name="levelName"></param>
         public void SetBaseLevel(string levelName)
         {
             BaseLevel = AllLevels
                 .First(l => l.Name == levelName as string);
         }
 
+        /// <summary>
+        /// 创建基本墙面类型
+        /// </summary>
         public void CreateBaseWallType()
         {
             ///Create the default material.
@@ -271,8 +311,6 @@ namespace PrefabHouseTools
                 Material.Create(ActiveDoc, "AutoWallMaterial");
             baseMaterial = ActiveDoc.GetElement(baseMaterialid) as Material;
             ///Set the material color.
-            ///baseMaterial.SurfaceForegroundPatternColor = colorGrey;
-            ///baseMaterial.SurfaceBackgroundPatternColor = colorGrey;
             baseMaterial.Color = colorGrey;
 
             ///Create the default wall type.
@@ -304,6 +342,11 @@ namespace PrefabHouseTools
             AutoWallTypes = new List<WallType> { baseWt };
         }
 
+        /// <summary>
+        /// 向文件中载入默认门窗族
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         public bool LoadOpeningFamilies(Document doc)
         {
             ///Get the path.
@@ -334,6 +377,11 @@ namespace PrefabHouseTools
             return true;
         }
 
+        /// <summary>
+        /// 向文件中载入默认插座族
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         public bool LoadSocketsFamilies(Document doc)
         {
             Assembly a = Assembly.GetExecutingAssembly();
@@ -344,7 +392,7 @@ namespace PrefabHouseTools
                 + "\\" + socketName + ".rfa";
                 if (!Helper.LoadFamily(doc, socketName, DoorPath, out Family socketFam))
                 {
-                    TaskDialog.Show("错误", "部分默认门族丢失，请重新安装插件");
+                    TaskDialog.Show("错误", "部分默认插座族丢失，请重新安装插件");
                     return false;
                 }
                 AutoSocketFamilies.Add(socketFam);
@@ -353,7 +401,36 @@ namespace PrefabHouseTools
         }
         #endregion
 
-        #region The main work.
+        #region 【核心】自动建模/The main work.
+        /// <summary>
+        /// 创建一个新的基本墙类型
+        /// </summary>
+        /// <param name="width_inches">用inch/英寸表示的墙体宽度</param>
+        /// <returns></returns>
+        private WallType CreateWallType(float width_inches)
+        {
+            ///Duplicate a new walltype;
+            float wallWidthMm = Helper.Feet2Mm(width_inches);
+            WallType currentWt = AutoWallTypes[0].Duplicate
+                ("AutoWall-" + wallWidthMm) as WallType;
+            ///Set the width of the new type;
+            CompoundStructure cStru = CompoundStructure
+                .CreateSingleLayerCompoundStructure
+                (MaterialFunctionAssignment.Structure,
+                width_inches, currentWt.GetCompoundStructure().GetMaterialId(0));
+            currentWt.SetCompoundStructure(cStru);
+            ///Add it to collection.
+            AutoWallTypes.Add(currentWt);
+            return currentWt;
+        }
+
+        /// <summary>
+        /// 在revit中自动创建墙体
+        /// </summary>
+        /// <param name="doc">当前文件</param>
+        /// <param name="house">当前HouseObject，包含json读取信息</param>
+        /// <param name="autoTypes">已载入的墙体类型链表</param>
+        /// <param name="baseLevel">用户选定的基准标高</param>
         public void CreateWalls
             (Document doc,HouseObject house,
             List<WallType> autoTypes,Level baseLevel)
@@ -377,24 +454,13 @@ namespace PrefabHouseTools
                     }
                     catch
                     {
-                        ///Duplicate a new walltype;
-                        float wallWidthMm = Helper.Feet2Mm(wa.Thickness);
-                        currentWt = AutoWallTypes[0].Duplicate
-                            ("AutoWall-" + wallWidthMm) as WallType;
-                        ///Set the width of the new type;
-                        CompoundStructure cStru = CompoundStructure
-                            .CreateSingleLayerCompoundStructure
-                            (MaterialFunctionAssignment.Structure,
-                            wa.Thickness, currentWt.GetCompoundStructure().GetMaterialId(0));
-                        currentWt.SetCompoundStructure(cStru);
-                        ///Add it to collection.
-                        AutoWallTypes.Add(currentWt);
+                        currentWt = this.CreateWallType(wa.Thickness);
                     }
 
                     ///Create the individual wall
                     wa.Wall = Wall.Create(doc, c, currentWt.Id, baseLevel.Id,
                         floor.Height, 0, false, true);
-
+                    ///Update progress.
                     ActiveForm.UpdateProgress(wallWorkLoad);
                 }
 
@@ -413,6 +479,14 @@ namespace PrefabHouseTools
             }
         }
 
+        /// <summary>
+        /// 在revit中自动创建所有门窗
+        /// </summary>
+        /// <param name="doc">当前文件</param>
+        /// <param name="house">当前HouseObject，包含json读取信息</param>
+        /// <param name="baseLevel">用户选定的基准标高</param>
+        /// <param name="doorFamilies">已载入的自动门族链表</param>
+        /// <param name="windowFamilies">已载入的自动窗族链表</param>
         public void CreateOpenings
             (Document doc, HouseObject house,
             Level baseLevel,List<Family>doorFamilies,
@@ -493,9 +567,9 @@ namespace PrefabHouseTools
 
 
         /// <summary>
-        /// 
+        /// 在revit中创建单个门窗
         /// </summary>
-        /// <param name="doc"></param>
+        /// <param name="doc">当前文件</param>
         /// <param name="floor"></param>
         /// <param name="opening"></param>
         /// <param name="baseLevel"></param>
@@ -568,17 +642,14 @@ namespace PrefabHouseTools
         }
         public bool DoCreateSockets()
         {
-            this.LoadSocketsFamilies(ActiveDoc);
+            if (!this.LoadSocketsFamilies(ActiveDoc))
+                return false;
 
             Document doc = this.ActiveDoc;
-            List<A_Socket> allSockets = 
-                CurrentHouse.Floors
-                .SelectMany(f => f.Socket)
-                .ToList();
-            List<A_Wall> allWalls =
-                CurrentHouse.Floors
-                .SelectMany(f => f.Walls)
-                .ToList();
+            List<A_Socket> allSockets = CurrentHouse.Floors
+                .SelectMany(f => f.Socket).ToList();
+            List<A_Wall> allWalls = CurrentHouse.Floors
+                .SelectMany(f => f.Walls).ToList();
 
             if (allSockets.Count() == 0)
                 return false;
@@ -593,15 +664,10 @@ namespace PrefabHouseTools
                 ///Get all the face of the host wall.
                 Wall hostWall = allWalls
                     .First(w => w.Uid == soc.Related.Uid).Wall;
-
-                List<Reference> sideFaces =
-                    HostObjectUtils.GetSideFaces
-                    (hostWall, ShellLayerType.Exterior)
-                    .ToList();
-                sideFaces.AddRange(
-                    HostObjectUtils.GetSideFaces
-                    (hostWall, ShellLayerType.Interior)
-                    .ToList());
+                List<Reference> sideFaces = HostObjectUtils.GetSideFaces
+                    (hostWall, ShellLayerType.Exterior).ToList();
+                sideFaces.AddRange(HostObjectUtils.GetSideFaces
+                    (hostWall, ShellLayerType.Interior).ToList());
 
                 ///Find the face where the socket is located.
                 Reference hostFace = sideFaces
@@ -650,12 +716,12 @@ namespace PrefabHouseTools
             }
             return true;
         }
-
         public bool DoCreateFurniture()
         {
             Document doc = ActiveDoc;
             DWGImportOptions inOpt = new DWGImportOptions();
 
+            ///获取0标高平面视图以及所有家具物体
             Autodesk.Revit.DB.View inView = 
                 new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_Views)
@@ -664,73 +730,94 @@ namespace PrefabHouseTools
             List<A_Furniture> allFurniture = 
                 RoomSoftDesigns
                 .SelectMany(r => r.Furniture)
+                .OrderBy(f => f.Item)
                 .ToList();
 
-            ///Find the file
+            ///确定执行路径，找到家具模型库，获取所有dwg文件名
             Assembly a = Assembly.GetExecutingAssembly();
             string furnitureFolder = 
                 Path.GetDirectoryName(a.Location)
                 +"\\CmdReadJsonFiles\\FurnitureDWG";
             string currentFurPath = string.Empty;
-
             string[] dwgNames = 
                 new DirectoryInfo(furnitureFolder)
                 .GetFiles("*.dwg")
                 .Select(f => f.Name).ToArray();
-            foreach (A_Furniture fur in allFurniture)
+
+            ///开始导入家具dwg
+            int furNumber = allFurniture.Count;
+            A_Furniture fur;///当前家具
+            A_Furniture lastFur;///上一个家具
+            Element furElement;///家具导入后的element
+            string confirmedFurniture;///需要导入的家具名称
+
+            for (int i = 0; i < furNumber; i++)
             {
-                if (!fur.Kind.Contains("FURNITURE")) continue;
+                fur = allFurniture[i];
+                ActiveForm.UpdateProgress(furnitureWorkLoad);
 
-                var currentFurniture = dwgNames
-                    .Where(s => s.Contains(fur.Item));
-                string confirmedFurniture;
-                try
-                {
-                    if (currentFurniture == null)
-                        continue;
-                    else if (currentFurniture.Count() == 1)
-                        confirmedFurniture = currentFurniture.First();
-                    else if (currentFurniture.Count() > 1)
-                        confirmedFurniture = currentFurniture
-                            .First(f => f.Contains(fur.YSizeMm.ToString()));
-                    else continue;
-                }
-                catch
-                {
+                ///如果数据种类不是家具，或家具对应的模型代码为空，进入下一个
+                if (!fur.Kind.Contains("FURNITURE") || fur.Item == null)
                     continue;
-                }
 
-                if (confirmedFurniture == null) continue;
-
-                currentFurPath = furnitureFolder + "\\" + confirmedFurniture;
-
+                ///设定模型插入位置，basic层级的家具不携带z坐标，需要根据z尺寸推算中心点坐标
+                ///如果有z坐标则直接使用其z坐标，并记录到家具物体中。
                 inOpt.ReferencePoint = fur.Z == null ?
                     new XYZ(fur.X, fur.Y, BaseLevel.Elevation + fur.ZSize * 0.5) :
-                    new XYZ(fur.X, fur.Y, (double)fur.Z + BaseLevel.Elevation + fur.ZSize * 0.5);
-
+                    fur.Layer == A_FurLayer.wall ?
+                    new XYZ(fur.X, fur.Y, BaseLevel.Elevation + (double)fur.Z - fur.ZSize * 0.5) :
+                    new XYZ(fur.X, fur.Y, (double)fur.Z + BaseLevel.Elevation);
+                fur.RefPoint = inOpt.ReferencePoint;
+                ///设定模型插入参考位置，普通为中心点，靠墙为原点
                 inOpt.Placement = fur.Layer == A_FurLayer.wall ?
                     ImportPlacement.Origin : ImportPlacement.Centered;
-
-                ///Import dwg and unpin it.
-                doc.Import
-                    (currentFurPath, inOpt, inView, 
-                    out ElementId insertId);
-                doc.Regenerate();
-                Element currentFur = doc.GetElement(insertId);
-                if (currentFur.Pinned) currentFur.Pinned = false;
-
+                ///设定家具旋转轴，以备使用
                 XYZ axis1 = new XYZ(fur.X, fur.Y, BaseLevel.Elevation);
                 XYZ axis2 = new XYZ(fur.X, fur.Y, BaseLevel.Elevation + 10);
                 Line rotateAxis = Line.CreateBound(axis1, axis2);
-                
-                ///Some problems to be fixed here about rotating direction.
-                ElementTransformUtils.RotateElement
-                    (doc, insertId, rotateAxis, Math.PI*fur.Rotation/180);
 
-                ActiveForm.UpdateProgress(furnitureWorkLoad);
+                ///如果该家具已经导入过，直接复制。
+                ///由于前期已按照item排序，所以只需查找上一个即可
+                ///复制旋转后直接进入下一个循环
+                if (i > 0 && fur.Item == allFurniture[i - 1].Item)
+                {
+                    lastFur = allFurniture[i - 1];
+                    fur.ElementId = ElementTransformUtils
+                        .CopyElement(doc, lastFur.ElementId, fur.RefPoint - lastFur.RefPoint)
+                        .First();
+                    ElementTransformUtils.RotateElement
+                        (doc, fur.ElementId,rotateAxis,fur.Rotation-lastFur.Rotation);
+                    continue;
+                }
+
+                ///进行到此说明家具未导入过，查找家具名称
+                try
+                {
+                    confirmedFurniture = dwgNames
+                        .First(s => s.Contains(fur.Item));
+                }
+                catch
+                {///该家具未找到对应模型，进入下一个循环
+                    continue;
+                }
+                if (confirmedFurniture == null) continue;
+                ///组合家具模型文件路径
+                currentFurPath = furnitureFolder + "\\" + confirmedFurniture;
+
+                ///插入dwg文件，并解除锁定.
+                doc.Import
+                    (currentFurPath, inOpt, inView, 
+                    out fur.ElementId);
+                doc.Regenerate();
+                furElement = doc.GetElement(fur.ElementId);
+                if (furElement.Pinned) furElement.Pinned = false;
+
+                ///旋转家具到指定角度
+                ElementTransformUtils.RotateElement
+                    (doc, fur.ElementId, rotateAxis, fur.Rotation);
             }
 
-
+            ///完成导入，返回
             return true;
         }
         #endregion
