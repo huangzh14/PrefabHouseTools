@@ -185,7 +185,7 @@
       :2020
       if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2020"
       if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2020"
-      if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)\CmdReadJsonFiles\2020\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2020"
+      if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)\CmdReadJsonFiles\2020\*.rfa" "$(AppData)\Autodesk\REVIT\Addins\2020\CmdReadJsonFiles\BaseFamily"
       goto exit
 
       :2019

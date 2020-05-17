@@ -105,7 +105,7 @@ namespace PrefabHouseTools
                     try
                     {///Try read the json as house with soft design.
                         CurrentHouse = jsonObj["house"].ToObject<HouseObject>();
-                        foreach (JToken j in jsonObj["roomSoftDesigns"].Children())
+                        foreach (JToken j in jsonObj["room_soft_designs"].Children())
                         {
                             RoomSoftDesigns.Add(j.ToObject<RoomSoftDesign>());
                         }

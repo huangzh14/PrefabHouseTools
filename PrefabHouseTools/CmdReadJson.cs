@@ -40,6 +40,8 @@ namespace PrefabHouseTools
              "auto-Window-BAY"};
         private string[] autoSocketsNames =
             {"auto-插座-单相五孔","auto-插座-单相五孔防水","auto-插座-网络电视"};
+        private string[] autoWaterSupplyNames =
+            {"auto-给水-八字阀"};
         /// <summary>
         /// 关于建立各项构件的工作量系数
         /// 用于进度条的显示
@@ -48,10 +50,48 @@ namespace PrefabHouseTools
         const int doorWorkLoad = 5;
         const int windowWorkLoad = 5;
         const int socketWorkLoad = 2;
+        const int waterSupplyWorkLoad = 2;
         const int furnitureWorkLoad = 50;
+        private int GetTotalWorkLoad()
+        {
+            int total = CurrentHouse.Floors
+                     .SelectMany(f => f.Walls)
+                     .Count() * wallWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Doors)
+                     .Count() * doorWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Windows)
+                     .Count() * windowWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Sockets)
+                     .Count() * socketWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Feedwater)
+                     .Count() * waterSupplyWorkLoad;
+            total += RoomSoftDesigns
+                     .SelectMany(r => r.Furniture)
+                     .Count() * furnitureWorkLoad;
+            return total;
+        }
         #endregion
 
         #region 参数设置/Parameter define
+        /// <summary>
+        /// 命令初始化，重新设置数据和连接当前文件
+        /// </summary>
+        /// <param name="doc"></param>
+        public void Initialize(Document doc)
+        {
+            AutoWallTypes = new List<WallType>();
+            AllLevels = new List<Level>();
+            AutoDoorFamilies = new List<Family>();
+            AutoWindowFamilies = new List<Family>();
+            AutoSocketFamilies = new List<Family>();
+            AutoWaterSupplyFamilies = new List<Family>();
+            ActiveDoc = doc;
+        }
+
         /// <summary>
         /// 当前的HouseObject,用于存储json文件中读取的信息
         /// </summary>
@@ -101,6 +141,10 @@ namespace PrefabHouseTools
         /// 已载入的自动插座族
         /// </summary>
         private List<Family> AutoSocketFamilies { get; set; }
+        /// <summary>
+        /// 已载入的自动给水族
+        /// </summary>
+        private List<Family> AutoWaterSupplyFamilies { get; set; }
 
         /// <summary>
         /// 当前文件对象存储和调用
@@ -208,11 +252,11 @@ namespace PrefabHouseTools
                     floor.Height = Helper.Mm2Feet(floor.Height);
 
 
-                    if (floor.Socket == null)
+                    if (floor.Sockets == null)
                     {
-                        floor.Socket = new List<A_Socket>();
+                        floor.Sockets = new List<A_Socket>();
                     }
-                    foreach (A_Socket socket in floor.Socket)
+                    foreach (A_Socket socket in floor.Sockets)
                     {
                         socket.X = Helper.Mm2Feet(socket.X);
                         socket.Y = Helper.Mm2Feet(socket.Y);
@@ -245,43 +289,7 @@ namespace PrefabHouseTools
         }
         #endregion
 
-        #region 建模进度更新/Progress calculating
-        private int GetTotalWorkLoad()
-        {
-            int total = CurrentHouse.Floors
-                     .SelectMany(f => f.Walls)
-                     .Count() * wallWorkLoad;
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Doors)
-                     .Count() * doorWorkLoad;
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Windows)
-                     .Count() * windowWorkLoad;
-            total += CurrentHouse.Floors
-                     .SelectMany(f => f.Socket)
-                     .Count() * socketWorkLoad;
-            total += RoomSoftDesigns
-                     .SelectMany(r => r.Furniture)
-                     .Count() * furnitureWorkLoad;
-            return total;
-        }
-
-        #endregion
-
         #region 设置默认值和导入默认族/Set base values.
-        /// <summary>
-        /// 命令初始化，重新设置数据和连接当前文件
-        /// </summary>
-        /// <param name="doc"></param>
-        public void Initialize(Document doc)
-        {
-            AutoWallTypes = new List<WallType>();
-            AllLevels = new List<Level>();
-            AutoDoorFamilies = new List<Family>();
-            AutoWindowFamilies = new List<Family>();
-            AutoSocketFamilies = new List<Family>();
-            ActiveDoc = doc;
-        }
         /// <summary>
         /// 指定输入字符串对应的标高为基准标高
         /// </summary>
@@ -396,6 +404,32 @@ namespace PrefabHouseTools
                     return false;
                 }
                 AutoSocketFamilies.Add(socketFam);
+            }
+            return true;
+        }
+        /// <summary>
+        /// 用于加载常量中包含的默认族（并检查默认族是否完备）
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="familyNames"></param>
+        /// <param name="familyList"></param>
+        /// <returns></returns>
+        public bool LoadBaseFamilies(Document doc,
+            string[] familyNames, List<Family> familyList)
+        {
+            Assembly a = Assembly.GetExecutingAssembly();
+            string rootFolder = Path.GetDirectoryName(a.Location) 
+                + "\\CmdReadJsonFiles\\BaseFamily";
+            foreach (string currentBaseFamily in familyNames)
+            {
+                string DoorPath = rootFolder
+                + "\\" + currentBaseFamily + ".rfa";
+                if (!Helper.LoadFamily(doc, currentBaseFamily, DoorPath, out Family loadedFam))
+                {
+                    TaskDialog.Show("错误", "部分默认族丢失，请修复或重新安装插件");
+                    return false;
+                }
+                familyList.Add(loadedFam);
             }
             return true;
         }
@@ -621,6 +655,46 @@ namespace PrefabHouseTools
                 StructuralType.NonStructural);
         }
 
+        public FamilyInstance CreateSystemTerminal
+            (Document doc, A_SystemTerminal sysTer, Family baseFamily,
+            IList<A_Wall> allWalls)
+        {
+            XYZ centerPt = new XYZ
+                    (sysTer.X, sysTer.Y, sysTer.Z + BaseLevel.Elevation);
+            XYZ dirPt = new XYZ
+                (0 - sysTer.Orientation.Y, sysTer.Orientation.X, 0);
+
+            ///Get all the face of the host wall.
+            Wall hostWall = allWalls
+                .First(w => w.Uid == sysTer.Related.Uid).Wall;
+            List<Reference> sideFaces = HostObjectUtils.GetSideFaces
+                (hostWall, ShellLayerType.Exterior).ToList();
+            sideFaces.AddRange(HostObjectUtils.GetSideFaces
+                (hostWall, ShellLayerType.Interior).ToList());
+
+            ///Find the face where the socket is located.
+            Reference hostFace = sideFaces
+                      .OrderBy(f => centerPt.DistanceTo
+                                    ((doc.GetElement(f)
+                                    .GetGeometryObjectFromReference(f)
+                                    as Face)
+                                    .Project(centerPt).XYZPoint))
+                      .First();
+            if (hostFace == null) return null;
+
+
+            FamilySymbol socSymbol =
+                doc.GetElement
+                (baseFamily.GetFamilySymbolIds().First())
+                as FamilySymbol;
+
+            socSymbol.Activate();
+            FamilyInstance currentTerminal = doc.Create
+                .NewFamilyInstance
+                (hostFace, centerPt, dirPt, socSymbol);
+            return currentTerminal;
+        }
+
 
         public bool DoCreateWalls()
         {
@@ -642,12 +716,12 @@ namespace PrefabHouseTools
         }
         public bool DoCreateSockets()
         {
-            if (!this.LoadSocketsFamilies(ActiveDoc))
+            Document doc = this.ActiveDoc;
+            if (!this.LoadBaseFamilies(doc,autoSocketsNames,AutoSocketFamilies))
                 return false;
 
-            Document doc = this.ActiveDoc;
             List<A_Socket> allSockets = CurrentHouse.Floors
-                .SelectMany(f => f.Socket).ToList();
+                .SelectMany(f => f.Sockets).ToList();
             List<A_Wall> allWalls = CurrentHouse.Floors
                 .SelectMany(f => f.Walls).ToList();
 
@@ -656,6 +730,35 @@ namespace PrefabHouseTools
 
             foreach (A_Socket soc in allSockets)
             {
+                ///Choose the type.
+                Family socFam;
+                switch (soc.Tag)
+                {
+                    case "五孔":
+                        socFam = AutoSocketFamilies
+                            .First(s =>
+                            (s.Name.Contains("五孔")) &&
+                            (!s.Name.Contains("防水")));
+                        break;
+                    case "五孔防水":
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains("五孔防水"));
+                        break;
+                    case "网络电视":
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains("网络电视"));
+                        break;
+                    default:
+                        socFam = AutoSocketFamilies
+                            .First(s => s.Name.Contains(soc.Tag));
+                        break;
+                }
+
+                soc.Instance = 
+                    CreateSystemTerminal(doc, soc, socFam, allWalls);
+
+                #region
+                /*
                 XYZ centerPt = new XYZ
                     (soc.X, soc.Y, soc.Z + BaseLevel.Elevation);
                 XYZ dirPt = new XYZ
@@ -679,29 +782,7 @@ namespace PrefabHouseTools
                           .First();
                 if (hostFace == null) continue;
 
-                ///Choose the type.
-                Family socFam ;
-                switch (soc.Tag)
-                {
-                    case "五孔":
-                        socFam = AutoSocketFamilies
-                            .First(s => 
-                            (s.Name.Contains("五孔")) &&
-                            (!s.Name.Contains("防水")));
-                        break;
-                    case "五孔防水":
-                        socFam = AutoSocketFamilies
-                            .First(s => s.Name.Contains("五孔防水"));
-                        break;
-                    case "网络电视":
-                        socFam = AutoSocketFamilies
-                            .First(s => s.Name.Contains("网络电视"));
-                        break;
-                    default:
-                        socFam = AutoSocketFamilies
-                            .First(s => s.Name.Contains(soc.Tag));
-                        break;
-                }
+                
                 FamilySymbol socSymbol = 
                     doc.GetElement
                     (socFam.GetFamilySymbolIds().First()) 
@@ -711,8 +792,43 @@ namespace PrefabHouseTools
                 soc.Instance = doc.Create
                     .NewFamilyInstance
                     (hostFace, centerPt,dirPt,socSymbol);
+                    */
+                #endregion Old Module
 
                 ActiveForm.UpdateProgress(socketWorkLoad);
+            }
+            return true;
+        }
+        public bool DoCreateWaterSupplys()
+        {
+            Document doc = this.ActiveDoc;
+            if (!this.LoadBaseFamilies(doc, autoWaterSupplyNames, AutoWaterSupplyFamilies))
+                return false;
+
+            List<A_WaterSupply> allWaterSupplies = CurrentHouse.Floors
+                .SelectMany(f => f.Feedwater).ToList();
+            List<A_Wall> allWalls = CurrentHouse.Floors
+                .SelectMany(f => f.Walls).ToList();
+
+            if (allWaterSupplies.Count() == 0)
+                return false;
+
+            foreach (A_WaterSupply waterSupTer in allWaterSupplies)
+            {
+                ///Choose the type.
+                Family waterSupFam;
+                switch (waterSupTer.Tag)
+                {
+                    default:
+                        waterSupFam = AutoWaterSupplyFamilies
+                            .First(s => s.Name.Contains(waterSupTer.Tag));
+                        break;
+                }
+
+                waterSupTer.Instance =
+                    CreateSystemTerminal(doc, waterSupTer, waterSupFam, allWalls);
+
+                ActiveForm.UpdateProgress(waterSupplyWorkLoad);
             }
             return true;
         }
@@ -822,7 +938,7 @@ namespace PrefabHouseTools
         }
         #endregion
 
-
+        #region 主执行模块/Excution module
         public Result Execute(
           ExternalCommandData commandData,
           ref string message,
@@ -860,20 +976,20 @@ namespace PrefabHouseTools
                 }
                 catch (Exception e)
                 {
-                    TaskDialog.Show("Error", "Something went wrong," +
-                        "details as follow:\n" + e.Message);
+                    TaskDialog.Show("错误", "程序执行出现未知错误，请联系开发者，" +
+                        "细节信息如下\n" + e.Message);
                     return Result.Failed;
                 }
 
                 tx.Commit();
             }
             
-
             ///In case the user close the form.
             if (CurrentHouse == null) return Result.Failed;
 
             return Result.Succeeded;
         }
+        #endregion
 
     }
 }

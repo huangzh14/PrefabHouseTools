@@ -153,7 +153,7 @@ namespace PrefabHouseTools
         UNDETERMINED,LIVING_ROOM,BEDROOM,CHILD_ROOM,ELDER_ROOM,BATHROOM,
         KITCHEN,BALCONY,STUDY,STOREROOM,CLOAKROOM,KITCHEN_BALCONY,
         BEDROOM_MASTER,PASSAGE,DINING,RECEPTION,STAIRCASE,YARD,EQUIPMENT,
-        NANNY,LAUNDRY,FREE,GARAGE,TERRACE,OTHER,WELL,OUTER
+        NANNY,LAUNDRY,FREE,GARAGE,TERRACE,OTHER,WELL,OUTER,ENTRANCE
     }
     public struct ContourRelation
     {
@@ -195,22 +195,29 @@ namespace PrefabHouseTools
     }
     #endregion
 
-    #region Sockets
-    public class A_SocketRelate
-    {
-        public string Kind;
-        public string Uid;
-    }
-    public class A_Socket
+    #region MEP系统末端/MEP-SystemTerminals
+    public abstract class A_SystemTerminal
     {
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
         public string Name { get; set; }
-        public A_SocketRelate Related { get; set; }
+        public A_TerminalRelate Related { get; set; }
         public string Tag { get; set; }
         public A_Point Orientation { get; set; }
         public FamilyInstance Instance { get; set; }
+    }
+    public class A_TerminalRelate
+    {
+        public string Kind;
+        public string Uid;
+    }
+    public class A_Socket : A_SystemTerminal
+    {
+    }
+    public class A_WaterSupply : A_SystemTerminal
+    {
+
     }
     #endregion
 
@@ -262,7 +269,7 @@ namespace PrefabHouseTools
     #region Floor and house objects
     public class A_Floor
     {
-        public int Number { get; set; }
+        public string Number { get; set; }
         public IList<A_Wall> Walls { get; set; }
         public IList<A_Door> Doors { get; set; }
         public IList<A_Window> Windows { get; set; }
@@ -272,7 +279,8 @@ namespace PrefabHouseTools
         public IList<A_Label> Labels { get; set; }
         public float Height { get; set; }
 
-        public IList<A_Socket> Socket { get; set; }
+        public IList<A_Socket> Sockets { get; set; }
+        public IList<A_WaterSupply> Feedwater { get; set; }
     }
     public class HouseObject
     {
@@ -290,11 +298,11 @@ namespace PrefabHouseTools
 
     #endregion
 
-    #region 家具布局结构总
+    #region 家具布局结构合并
     public class HouseWithSoft
     {
         public HouseObject House;
-        public IList<RoomSoftDesign> RoomSoftDesigns;
+        public IList<RoomSoftDesign> Room_Soft_Designs;
     }
     #endregion
 }
