@@ -536,7 +536,10 @@ namespace PrefabHouseTools
                     new Color(0,0,255),
                     new Color(150,150,0),
                     new Color(0,150,150),
-                    new Color(150,0,150)
+                    new Color(150,0,150),
+                    new Color(120,90,90),
+                    new Color(90,90,120),
+                    new Color(90,120,90)
                 };
                 short counter = 1;
                 foreach (SystemInfoElec eSys in systemInfoList)

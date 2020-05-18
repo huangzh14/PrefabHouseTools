@@ -157,7 +157,12 @@ namespace PrefabHouseTools
                     Element wallOrNo = doc.GetElement(Seg.ElementId);
                     ElementId wallId = doc.Settings.Categories
                         .get_Item(BuiltInCategory.OST_Walls).Id;
-                    if (wallOrNo.Category.Id.Equals(wallId))
+                    if (wallOrNo == null)
+                    {
+                        boundCurs.Push(new Bcurve
+                        (Seg.GetCurve(), Seg.ElementId, false, Seg.GetCurve(), -1));
+                    }
+                    else if (wallOrNo.Category.Id.Equals(wallId))
                     {
                         Wall w = wallOrNo as Wall;
                         LocationCurve wLoc = w.Location as LocationCurve;
@@ -527,7 +532,15 @@ namespace PrefabHouseTools
         /// </summary>
         public void CalculateFixCentroid()
         {
-            if (ElecFixtures.Count <= 0) return;
+            if (ElecFixtures.Count <= 0)
+            {
+                List<XYZ> allVertex = VertexList
+                    .SelectMany(v => v)
+                    .ToList();
+                FixCentroid = allVertex.Aggregate((a, b) => a + b)
+                    / allVertex.Count;
+                return;
+            }
             List<double> xs = new List<double>();
             List<double> ys = new List<double>();
             foreach (List<FixtureE> fList in ElecFixturesDic.Values)
