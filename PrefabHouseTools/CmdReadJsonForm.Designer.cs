@@ -32,6 +32,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.basicLayoutCheckbox = new System.Windows.Forms.CheckBox();
+            this.waterTerminalCheckbox = new System.Windows.Forms.CheckBox();
+            this.socketCheckbox = new System.Windows.Forms.CheckBox();
+            this.lightingCheckbox = new System.Windows.Forms.CheckBox();
+            this.furnitureCheckbox = new System.Windows.Forms.CheckBox();
             this.StartModel = new System.Windows.Forms.Button();
             this.PreviewCanvas = new System.Windows.Forms.Panel();
             this.prograssLabel = new System.Windows.Forms.Label();
@@ -51,17 +57,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LevelBox.FormattingEnabled = true;
             this.LevelBox.ItemHeight = 30;
-            this.LevelBox.Location = new System.Drawing.Point(8, 573);
+            this.LevelBox.Location = new System.Drawing.Point(8, 408);
             this.LevelBox.Margin = new System.Windows.Forms.Padding(8);
             this.LevelBox.Name = "LevelBox";
-            this.LevelBox.Size = new System.Drawing.Size(257, 274);
+            this.LevelBox.Size = new System.Drawing.Size(257, 454);
             this.LevelBox.TabIndex = 3;
             this.LevelBox.SelectedIndexChanged += new System.EventHandler(this.LevelBox_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 515);
+            this.label2.Location = new System.Drawing.Point(3, 350);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(148, 30);
             this.label2.TabIndex = 5;
@@ -83,17 +89,90 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.LevelBox, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.basicLayoutCheckbox, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.waterTerminalCheckbox, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.socketCheckbox, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.lightingCheckbox, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.furnitureCheckbox, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.LevelBox, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 7);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 9);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 9;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(273, 876);
             this.tableLayoutPanel1.TabIndex = 10;
+            this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 30);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "执行模块";
+            // 
+            // basicLayoutCheckbox
+            // 
+            this.basicLayoutCheckbox.AutoSize = true;
+            this.basicLayoutCheckbox.Checked = true;
+            this.basicLayoutCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.basicLayoutCheckbox.Location = new System.Drawing.Point(3, 53);
+            this.basicLayoutCheckbox.Name = "basicLayoutCheckbox";
+            this.basicLayoutCheckbox.Size = new System.Drawing.Size(261, 34);
+            this.basicLayoutCheckbox.TabIndex = 8;
+            this.basicLayoutCheckbox.Text = "基本户型和门窗";
+            this.basicLayoutCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // waterTerminalCheckbox
+            // 
+            this.waterTerminalCheckbox.AutoSize = true;
+            this.waterTerminalCheckbox.Location = new System.Drawing.Point(3, 103);
+            this.waterTerminalCheckbox.Name = "waterTerminalCheckbox";
+            this.waterTerminalCheckbox.Size = new System.Drawing.Size(201, 34);
+            this.waterTerminalCheckbox.TabIndex = 9;
+            this.waterTerminalCheckbox.Text = "给排水末端";
+            this.waterTerminalCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // socketCheckbox
+            // 
+            this.socketCheckbox.AutoSize = true;
+            this.socketCheckbox.Location = new System.Drawing.Point(3, 153);
+            this.socketCheckbox.Name = "socketCheckbox";
+            this.socketCheckbox.Size = new System.Drawing.Size(171, 34);
+            this.socketCheckbox.TabIndex = 10;
+            this.socketCheckbox.Text = "插座末端";
+            this.socketCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // lightingCheckbox
+            // 
+            this.lightingCheckbox.AutoSize = true;
+            this.lightingCheckbox.Location = new System.Drawing.Point(3, 203);
+            this.lightingCheckbox.Name = "lightingCheckbox";
+            this.lightingCheckbox.Size = new System.Drawing.Size(171, 34);
+            this.lightingCheckbox.TabIndex = 11;
+            this.lightingCheckbox.Text = "照明末端";
+            this.lightingCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // furnitureCheckbox
+            // 
+            this.furnitureCheckbox.AutoSize = true;
+            this.furnitureCheckbox.Location = new System.Drawing.Point(3, 253);
+            this.furnitureCheckbox.Name = "furnitureCheckbox";
+            this.furnitureCheckbox.Size = new System.Drawing.Size(111, 34);
+            this.furnitureCheckbox.TabIndex = 12;
+            this.furnitureCheckbox.Text = "家具";
+            this.furnitureCheckbox.UseVisualStyleBackColor = true;
             // 
             // StartModel
             // 
@@ -222,5 +301,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button ChooseFile;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox basicLayoutCheckbox;
+        private System.Windows.Forms.CheckBox waterTerminalCheckbox;
+        private System.Windows.Forms.CheckBox socketCheckbox;
+        private System.Windows.Forms.CheckBox lightingCheckbox;
+        private System.Windows.Forms.CheckBox furnitureCheckbox;
     }
 }

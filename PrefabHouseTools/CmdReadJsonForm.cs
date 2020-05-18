@@ -44,7 +44,8 @@ namespace PrefabHouseTools
         {
             InitializeComponent();
 
-            ///Disable the start button untile all info is acquired.
+            ///在获取json数据输入前停用开始建模按钮
+            /// Disable the start button untile all info is acquired.
             StartModel.Enabled = false;
 
             ///Data prepare.
@@ -158,10 +159,17 @@ namespace PrefabHouseTools
         private void StartModel_Click(object sender, EventArgs e)
         {
             SetInitialProgress(originCommand);
-            originCommand.DoCreateWalls();
-            originCommand.DoCreateOpenings();
-            originCommand.DoCreateSockets();
-            originCommand.DoCreateFurniture();
+            if (basicLayoutCheckbox.Checked)
+            {
+                originCommand.DoCreateWalls();
+                originCommand.DoCreateOpenings();
+            }
+            if (socketCheckbox.Checked)
+                originCommand.DoCreateSockets();
+            if (waterTerminalCheckbox.Checked)
+                originCommand.DoCreateWaterSupplys();
+            if (furnitureCheckbox.Checked)
+                originCommand.DoCreateFurniture();
             DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -175,6 +183,11 @@ namespace PrefabHouseTools
         private void CmdReadJsonForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
         private void CmdReadJsonForm_SizeChanged(object sender, EventArgs e)
