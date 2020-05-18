@@ -168,6 +168,8 @@ namespace PrefabHouseTools
                 originCommand.DoCreateSockets();
             if (waterTerminalCheckbox.Checked)
                 originCommand.DoCreateWaterSupplys();
+            if (lightingCheckbox.Checked)
+                originCommand.DoCreateLights();
             if (furnitureCheckbox.Checked)
                 originCommand.DoCreateFurniture();
             DialogResult = DialogResult.OK;

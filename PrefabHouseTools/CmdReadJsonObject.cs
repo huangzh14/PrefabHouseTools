@@ -278,6 +278,7 @@ namespace PrefabHouseTools
         public float Y { get; set; }
         public float Z { get; set; }
         public string Name { get; set; }
+        public FamilyInstance Instance { get; set; }
         public void TransferMm2Feet()
         {
             this.X = Helper.Mm2Feet(this.X);
@@ -295,7 +296,6 @@ namespace PrefabHouseTools
         public A_TerminalRelate Related { get; set; }
         public string Tag { get; set; }
         public A_Point Orientation { get; set; }
-        public FamilyInstance Instance { get; set; }
     }
     public class A_TerminalRelate
     {

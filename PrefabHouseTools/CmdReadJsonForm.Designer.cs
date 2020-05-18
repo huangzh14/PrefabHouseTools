@@ -127,6 +127,7 @@
             this.basicLayoutCheckbox.AutoSize = true;
             this.basicLayoutCheckbox.Checked = true;
             this.basicLayoutCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.basicLayoutCheckbox.Enabled = false;
             this.basicLayoutCheckbox.Location = new System.Drawing.Point(3, 53);
             this.basicLayoutCheckbox.Name = "basicLayoutCheckbox";
             this.basicLayoutCheckbox.Size = new System.Drawing.Size(261, 34);

@@ -42,6 +42,8 @@ namespace PrefabHouseTools
             {"auto-插座-单相五孔","auto-插座-单相五孔防水","auto-插座-网络电视"};
         private string[] autoWaterSupplyNames =
             {"auto-给水-八字阀","auto-给水-混水器"};
+        private string[] autoLightingNames =
+            {"auto-照明-LED顶灯","auto-照明-壁灯"};
         /// <summary>
         /// 关于建立各项构件的工作量系数
         /// 用于进度条的显示
@@ -51,6 +53,7 @@ namespace PrefabHouseTools
         const int windowWorkLoad = 5;
         const int socketWorkLoad = 2;
         const int waterSupplyWorkLoad = 2;
+        const int lightWorkLoad = 2;
         const int furnitureWorkLoad = 50;
         private int GetTotalWorkLoad()
         {
@@ -69,6 +72,9 @@ namespace PrefabHouseTools
             total += CurrentHouse.Floors
                      .SelectMany(f => f.Feedwater)
                      .Count() * waterSupplyWorkLoad;
+            total += CurrentHouse.Floors
+                     .SelectMany(f => f.Lights)
+                     .Count() * lightWorkLoad;
             total += RoomSoftDesigns
                      .SelectMany(r => r.Furniture)
                      .Count() * furnitureWorkLoad;
@@ -96,6 +102,7 @@ namespace PrefabHouseTools
             AutoWindowFamilies = new List<Family>();
             AutoSocketFamilies = new List<Family>();
             AutoWaterSupplyFamilies = new List<Family>();
+            AutoLightingFamilies = new List<Family>();
             ActiveDoc = doc;
         }
 
@@ -139,22 +146,14 @@ namespace PrefabHouseTools
         /// </summary>
         private List<Level> AllLevels { get; set; }
         private Level BaseLevel { get; set; }
-        /// <summary>
-        /// 已载入的自动门族
-        /// </summary>
+
+        #region 各项已载入的基本族
         private List<Family> AutoDoorFamilies { get; set; }
-        /// <summary>
-        /// 已载入的自动窗族
-        /// </summary>
         private List<Family> AutoWindowFamilies { get; set; }
-        /// <summary>
-        /// 已载入的自动插座族
-        /// </summary>
         private List<Family> AutoSocketFamilies { get; set; }
-        /// <summary>
-        /// 已载入的自动给水族
-        /// </summary>
         private List<Family> AutoWaterSupplyFamilies { get; set; }
+        private List<Family> AutoLightingFamilies { get; set; }
+        #endregion
 
         /// <summary>
         /// 当前文件对象存储和调用
@@ -547,6 +546,27 @@ namespace PrefabHouseTools
                 StructuralType.NonStructural);
         }
 
+        public Reference FindClosestFaceOnWall(Document doc,XYZ pt,Wall hostWall,out XYZ dirPt)
+        {
+            dirPt = new XYZ();
+            List<Reference> sideFaces = HostObjectUtils.GetSideFaces
+                (hostWall, ShellLayerType.Exterior).ToList();
+            sideFaces.AddRange(HostObjectUtils.GetSideFaces
+                (hostWall, ShellLayerType.Interior).ToList());
+            Reference resultRef = sideFaces
+                      .OrderBy(f => pt.DistanceTo
+                                    ((doc.GetElement(f)
+                                    .GetGeometryObjectFromReference(f)
+                                    as Face)
+                                    .Project(pt).XYZPoint))
+                      .First();
+            if (resultRef == null) return null;
+            Face resultFace = doc.GetElement(resultRef)
+                .GetGeometryObjectFromReference(resultRef) as Face;
+            dirPt = pt - resultFace.Project(pt).XYZPoint;
+            return resultRef;
+
+        }
         public FamilyInstance CreateSystemTerminal
             (Document doc, A_SystemTerminal sysTer, Family baseFamily,
             IList<A_Wall> allWalls)
@@ -735,6 +755,51 @@ namespace PrefabHouseTools
                     CreateSystemTerminal(doc, waterSupTer, waterSupFam, allWalls);
 
                 ActiveForm.UpdateProgress(waterSupplyWorkLoad);
+            }
+            return true;
+        }
+        public bool DoCreateLights()
+        {
+            Document doc = this.ActiveDoc;
+            List<A_Lighting> allLights = CurrentHouse.Floors
+                .SelectMany(f => f.Lights).ToList();
+            List<A_Wall> allWalls = CurrentHouse.Floors
+                .SelectMany(f => f.Walls).ToList();
+            if (allLights.Count == 0) return false;
+
+            if (!LoadBaseFamilies(doc, autoLightingNames, AutoLightingFamilies))
+                return false;
+            foreach (A_Lighting light in allLights)
+            {
+                Family lightFam = AutoLightingFamilies
+                    .First(f => f.Name.Contains(light.Name));
+                FamilySymbol lightSymbol = doc.GetElement
+                    (lightFam.GetFamilySymbolIds().First())
+                    as FamilySymbol;
+                lightSymbol.Activate();
+
+                XYZ lightCenterPt = new XYZ(light.X, light.Y, light.Z);
+                switch (light.Name)
+                {
+                    case "壁灯":
+                        A_Wall lightWall = allWalls
+                            .OrderBy(w =>
+                            Line.CreateBound
+                            (new XYZ(w.P1.X, w.P1.Y, light.Z), new XYZ(w.P2.X, w.P2.Y, light.Z))
+                            .Project(lightCenterPt).XYZPoint.DistanceTo(lightCenterPt))
+                            .First();
+                        light.Instance = doc.Create.NewFamilyInstance
+                            (lightCenterPt, lightSymbol, lightWall.Wall, StructuralType.NonStructural);
+                        break;
+                    case "顶灯":
+                        light.Instance = doc.Create.NewFamilyInstance
+                            (new XYZ(light.X, light.Y, light.Z), 
+                            lightSymbol, StructuralType.NonStructural);
+                        break;
+                    default:
+                        break;
+                }
+                ActiveForm.UpdateProgress(lightWorkLoad);
             }
             return true;
         }
