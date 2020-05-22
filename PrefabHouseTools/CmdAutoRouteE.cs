@@ -199,6 +199,7 @@ namespace PrefabHouseTools
             ///
             double structCeilingH = 0;
             double structFloorH = 0;
+            double interiorCeilingH = 0;
             ///Using a form to display all the reference levels 
             ///for user to choose from.
             using (CmdAutoRouteEform input = new CmdAutoRouteEform())
@@ -226,6 +227,8 @@ namespace PrefabHouseTools
                         [input.listCeilingLevel.SelectedIndex];
                     structFloorH = levelH
                         [input.listFloorLevel.SelectedIndex];
+                    interiorCeilingH = levelH
+                        [input.listInteriorCeilingLevels.SelectedIndex];
                 }  
                 else return Result.Cancelled;
             }
@@ -234,7 +237,7 @@ namespace PrefabHouseTools
             foreach (Room r in roomSelected)
             {///The constructor of RoomInfoElec will do the job automaticly.
                 roomInfoList.Add(new RoomInfoElec
-                    (r,structCeilingH,structFloorH));
+                    (r,structCeilingH,structFloorH,interiorCeilingH));
             }
 
             ///3-Create systemInfo object for eacy electrical circuit.

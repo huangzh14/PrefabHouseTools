@@ -23,6 +23,7 @@ namespace PrefabHouseTools
             {
                 listCeilingLevel.Items.Add(s);
                 listFloorLevel.Items.Add(s);
+                listInteriorCeilingLevels.Items.Add(s);
             }
         }
 
@@ -47,7 +48,7 @@ namespace PrefabHouseTools
             this.Close();
         }
 
-        private void listFloorLevel_SelectedIndexChanged(object sender, EventArgs e)
+        private void label2_Click(object sender, EventArgs e)
         {
 
         }

@@ -69,7 +69,8 @@ namespace PrefabHouseTools
         
         public RoomInfo(Room room,
             double structuralCeilingHeight,
-            double structuralFloorHeight)
+            double structuralFloorHeight,
+            double interiorCeilingHeight)
         {
             Room = room;
             BoundaryList = GetBoundary
@@ -79,10 +80,11 @@ namespace PrefabHouseTools
             AdjacentRooms = new List<RoomInfo>();
             FinishFloorLevel = room.ClosedShell
                 .GetBoundingBox().Min.Z;
-            FinishCeilingLevel = room.ClosedShell
-                .GetBoundingBox().Max.Z;
+            ///FinishCeilingLevel = room.ClosedShell
+            ///    .GetBoundingBox().Max.Z;
             StructCeilingLevel = structuralCeilingHeight;
             StructFloorLevel = structuralFloorHeight;
+            FinishCeilingLevel = interiorCeilingHeight;
         }
 
         #region The methodS for boundary calculation.
@@ -409,9 +411,11 @@ namespace PrefabHouseTools
         /// <param name="room"></param>
         public RoomInfoElec(Room room,
             double structuralCeilingHeight,
-            double structuralFloorHeight) 
+            double structuralFloorHeight,
+            double interiorCeilingHeight) 
             : base(room,structuralCeilingHeight
-                       ,structuralFloorHeight)
+                       ,structuralFloorHeight
+                  ,interiorCeilingHeight)
         {
             ElecFixturesDic = 
                 new Dictionary<SystemInfoElec, List<FixtureE>>();
