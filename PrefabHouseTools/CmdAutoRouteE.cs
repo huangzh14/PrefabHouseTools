@@ -532,18 +532,11 @@ namespace PrefabHouseTools
                 Categories cats = doc.Settings.Categories;
                 Category lineCat = cats
                     .get_Item(BuiltInCategory.OST_Lines);
-                List<Color> colors = new List<Color>
-                {
-                    new Color(255,0,0),
-                    new Color(0,255,0),
-                    new Color(0,0,255),
-                    new Color(150,150,0),
-                    new Color(0,150,150),
-                    new Color(150,0,150),
-                    new Color(120,90,90),
-                    new Color(90,90,120),
-                    new Color(90,120,90)
-                };
+                CategoryNameMap lineCatsNames = lineCat.SubCategories;
+                
+
+                int sysNum = systemInfoList.Count();
+                List<Color> colors = Helper.ColorPallet(sysNum);
                 short counter = 1;
                 foreach (SystemInfoElec eSys in systemInfoList)
                 {
@@ -552,24 +545,20 @@ namespace PrefabHouseTools
                     ///2-Create the new linestyle for this system.
                     ///If having naming conflict,result will be null.
                     ///Then redo the loop.
-                    do
+                    try
                     {
-                        try
-                        {
-                            newLineStyleCat = cats.NewSubcategory
-                                (lineCat, "ElectricalLine-" + counter);
-                            doc.Regenerate();
-                            newLineStyleCat.SetLineWeight
-                                (7, GraphicsStyleType.Projection);
-                            newLineStyleCat.LineColor = colors[counter - 1];
-                            newLineStyle =
-                                doc.GetElement(newLineStyleCat.Id);
-                        }
-                        catch
-                        {
-                            counter++;
-                        }
-                    } while (newLineStyleCat == null);
+                        newLineStyleCat = cats.NewSubcategory
+                            (lineCat, "ElectricalLine-" + counter);
+                    }
+                    catch
+                    {
+                        newLineStyleCat = lineCatsNames.get_Item("ElectricalLine-" + counter);
+                    }
+                    newLineStyleCat.SetLineWeight
+                        (7, GraphicsStyleType.Projection);
+                    newLineStyleCat.LineColor = colors[counter - 1];
+                    newLineStyle =
+                        doc.GetElement(newLineStyleCat.Id);
                     
                     ///3-Create the model line and set linestyle.
                     XYZ x0 = new XYZ();

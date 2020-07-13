@@ -165,5 +165,41 @@ namespace PrefabHouseTools
             return true;
         }
         #endregion
+
+        /// <summary>
+        /// 生成一个含有给定数目颜色的颜色序列
+        /// Generate a pallete containing a given number of colors.
+        /// </summary>
+        /// <param name="colorNumber"></param>
+        /// <returns></returns>
+        public static List<Color> ColorPallet(int colorNumber)
+        {
+            List<Color> currentList = new List<Color>();
+            double segNum = Math.Ceiling(Math.Pow(colorNumber,0.333333));
+
+            List<byte> RGBindex = new List<byte>();
+            for (int i = 0; i < segNum; i++)
+            {
+                RGBindex.Add((byte)Math.Floor(255 * i / (segNum - 1)));
+            }
+
+            int colorCounter = 0;
+            for (int i = 0; i < segNum; i++)
+            {
+                for (int j = 0; j < segNum; j++)
+                {
+                    for (int k = 0; k < segNum; k++)
+                    {
+                        currentList.Add
+                            (new Color(RGBindex[i], RGBindex[j], RGBindex[k]));
+                        colorCounter++;
+                        if (colorCounter == colorNumber) break;
+                    }
+                    if (colorCounter == colorNumber) break;
+                }
+                if (colorCounter == colorNumber) break;
+            }
+            return currentList;
+        }
     }
 }

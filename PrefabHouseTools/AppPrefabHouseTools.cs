@@ -14,22 +14,22 @@ namespace PrefabHouseTools
     {
         public Result OnStartup(UIControlledApplication a)
         {
-            a.CreateRibbonTab("PrefabHouseTools");
+            a.CreateRibbonTab("预制装修工具箱");
             RibbonPanel autoModelPanel =
-                a.CreateRibbonPanel("PrefabHouseTools","自动建模");
+                a.CreateRibbonPanel("预制装修工具箱", "自动建模");
             RibbonPanel dataTransferPanel =
-                a.CreateRibbonPanel("PrefabHouseTools", "数据输入和转换");
+                a.CreateRibbonPanel("预制装修工具箱", "数据输入和转换");
             string thisPath = Assembly
                 .GetExecutingAssembly().Location;
 
             PushButtonData SetCircuitD = new PushButtonData
-                ("CmdAutoSetCircuit", "Set Circuit",
+                ("CmdAutoSetCircuit", "设定回路",
                 thisPath, "PrefabHouseTools.CmdSetCircuit");
             PushButton SetCircuitB = autoModelPanel
                 .AddItem(SetCircuitD) as PushButton;
 
             PushButtonData AutoRouteD = new PushButtonData
-                ("CmdAutoRouteE", "Auto Route Electrical",
+                ("CmdAutoRouteE", "自动生成电路",
                 thisPath, "PrefabHouseTools.CmdAutoRouteE");
             PushButton AutoRouteB = autoModelPanel
                 .AddItem(AutoRouteD) as PushButton;
@@ -47,7 +47,7 @@ namespace PrefabHouseTools
                 .AddItem(BatchRenameD) as PushButton;
 
             PushButtonData TestCmdD = new PushButtonData
-                ("TestCmd", "Test", thisPath,
+                ("TestCmd", "开发测试", thisPath,
                 "PrefabHouseTools.TestCmd");
             PushButton TestCmdB = autoModelPanel
                 .AddItem(TestCmdD) as PushButton;
